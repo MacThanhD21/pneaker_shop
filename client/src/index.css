@@ -1,0 +1,106 @@
+:root {
+  --bgc-main: #fff5f5;
+  --clr-border: #ffcccc;
+  --clr-light-gray: #ffe6e6;
+  --clr-gray: #ffcccc;
+  --clr-gray-2: #ff9999;
+  --clr-gray-3: #ff6666;
+  --clr-gray-4: #ff3333;
+  --clr-red: #ff9999;
+  --clr-mocha: #d2691e;
+  --clr-mocha-2: #a0522d;
+  --clr-mocha-3: #8b4513;
+  --clr-mocha-4: #ffe6e6;
+  --clr-mocha-5: #ffcccc;
+  --clr-mocha-hover: rgba(210, 105, 30, 0.068);
+  --clr-primary: #ff9999;
+  --clr-primary-2: #ff6666;
+}
+
+* {
+  font-family: 'Lato', sans-serif;
+  font-family: 'Urbanist', sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bgc-main);
+  margin: auto;
+}
+body::-webkit-scrollbar {
+  display: none;
+}
+
+.section-center {
+  width: 90%;
+  margin: 0 auto;
+  max-width: 1250px;
+}
+a:link,
+a:visited,
+a:hover,
+a:active {
+  text-decoration: none;
+  color: black;
+}
+
+/* .css-106c1u2-MuiBadge-badge {
+  background-color: var(--clr-mocha) !important;
+} */
+.css-1e6y48t-MuiButtonBase-root-MuiButton-root {
+  color: var(--clr-mocha-2) !important;
+}
+
+.css-1e6y48t-MuiButtonBase-root-MuiButton-root:hover {
+  text-decoration: none;
+  background-color: rgba(63, 30, 2, 0.068) !important;
+}
+
+.css-154xyx0-MuiInputBase-root-MuiOutlinedInput-root.Mui-focused
+  .MuiOutlinedInput-notchedOutline {
+  border-color: var(--clr-mocha-2) !important;
+}
+.css-1sumxir-MuiFormLabel-root-MuiInputLabel-root.Mui-focused {
+  color: black !important;
+}
+.css-187mznn-MuiSlider-root {
+  color: #e45d5d !important;
+}
+/* .css-eg0mwd-MuiSlider-thumb {
+  height: 1.5vh !important;
+  width: 4% !important;
+  border-radius: 100% !important;
+} */
+
+/* .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected {
+  background-color: var(--clr-mocha-2) !important;
+  color: white;
+} */
+
+/* .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root:hover {
+  background-color: var(--clr-mocha-3) !important;
+} */
+.css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root.Mui-focused
+  .MuiOutlinedInput-notchedOutline {
+  border-color: var(--clr-mocha-2) !important;
+}
+
+.css-1poimk-MuiPaper-root-MuiMenu-paper-MuiPaper-root-MuiPopover-paper {
+  box-shadow: none !important;
+}
+.hr {
+  margin-top: 3rem;
+  width: 100%;
+  border: 2px solid var(--clr-border);
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+
+.size-select {
+  background-color: red !important;
+}
+
+.css-18lrjg1-MuiCircularProgress-root {
+  color: var(--clr-mocha-3) !important;
+}
