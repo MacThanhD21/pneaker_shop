@@ -13,6 +13,7 @@ import {
   ProductPage,
   RegisterPage,
   ShopPage,
+  PaymentPage,
 } from './pages';
 
 import { ProtectedProfileRoute, ProtectedRoute, Footer } from './components';
@@ -63,6 +64,8 @@ const App = () => {
         <Route path='/shop' element={<ShopPage />} />
         <Route path='/shop/:id' element={<ProductPage />} />
         <Route path='/cart' element={<CartPage />} />
+        
+        <Route path='/payment' element={<PaymentPage /> } />
         <Route path='*' element={<ErrorPage />} />
         <Route
           path='/login'

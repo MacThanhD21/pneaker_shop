@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import StarIcon from '@mui/icons-material/Star';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { Link } from 'react-router-dom';
+import { formatVNDPrice } from '../utils/formatPrice';
 const ListView = ({ data, filteredProducts }) => {
   return (
     <Wrapper>
@@ -15,7 +16,7 @@ const ListView = ({ data, filteredProducts }) => {
               <InfoContainer>
                 <Title>{title}</Title>
 
-                <Price>${price}</Price>
+                <Price>{formatVNDPrice(price)}</Price>
                 <RatesContainer>
                   <StarIcon style={{ width: '8%' }} /> {rates}
                   /5.0

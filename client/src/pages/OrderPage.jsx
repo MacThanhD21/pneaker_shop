@@ -27,6 +27,10 @@ const OrderPage = () => {
 
   const { city, address, country, postalCode, phoneNumber } =
     !isLoading && userInfo?.shippingAddress;
+
+  const firstName = userInfo?.firstName;
+  const lastName = userInfo?.lastName;
+
   const { errors } = validateShippingAddress(
     city,
     address,
@@ -55,7 +59,7 @@ const OrderPage = () => {
 
   useEffect(() => {
     if (data?.getUserCart.cartProducts.length < 1) {
-      navigate('/history');
+      navigate('/history'); 
     }
   }, [data?.getUserCart, navigate]);
 
@@ -83,6 +87,13 @@ const OrderPage = () => {
           <LoadingContainer>
             <Container>
               <OrderInfo>
+              <Title>Information</Title>
+                <p>
+                  Name: {firstName} {lastName}
+                </p>
+                <p>
+                  Phone: {phoneNumber}
+                </p>
                 <Title>SHIPPING</Title>
                 <p>
                   Address: {address}, {city}, {postalCode}, {country}
@@ -97,9 +108,10 @@ const OrderPage = () => {
             </Container>
             <OrderSummary>
               <OrderSum
-                onClick={() => completeOrder()}
+                onClick
                 cartProducts={cartProducts}
                 orderPage
+                link='/payment'
               />
             </OrderSummary>
           </LoadingContainer>

@@ -10,6 +10,7 @@ import { DELETE_FROM_CART } from '../graphql/Mutations/cartMutations';
 import { GET_USER_CART } from '../graphql/Queries/cartQueries';
 import MuiError from '../assets/mui/Alert';
 import { mobile } from '../responsive';
+import { formatVNDPrice } from '../utils/formatPrice';
 
 const CartItems = ({ productId, size, id, orderPage, historyPage }) => {
   const [cartItems, setCartItems] = useState([]);
@@ -101,7 +102,7 @@ const CartItems = ({ productId, size, id, orderPage, historyPage }) => {
                       onClick={() => deleteProduct()}
                     />
                   )}
-                  <Price>${price * size?.length}</Price>
+                  <Price>{formatVNDPrice(price * size?.length)}</Price>
                 </div>
               )}
             </PriceContainer>

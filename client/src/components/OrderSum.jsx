@@ -2,10 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import Loading from '../assets/mui/Loading';
 import { Link } from 'react-router-dom';
+import { formatVNDPrice } from '../utils/formatPrice';
 
-const OrderSum = ({ cartProducts, loading, link, onClick, orderPage }) => {
-  const deliveryTax = 10.0;
-  const salesTax = 5.0;
+const OrderSum = ({ cartProducts, loading, link, onClick, orderPage}) => {
+  const deliveryTax = 10000;
+  const salesTax = 20000;
 
   const originalPriceCalculated = cartProducts?.reduce(
     (acc, val) => Number(acc) + Number(val.productPrice),
@@ -27,28 +28,30 @@ const OrderSum = ({ cartProducts, loading, link, onClick, orderPage }) => {
           <Title>Order Summary</Title>
           <Info>
             Original price
-            <span>${parseFloat(originalPriceCalculated)?.toFixed(2)}</span>
+            <span>{formatVNDPrice(originalPriceCalculated)}</span>
           </Info>
           <Info>
             3 Items
-            <span>${parseFloat(originalPriceCalculated)?.toFixed(2)}</span>
+            <span>{formatVNDPrice(originalPriceCalculated)}</span>
           </Info>
           <Info>
-            Delivery<span>${deliveryTax.toFixed(2)}</span>
+            Delivery<span>{formatVNDPrice(deliveryTax)}</span>
           </Info>
           <Info>
-            Sales tax<span>${salesTax.toFixed(2)}</span>
+            Sales tax<span>{formatVNDPrice(salesTax)}</span>
           </Info>
           <hr />
           <TotalContainer>
             <TotalPrice>Total</TotalPrice>
-            <Price>${parseFloat(totalPriceCalculated)?.toFixed(2)}</Price>
+            <Price>{formatVNDPrice(totalPriceCalculated)}</Price>
           </TotalContainer>
-          <Link to='/order'>
-            <Button onClick={onClick}>
-              {orderPage ? 'Complete Order' : 'Proceed To Checkout'}
-            </Button>
-          </Link>
+          {onClick ? (
+            <Link to= {link}>
+              <Button onClick={onClick}>
+                {orderPage ? 'Verify Information' : 'Proceed To Checkout'}
+              </Button>
+            </Link>
+          ) : null}
         </Container>
       )}
     </Wrapper>

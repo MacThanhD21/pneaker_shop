@@ -11,6 +11,7 @@ import { ADD_TO_CART } from '../graphql/Mutations/cartMutations';
 import { useDispatch, useSelector } from 'react-redux';
 import { GET_USER_CART } from '../graphql/Queries/cartQueries';
 import { mobile } from '../responsive';
+import { formatVNDPrice } from '../utils/formatPrice';
 
 const ProductPage = () => {
   const [product, setProduct] = useState('');
@@ -97,12 +98,9 @@ const ProductPage = () => {
           <InfoContainer>
             <Title>{title}</Title>
             <Stars stars={rates} />
-            <Price>${price}</Price>
+            <Price>{formatVNDPrice(price)}</Price>
             <Lorem>
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Numquam
-              ullam est dicta vero sint aliquid ut accusamus, natus corporis
-              quisquam obcaecati? Similique odio ex repellendus eaque, molestiae
-              praesentium sunt nesciunt.
+              Một sản phẩm được thiết kế để cung cấp cho bạn một cảm giác thoải mái nhất mất đến từ nhà PTIT.
             </Lorem>
             <Info>
               Available:<span>{inStock ? 'In stock' : 'Out of stock'}</span>

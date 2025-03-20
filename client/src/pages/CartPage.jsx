@@ -56,7 +56,7 @@ const CartPage = () => {
               </CartItemsContainer>
             </Container>
             <OrderSummary>
-              <OrderSum cartProducts={cartProducts} loading={loading} />
+              <OrderSum cartProducts={cartProducts} loading={loading} onClick link='/order'/>
             </OrderSummary>
           </div>
         )}

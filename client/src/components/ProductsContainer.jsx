@@ -5,6 +5,7 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import Stars from './Stars';
 import { Link } from 'react-router-dom';
 import { mobile } from '../responsive';
+import { formatVNDPrice } from '../utils/formatPrice';
 
 const ProductsContainer = ({ title, image, price, rates, id }) => {
   return (
@@ -29,7 +30,7 @@ const ProductsContainer = ({ title, image, price, rates, id }) => {
               Buy <AddShoppingCartIcon style={{ fontSize: '18px' }} />
             </Button>
           </Link>
-          <Price>${price}</Price>
+          <Price>{formatVNDPrice(price)}</Price>
         </PriceContainer>
       </Wrapper>
     </>
