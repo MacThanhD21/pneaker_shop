@@ -118,9 +118,8 @@ const ProductPage = () => {
                 <SizeContainer>
                   {size?.map((size, index) => (
                     <SizeButton
-                      className={size === shoeSize ? 'active' : ''}
-                      onClick={(e) => setShoeSize(Number(e.target.value))}
-                      value={size}
+                      className={shoeSize === size ? 'active' : ''}
+                      onClick={() => setShoeSize(size)}
                       key={index}
                       disabled={
                         matchUserId &&
@@ -128,7 +127,7 @@ const ProductPage = () => {
                         filteredSizesFromCart?.includes(size)
                       }
                     >
-                      {`${size} US`}
+                      {size}
                     </SizeButton>
                   ))}
                 </SizeContainer>
@@ -259,21 +258,25 @@ const SizeButton = styled.button`
   color: black;
   font-weight: 500;
   font-size: 16px;
-  padding: 15px 20px;
-  margin-bottom: 10px;
-  border: transparent;
+  padding: 5px 7px;
+  // margin-bottom: 10px;
   border: 1px solid transparent;
   cursor: pointer;
-  :hover {
+  transition: all 0.1s ease;
+
+  &:hover {
     border: 1px solid black;
   }
-  :disabled {
+
+  &:disabled {
     color: #b6b6b6;
     border: none;
     pointer-events: none;
   }
 
-  :checked {
+  &.active {
+    background-color: black;
+    color: white;
     border: 1px solid black;
   }
-`;
+`; 

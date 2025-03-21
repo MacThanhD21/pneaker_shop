@@ -11,9 +11,9 @@ export const PriceSlider = ({ value, onChangeCommitted, onChange }) => {
           width: '100%',
         }}
         value={value}
-        min={199}
-        max={1000}
-        step={1}
+        min={100000}
+        max={5000000}
+        step={50000}
         onChange={onChange}
         onChangeCommitted={onChangeCommitted}
         valueLabelDisplay='auto'

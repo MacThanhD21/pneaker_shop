@@ -9,24 +9,19 @@ const About = () => {
       <AboutContainer>
         <Title>
           <Logo src={logo} />
-          About SneakersShop
+          About Pneaker Shop
         </Title>
         <Info>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit
-          <br />. Sunt quo fugiat sit consequuntur
-          <br /> hic repudiandae quis? Error facere, labore, aperiam tenetur
-          <br />
-          necessitatibus voluptates veritatis quaerat ad vitae adipisci
-          cupiditate nostrum <br />
-          porro doloremque a totam facilis et! Reprehenderit quidem fugit
-          delectus.
-          <br /> hic repudiandae quis? Error facere, labore, aperiam tenetur
-          necessitatibus
-          <br /> voluptates veritatis quaerat ad vitae adipisci cupiditate
-          nostrum <br />
-          porro doloremque a totam facilis et! Reprehenderit quidem fugit
-          delectus.
-        </Info>
+          <p>
+            Chúng tôi tự hào mang đến những mẫu giày sneaker độc đáo và phong cách nhất
+            từ các thương hiệu hàng đầu thế giới. Với hơn 5 năm kinh nghiệm,
+            Psneaker Shop cam kết mang đến cho bạn không chỉ những đôi giày chất lượng
+            mà còn là trải nghiệm mua sắm tuyệt vời nhất. Từ những thiết kế đường phố cá tính
+            đến những mẫu giày thể thao cao cấp, chúng tôi có tất cả những gì bạn cần
+            để thể hiện phong cách riêng của mình. Hãy để Psneaker Shop đồng hành
+            cùng bạn trong mọi bước chân!
+          </p>
+        </Info> 
       </AboutContainer>
       <ImageContainer>
         <Image src={image} />
@@ -63,12 +58,41 @@ const Logo = styled.img`
   ${mobile({ width: '30%' })}
 `;
 
-const Info = styled.p`
+const Info = styled.div`
+  padding: 24px;
+  text-align: center;
+  line-height: 2;
+  font-size: 14px;
   color: var(--clr-gray);
+  max-width: 900px;
+  margin: 0 auto;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+
+  /* First paragraph styling */
+  p:first-of-type {
+    font-size: 24px;
+    font-weight: 400;
+    color:rgb(255, 153, 153);
+    margin-bottom: 20px;
+  }
+
+  /* Hover effect */
+  &:hover {
+    transform: translateY(-6px);
+    transition: transform 0.3s ease;
+  }
+
+  /* Mobile responsiveness */
   ${mobile({
     margin: '1rem',
+    padding: '20px',
+    fontSize: '16px'
   })}
 `;
+
+        
 
 const ImageContainer = styled.div`
   ${mobile({ display: 'none' })}

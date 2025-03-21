@@ -24,6 +24,8 @@ const OrderPage = () => {
     variables: { userId: userInfo?.id },
   });
   const cartProducts = data?.getUserCart.cartProducts;
+  
+  const selectedProducts = cartProducts?.filter(product => product.selected) || [];
 
   const { city, address, country, postalCode, phoneNumber } =
     !isLoading && userInfo?.shippingAddress;
@@ -58,10 +60,10 @@ const OrderPage = () => {
     });
 
   useEffect(() => {
-    if (data?.getUserCart.cartProducts.length < 1) {
-      navigate('/history'); 
+    if (selectedProducts.length < 0) {
+      navigate('/cart');
     }
-  }, [data?.getUserCart, navigate]);
+  }, [selectedProducts, navigate]);
 
   return (
     <div className='section-center'>
@@ -87,7 +89,7 @@ const OrderPage = () => {
           <LoadingContainer>
             <Container>
               <OrderInfo>
-              <Title>Information</Title>
+                <Title>Information</Title>
                 <p>
                   Name: {firstName} {lastName}
                 </p>
@@ -100,7 +102,7 @@ const OrderPage = () => {
                 </p>
                 <Title>ORDERS</Title>
                 <CartContainer>
-                  {cartProducts?.map((cartItem, index) => (
+                  {selectedProducts.map((cartItem, index) => (
                     <CartItems key={index} orderPage {...cartItem} />
                   ))}
                 </CartContainer>
@@ -109,7 +111,7 @@ const OrderPage = () => {
             <OrderSummary>
               <OrderSum
                 onClick
-                cartProducts={cartProducts}
+                cartProducts={selectedProducts}
                 orderPage
                 link='/payment'
               />
@@ -156,19 +158,19 @@ const CartContainer = styled.div`
   padding-right: 0.5rem;
   overflow-y: scroll;
   overflow-x: hidden;
-  height: 50vh;
-  margin-top: 1rem;
+  height: 30vh;
+  // margin-top: 1rem;
   &::-webkit-scrollbar-thumb {
     border-radius: 10px;
     background-color: rgba(0, 0, 0, 0.15);
   }
   &::-webkit-scrollbar {
-    width: 2px;
+    width: 10px;
   }
   ${mobile({
     margin: '0 auto',
     padding: '0',
-  })}
+})}
 `;
 
 const OrderSummary = styled.div`
@@ -178,11 +180,11 @@ const OrderSummary = styled.div`
   padding: 6rem;
   flex-direction: column;
   ${mobile({
-    display: 'flex',
-    padding: '0',
-    justifyContent: 'center',
-    width: '100%',
-  })}
+  display: 'flex',
+  padding: '0',
+  justifyContent: 'center',
+  width: '100%',
+})}
 `;
 const ErrorContainer = styled.div`
   display: flex;

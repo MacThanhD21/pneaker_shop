@@ -18,7 +18,7 @@ const SizeChart = () => {
     dispatch(addSize(size));
   };
 
-  for (let i = 3; i <= 12.5; i += 0.5) {
+  for (let i = 37; i <= 48; i += 1) {
     sizes.push(i);
   }
 

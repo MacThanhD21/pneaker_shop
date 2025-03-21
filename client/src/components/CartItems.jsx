@@ -12,7 +12,7 @@ import MuiError from '../assets/mui/Alert';
 import { mobile } from '../responsive';
 import { formatVNDPrice } from '../utils/formatPrice';
 
-const CartItems = ({ productId, size, id, orderPage, historyPage }) => {
+const CartItems = ({ productId, size, id, orderPage, historyPage, isSelected, onSelect }) => {
   const [cartItems, setCartItems] = useState([]);
   const { userInfo } = useSelector((state) => state.user);
 
@@ -52,6 +52,14 @@ const CartItems = ({ productId, size, id, orderPage, historyPage }) => {
             />
           ) : (
             <ItemContainer>
+              <CheckboxContainer>
+                <input
+                  type="checkbox"
+                  checked={isSelected}
+                  onChange={onSelect}
+                  id={`item-${id}`}
+                />
+              </CheckboxContainer>
               <ImageContainer>
                 <Image src={image} />
               </ImageContainer>
@@ -207,5 +215,17 @@ const SaleInfo = styled.div`
     h3 {
       font-weight: 600;
     }
+  }
+`;
+
+const CheckboxContainer = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
   }
 `;
