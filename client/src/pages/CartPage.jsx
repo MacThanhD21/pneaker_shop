@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -10,6 +10,7 @@ import { Navbar, OrderSum, TopPicks } from '../components';
 import CartItems from '../components/CartItems';
 import MuiError from '../assets/mui/Alert';
 import { mobile } from '../responsive';
+import { UPDATE_CART_ITEMS_SELECTION } from '../graphql/Mutations/cartMutations';
 
 const CartPage = () => {
   const { userInfo } = useSelector((state) => state.user);
@@ -17,27 +18,72 @@ const CartPage = () => {
     variables: { userId: userInfo?.id },
   });
   const cartProducts = data?.getUserCart.cartProducts;
+  console.log(cartProducts);
   const cartLength = cartProducts?.length;
+
+  const [updateCartItemsSelection] = useMutation(UPDATE_CART_ITEMS_SELECTION, {
+    refetchQueries: [{ query: GET_USER_CART }],
+  });
 
 
   // Add state for selected items
   const [selectedItems, setSelectedItems] = useState([]);
 
   // Handle select all
-  const handleSelectAll = (e) => {
+  const handleSelectAll = async(e) => {
     if (e.target.checked) {
+      try {
+        await updateCartItemsSelection({
+          variables: {
+            cartProductIds: cartProducts.map(item => item.id),
+            selected: true,
+          }
+        });
+      } catch (error) {
+        console.error('Error updating cart items selection:', error);
+      }
       setSelectedItems(cartProducts.map(item => item.id));
     } else {
+      try {
+        await updateCartItemsSelection({
+          variables: {
+            cartProductIds: cartProducts.map(item => item.id),
+            selected: false,
+          }
+        });
+      } catch (error) {
+        console.error('Error updating cart items selection:', error);
+      }
       setSelectedItems([]);
     }
   };
 
   // Handle individual item selection
-  const handleSelectItem = (itemId) => {
-    setSelectedItems(prev => {
+  const handleSelectItem = async (itemId) => {
+    setSelectedItems(async (prev) => {
       if (prev.includes(itemId)) {
+        try {
+          await updateCartItemsSelection({
+            variables: {
+              cartProductIds: [itemId],
+              selected: false,
+            }
+          });
+        } catch (error) {
+          console.error('Error updating cart items selection:', error);
+        }
         return prev.filter(id => id !== itemId);
       } else {
+        try {
+          await updateCartItemsSelection({
+            variables: {
+              cartProductIds: [itemId],
+              selected: true,
+            }
+          });
+        } catch (error) {
+          console.error('Error updating cart items selection:', error);
+        }
         return [...prev, itemId];
       }
     });
@@ -75,6 +121,7 @@ const CartPage = () => {
                     checked={selectedItems.length === cartProducts.length}
                     onChange={handleSelectAll}
                     id="selectAll"
+                    defaultChecked={false}
                   />
                   <label htmlFor="selectAll">Select All</label>
                   <span style={{ color: 'var(--clr-gray)', marginLeft: '1rem' }}>

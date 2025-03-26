@@ -45,11 +45,12 @@ export const cart = {
           productId,
           size,
           productPrice,
+          selected: false,
         });
       } else {
         return new Cart({
           userId,
-          cartProducts: { size, productId, productPrice },
+          cartProducts: { size, productId, productPrice, selected: false },
         }).save();
       }
 
@@ -76,5 +77,29 @@ export const cart = {
 
       return { ...cart._doc, userId: userAuth._id };
     },
+
+    updateCartItemsSelection: async (_, { cartProductIds, selected }, context) => {
+      const userAuth = await auth(context);
+      const cart = await Cart.findOne({ userId: userAuth._id });
+
+      if (userAuth?._id.toString() !== cart?.userId.toString()) {
+        throw new UserInputError('Permission denied!');
+      }
+      if (!cart) {
+        throw new UserInputError('Bad Input!');
+      }
+
+      cart.cartProducts.forEach(product => {
+        cartProductIds.forEach( (item) => {
+          if(product._id.toString() === item.toString()) {
+            product.selected = selected;
+          }
+        }
+        )
+      });
+
+      await cart.save();
+      return { ...cart._doc, userId: userAuth._id };
+    }
   },
 };

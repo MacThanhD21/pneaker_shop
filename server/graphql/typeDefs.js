@@ -103,6 +103,7 @@ export const typeDefs = gql`
     size: [Float!]!
     productPrice: Int!
     id: ID
+    selected: Boolean!
   }
 
   input RegisterInput {
@@ -166,5 +167,6 @@ export const typeDefs = gql`
     deleteProductFromCart(id: ID!): Cart!
     createProductReview(productId: ID!, userRate: Int!): Product!
     createOrder: Order!
+    updateCartItemsSelection(cartProductIds: [ID!]!, selected: Boolean!): Cart!
   }
 `;

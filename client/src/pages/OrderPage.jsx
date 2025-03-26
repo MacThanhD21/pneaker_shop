@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
@@ -23,10 +23,10 @@ const OrderPage = () => {
   const { loading, data } = useQuery(GET_USER_CART, {
     variables: { userId: userInfo?.id },
   });
-  const cartProducts = data?.getUserCart.cartProducts;
-  
-  const selectedProducts = cartProducts?.filter(product => product.selected) || [];
-
+  const cartProducts = data?.getUserCart.cartProducts;  
+  const selectedProducts = useMemo(() => {
+    return cartProducts?.filter(product => product.selected) || [];
+  }, [cartProducts]);
   const { city, address, country, postalCode, phoneNumber } =
     !isLoading && userInfo?.shippingAddress;
 
@@ -96,14 +96,14 @@ const OrderPage = () => {
                 <p>
                   Phone: {phoneNumber}
                 </p>
-                <Title>SHIPPING</Title>
+                <Title>Delivery Address</Title>
                 <p>
                   Address: {address}, {city}, {postalCode}, {country}
                 </p>
-                <Title>ORDERS</Title>
+                <Title>Orders Detail</Title>
                 <CartContainer>
                   {selectedProducts.map((cartItem, index) => (
-                    <CartItems key={index} orderPage {...cartItem} />
+                    <CartItems key={index} orderPage {...cartItem} onDisableCheckbox />
                   ))}
                 </CartContainer>
               </OrderInfo>

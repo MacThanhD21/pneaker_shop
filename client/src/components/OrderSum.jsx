@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom';
 import { formatVNDPrice } from '../utils/formatPrice';
 
 const OrderSum = ({ cartProducts, loading, link, onClick, orderPage}) => {
-  const deliveryTax = 10000;
-  const salesTax = 20000;
+  const deliveryTax = cartProducts?.length > 0 ? 10000 : 0;
+  const salesTax = cartProducts?.length > 0 ? 20000 : 0;
 
   const originalPriceCalculated = cartProducts?.reduce(
     (acc, val) => Number(acc) + Number(val.productPrice),
@@ -31,7 +31,7 @@ const OrderSum = ({ cartProducts, loading, link, onClick, orderPage}) => {
             <span>{formatVNDPrice(originalPriceCalculated)}</span>
           </Info>
           <Info>
-            3 Items
+            Items
             <span>{formatVNDPrice(originalPriceCalculated)}</span>
           </Info>
           <Info>

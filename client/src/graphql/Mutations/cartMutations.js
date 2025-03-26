@@ -19,6 +19,7 @@ const ADD_TO_CART = gql`
         productPrice
         size
         id
+        selected
       }
     }
   }
@@ -33,9 +34,25 @@ const DELETE_FROM_CART = gql`
         productId
         productPrice
         size
+        selected
       }
     }
   }
 `;
 
-export { ADD_TO_CART, DELETE_FROM_CART };
+const UPDATE_CART_ITEMS_SELECTION = gql`
+  mutation ($cartProductIds: [ID!]!, $selected: Boolean!) {
+    updateCartItemsSelection(cartProductIds: $cartProductIds, selected: $selected) {
+      userId
+      cartProducts {
+        id
+        productId
+        productPrice
+        size
+        selected
+      }
+    }
+  }
+`;
+
+export { ADD_TO_CART, DELETE_FROM_CART, UPDATE_CART_ITEMS_SELECTION };
