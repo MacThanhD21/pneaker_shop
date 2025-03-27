@@ -1,9 +1,6 @@
 import mongoose from 'mongoose';
 
-const sizeEnum = [
-  3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5,
-  12, 12.5,
-];
+const sizeEnum = [37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48];
 
 const reviewSchema = mongoose.Schema({
   rating: { type: Number, required: true },

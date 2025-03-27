@@ -10,7 +10,7 @@ const OrderComponent = ({ datePurchased, orderProducts, id }) => {
         {orderProducts.flatMap((c, index) => {
           return (
             <HistoryItems key={index} {...c} datePurchased={datePurchased} />
-          );
+          );  
         })}
       </Wrapper>
     </>

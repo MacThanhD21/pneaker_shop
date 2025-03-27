@@ -18,7 +18,6 @@ const CartPage = () => {
     variables: { userId: userInfo?.id },
   });
   const cartProducts = data?.getUserCart.cartProducts;
-  console.log(cartProducts);
   const cartLength = cartProducts?.length;
 
   const [updateCartItemsSelection] = useMutation(UPDATE_CART_ITEMS_SELECTION, {
@@ -39,10 +38,10 @@ const CartPage = () => {
             selected: true,
           }
         });
+        setSelectedItems(cartProducts.map(item => item.id));
       } catch (error) {
         console.error('Error updating cart items selection:', error);
       }
-      setSelectedItems(cartProducts.map(item => item.id));
     } else {
       try {
         await updateCartItemsSelection({
@@ -51,42 +50,35 @@ const CartPage = () => {
             selected: false,
           }
         });
+        setSelectedItems([]);
       } catch (error) {
         console.error('Error updating cart items selection:', error);
       }
-      setSelectedItems([]);
     }
   };
 
   // Handle individual item selection
   const handleSelectItem = async (itemId) => {
-    setSelectedItems(async (prev) => {
-      if (prev.includes(itemId)) {
-        try {
-          await updateCartItemsSelection({
-            variables: {
-              cartProductIds: [itemId],
-              selected: false,
-            }
-          });
-        } catch (error) {
-          console.error('Error updating cart items selection:', error);
+    try {
+      setSelectedItems(prev => {
+        if (isCurrentlySelected) {
+          return prev.filter(id => id !== itemId);
+        } else {
+          return [...prev, itemId];
         }
-        return prev.filter(id => id !== itemId);
-      } else {
-        try {
-          await updateCartItemsSelection({
-            variables: {
-              cartProductIds: [itemId],
-              selected: true,
-            }
-          });
-        } catch (error) {
-          console.error('Error updating cart items selection:', error);
+      });
+      const isCurrentlySelected = selectedItems.includes(itemId);
+      await updateCartItemsSelection({
+        variables: {
+          cartProductIds: [itemId],
+          selected: !isCurrentlySelected,
         }
-        return [...prev, itemId];
-      }
-    });
+      });
+      
+     
+    } catch (error) {
+      console.error('Error updating cart items selection:', error);
+    }
   };
 
   return (
@@ -136,6 +128,7 @@ const CartPage = () => {
                     {...cartItem}
                     isSelected={selectedItems.includes(cartItem.id)}
                     onSelect={() => handleSelectItem(cartItem.id)}
+                    onDisableCheckbox={false}
                   />
                 ))}
               </CartItemsContainer>

@@ -22,8 +22,10 @@ export const order = {
       const userAuth = await auth(context);
       const cart = await Cart.findOne({ userId: userAuth._id });
       const products = await Product.find({
-        _id: cart.cartProducts.map((c) => c.productId),
+        _id: cart.cartProducts.map((c) => c.productId && c.selected === true),
       });
+      console.log("hello");
+      console.log(products);
       const topPicksBrands = products.map((p) => p.brand);
 
       for (const cartInfo of cart.cartProducts) {

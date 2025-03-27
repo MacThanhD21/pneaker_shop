@@ -4,7 +4,7 @@ import { doPayment } from '../app/controller/payment.controller.js'
 
 
 
-function route(app){
+function  route(app){
     app.use('/', mainRoute)
 }
 

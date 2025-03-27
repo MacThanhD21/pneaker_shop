@@ -48,7 +48,7 @@ const deleteCarts = async () => {
 };
 
 const deleteOrders = async () => {
-  connectDB(process.env.MONGO_URI);
+  connectDB("mongodb+srv://xorada8242:MongoDBcom123@cluster0.155yc0l.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0");
 
   try {
     await Order.deleteMany();
@@ -60,5 +60,5 @@ const deleteOrders = async () => {
 };
 
 // deleteUsers();
-// deleteOrders();
-insertProducts();
+deleteOrders();
+// insertProducts();
