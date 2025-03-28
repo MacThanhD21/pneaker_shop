@@ -10,10 +10,13 @@ import MuiError from '../../assets/mui/Alert';
 const PurchaseHistory = () => {
   const { loading, error, data } = useQuery(GET_USER_ORDER);
 
+  console.log(data)
+  
   const navigate = useNavigate();
 
   const ordersLength = data?.getUserOrders.length;
-
+  console.log(ordersLength);
+  
   useEffect(() => {
     if (ordersLength < 1 && !loading) {
       navigate('/shop');

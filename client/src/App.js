@@ -14,6 +14,7 @@ import {
   RegisterPage,
   ShopPage,
   PaymentPage,
+  AboutPage,
 } from './pages';
 
 import { ProtectedProfileRoute, ProtectedRoute, Footer } from './components';
@@ -61,11 +62,11 @@ const App = () => {
       <MobileMenu />
       <Routes>
         <Route exact path='/' element={<HomePage />} />
+        <Route path='/about' element={<AboutPage />} />
         <Route path='/shop' element={<ShopPage />} />
         <Route path='/shop/:id' element={<ProductPage />} />
         <Route path='/cart' element={<CartPage />} />
-        
-        <Route path='/payment' element={<PaymentPage /> } />
+        <Route path='/payment' element={<PaymentPage />} />
         <Route path='*' element={<ErrorPage />} />
         <Route
           path='/login'

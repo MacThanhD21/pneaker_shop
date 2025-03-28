@@ -105,6 +105,9 @@ const PaymentPage = () => {
   });
 
   const cartProducts = data?.getUserCart.cartProducts.filter(item => item.selected === true);
+  console.log(cartProducts);
+  
+
   const [completeOrder, { loading: orderLoading, error: orderError }] =
     useMutation(CREATE_ORDER, {
       refetchQueries: [

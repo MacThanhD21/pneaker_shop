@@ -28,18 +28,16 @@ const EditingProfile = ({
     lastName: userInfo.lastName || '',
     shoeSize: userInfo.shoeSize || null,
   };
-  const [errors, setErrors] = useState('');
+
+  const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
 
   let sizes = [];
-  for (let i = 3; i <= 12.5; i += 0.5) {
+  for (let i = 37; i <= 47; i += 1) {
     sizes.push(i);
   }
 
-  const { onChange, onSubmit, values } = useForm(
-    updateUserCallback,
-    initialState
-  );
+  const { onChange, onSubmit, values } = useForm(updateUserCallback, initialState);
 
   const [update, { loading }] = useMutation(UPDATE_USER, {
     update(_, data) {
@@ -47,14 +45,45 @@ const EditingProfile = ({
       toggleEdit();
     },
     onError(err) {
-      setErrors(err.message);
+      setErrors({ form: err.message });
     },
     variables: values,
   });
 
   function updateUserCallback() {
+    // Validate fields
+    const validationErrors = validateFields(values);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return; // Không tiếp tục nếu có lỗi
+    }
     update();
   }
+
+  const validateFields = (values) => {
+    const errors = {};
+
+    // Kiểm tra first name
+    if (!values.firstName.trim()) {
+      errors.firstName = 'First name is required';
+    } else if (!/^[A-Za-z\s]+$/.test(values.firstName)) {
+      errors.firstName = 'First name must contain only letters and spaces';
+    } else if (values.firstName.length < 2 || values.firstName.length > 50) {
+      errors.firstName = 'First name must be between 2 and 50 characters';
+    }
+
+    // Kiểm tra last name
+    if (!values.lastName.trim()) {
+      errors.lastName = 'Last name is required';
+    } else if (!/^[A-Za-z\s]+$/.test(values.lastName)) {
+      errors.lastName = 'Last name must contain only letters and spaces';
+    } else if (values.lastName.length < 2 || values.lastName.length > 50) {
+      errors.lastName = 'Last name must be between 2 and 50 characters';
+    }
+
+    return errors;
+  };
+
   return (
     <>
       <Wrapper>
@@ -72,6 +101,7 @@ const EditingProfile = ({
                 value={values.firstName}
                 onChange={onChange}
               />
+              {errors.firstName && <ErrorText>{errors.firstName}</ErrorText>}
             </Info>
             <Info>
               <Label>Last Name</Label>
@@ -81,6 +111,7 @@ const EditingProfile = ({
                 value={values.lastName}
                 onChange={onChange}
               />
+              {errors.lastName && <ErrorText>{errors.lastName}</ErrorText>}
             </Info>
             <Info>
               <Label>Email Address</Label>
@@ -120,7 +151,7 @@ const EditingProfile = ({
               </Label>
             </Info>
 
-            {errors && <MuiError value={errors} type='error' />}
+            {errors.form && <MuiError value={errors.form} type='error' />}
           </Form>
         </InfoContainer>
       </Wrapper>
@@ -163,4 +194,10 @@ const Form = styled.form`
   flex-wrap: wrap;
   width: 100%;
   height: 30vh;
+`;
+
+const ErrorText = styled.p`
+  color: red;
+  font-size: 12px;
+  margin-top: 0.5rem;
 `;

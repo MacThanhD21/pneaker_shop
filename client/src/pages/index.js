@@ -7,7 +7,7 @@ import ProductPage from './ProductPage';
 import RegisterPage from './RegisterPage';
 import ShopPage from './ShopPage';
 import PaymentPage from './PaymentPage';
-
+import AboutPage from './AboutPage';
 
 export {
   HomePage,
@@ -18,5 +18,6 @@ export {
   RegisterPage,
   ErrorPage,
   OrderPage,
-  PaymentPage
+  PaymentPage,
+  AboutPage
 };
