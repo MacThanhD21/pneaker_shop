@@ -25,7 +25,11 @@ const BrandChart = () => {
     dispatch(addBrand(name));
   };
 
-  const brands = ['Dunk', 'Jordan', 'Yeezy', 'Puma'];
+  const brands = ['Giày Dunk', 'Giày Jordan', 'Giày Yeezy', 'Giày Puma'];
+
+  const displayBrandName = (brandName) => {
+    return brandName.replace(/^Giày\s+/i, '');
+  };
 
   return (
     <Wrapper>
@@ -54,7 +58,7 @@ const BrandChart = () => {
                 type='checkbox'
                 checked={brand === item}
               />
-              <Label>{item}</Label>
+              <Label>{displayBrandName(item)}</Label>
             </Brand>
           ))}
         </BrandContainer>

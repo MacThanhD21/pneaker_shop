@@ -32,7 +32,7 @@ const TopPicks = (props) => {
       <HeaderContainer>
         <Header>
           <Icon src={icon} />
-          TOP pick
+          TOP PICK
         </Header>
         <Link to='/shop'>
           <ViewButton cartPage={cartPage && cartPage}>

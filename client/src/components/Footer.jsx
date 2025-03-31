@@ -93,101 +93,129 @@ const Footer = () => {
 export default Footer;
 
 const FooterWrapper = styled.footer`
-  background-color: rgb(255, 245, 245);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 10); /* Tạo hiệu ứng đổ bóng nhẹ */
-  padding-top: 20px;
+  background: #f8f9fa;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  padding-top: 3rem;
+  color: #2c3e50;
 `;
 
-
 const FooterContent = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
   justify-content: space-between;
-  padding: 0 3rem;
-  ${mobile({ flexDirection: "column", alignItems: "center", padding: "1rem" })}
+  gap: 4rem;
+  padding: 0 3rem 3rem;
+  
+  ${mobile({ 
+    flexDirection: "column", 
+    alignItems: "flex-start", 
+    padding: "1rem",
+    gap: "2rem"
+  })}
 `;
 
 const CompanyInfo = styled.div`
-  flex: 2;
-  padding-right: 2rem;
-  ${mobile({ flex: "1", textAlign: "center" })}
+  flex: 1;
+  max-width: 400px;
+  
+  ${mobile({ 
+    maxWidth: "100%",
+    marginBottom: "2rem" 
+  })}
 `;
 
 const Logo = styled.h2`
   font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
 `;
 
 const Description = styled.p`
-  font-size: 16px;
+  font-size: 1rem;
   margin: 1rem 0;
+  color: #34495e;
+  line-height: 1.6;
 `;
 
 const Contact = styled.div`
-  margin-top: 1rem;
+  margin-top: 2rem;
+  
   h3 {
-    font-weight: bold;
-    margin-bottom: 0.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    font-size: 1.2rem;
+  }
+  
+  p {
+    margin: 0.5rem 0;
+    color: #34495e;
+  }
+  
+  a {
+    color: #3498db;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    &:hover {
+      color: #2980b9;
+      text-decoration: underline;
+    }
   }
 `;
 
 const FooterLinks = styled.div`
   flex: 1;
+  
   h3 {
-    font-weight: bold;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
   }
+  
   ul {
     list-style: none;
     padding: 0;
+    margin: 0;
   }
+  
   ul li {
-    margin: 0.5rem 0;
+    margin: 0.8rem 0;
+    
+    a {
+      color: #34495e;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+      
+      &:hover {
+        color: #3498db;
+        text-decoration: underline;
+      }
+    }
   }
 `;
 
-const CustomerSupport = styled.div`
+const CustomerSupport = styled(FooterLinks)`
   flex: 1;
-  h3 {
-    font-weight: bold;
-  }
-  ul {
-    list-style: none;
-    padding: 0;
-  }
-  ul li {
-    margin: 0.5rem 0;
-  }
-`;
-
-const SocialMedia = styled.div`
-  flex: 1;
-  text-align: center;
-`;
-
-const SocialIcons = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 1rem;
-`;
-
-const Icon = styled.a`
-  font-size: 24px;
-  margin: 0 10px;
-  color: #333;
-  transition: color 0.3s;
-  &:hover {
-    color: #0073e6;
-  }
 `;
 
 const FooterBottom = styled.div`
-  background-color: #222;
-  color: white;
+  background: #2c3e50;
+  color: #fff;
   text-align: center;
-  padding: 1rem 0;
-  font-size: 14px;
+  padding: 1.5rem 0;
+  font-size: 0.9rem;
+  
   a {
-    color: white;
+    color: #fff;
     text-decoration: none;
+    transition: all 0.3s ease;
+    
     &:hover {
+      color: #3498db;
       text-decoration: underline;
     }
   }

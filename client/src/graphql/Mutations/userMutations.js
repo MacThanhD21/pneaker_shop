@@ -3,17 +3,15 @@ import { gql } from '@apollo/client';
 const LOGIN_USER = gql`
   mutation ($username: String!, $password: String!) {
     login(username: $username, password: $password) {
-      email
-      createdAt
       id
-      isAdmin
-      shoeSize
-      token
+      email
       username
+      token
       firstName
       lastName
-      password
-      topPicks
+      shoeSize
+      isAdmin
+      createdAt
       shippingAddress {
         city
         postalCode
@@ -21,6 +19,7 @@ const LOGIN_USER = gql`
         address
         phoneNumber
       }
+      topPicks
     }
   }
 `;

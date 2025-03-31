@@ -25,7 +25,16 @@ import LeftSidebar from './LeftSidebar';
 import ProtectedRoute from './ProtectedRoute';
 import ProtectedProfileRoute from './ProtectedProfileRoute';
 import MobileProfileBar from './MobileProfileBar';
-import PaymentPage  from '../pages/PaymentPage';
+import PaymentPage from '../pages/PaymentPage';
+import BrandShowcase from './BrandShowcase';
+import CustomerReviews from './CustomerReviews';
+import FeaturedCollections from './FeaturedCollections';
+import Newsletter from './Newsletter';
+import NewArrivals from './NewArrivals';
+import ShoeCareTips from './ShoeCareTips';
+import SpecialOffers from './SpecialOffers';
+import FadeInSection from './FadeInSection';
+
 export {
   Logo,
   OrderSum,
@@ -54,4 +63,12 @@ export {
   ColorChart,
   FormRow,
   SearchBar,
+  BrandShowcase,
+  CustomerReviews,
+  FeaturedCollections,
+  Newsletter,
+  NewArrivals,
+  ShoeCareTips,
+  SpecialOffers,
+  FadeInSection
 };

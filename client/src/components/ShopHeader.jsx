@@ -22,7 +22,7 @@ const ShopHeader = ({ filteredProducts }) => {
 
   return (
     <Wrapper>
-      <Title>SNEAKERS SHOP</Title>
+      <Title>PNEAKER SHOP</Title>
       <SortContainer>
         <TotalSneakers>
           {filteredProducts && filteredProducts.length + ' sneakers'}

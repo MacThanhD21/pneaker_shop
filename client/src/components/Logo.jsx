@@ -7,7 +7,9 @@ const Logo = () => {
     <Wrapper>
       <Image src={logo} />
       <Title>
-        <StyledLink to='/'>PSneaker</StyledLink>
+        <StyledLink to='/'>
+          <LogoText>PSneaker</LogoText>
+        </StyledLink>
       </Title>
     </Wrapper>
   );
@@ -17,26 +19,63 @@ export default Logo;
 
 const Wrapper = styled.div`
   display: flex;
-  justify-content: center;
+  align-items: center;
+  gap: 10px;
   width: 20%;
   min-width: 245px;
 `;
 
-const Title = styled.h2`
+const Title = styled.h1`
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 1px;
   display: flex;
   align-items: center;
-  padding-left: 5px;
 `;
 
 const StyledLink = styled(Link)`
-  color: red; /* Change the color to red */
-  font-size: 2rem; /* Increase the font size */
-  font-weight: bold; /* Make the text bold */
-  text-transform: uppercase; /* Transform text to uppercase */
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Add a subtle text shadow */
-  text-decoration: none; /* Remove underline from link */
+  text-decoration: none;
+  display: flex;
+  align-items: center;
 `;
+
+const LogoText = styled.span`
+  background: linear-gradient(45deg, #db7093, #e75480);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 4px rgba(219, 112, 147, 0.2);
+  position: relative;
+  display: inline-block;
+  transition: all 0.3s ease;
+  line-height: 1;
+
+  &:hover {
+    transform: scale(1.05);
+    text-shadow: 3px 3px 6px rgba(219, 112, 147, 0.3);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background: linear-gradient(90deg, #db7093, #e75480);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+`;  
+
 const Image = styled.img`
-  width: 7%;
-  min-width: 100px;
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
 `;

@@ -6,9 +6,11 @@ import { ClickAwayListener } from '@mui/material';
 import { useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { GET_PRODUCTS_BY_TITLE } from '../graphql/Queries/productQueries';
+
 const SearchBar = ({ display }) => {
   const [filteredData, setFilteredData] = useState([]);
   const [searchValue, setSearchValue] = useState('');
+  const [showNoResults, setShowNoResults] = useState(false);
 
   const { data: searchData } = useQuery(GET_PRODUCTS_BY_TITLE, {
     variables: { searchQuery: searchValue },
@@ -22,13 +24,16 @@ const SearchBar = ({ display }) => {
   const closeDropDown = () => {
     setFilteredData([]);
     setSearchValue('');
+    setShowNoResults(false);
   };
 
   useEffect(() => {
     if (searchValue === '') {
       setFilteredData([]);
+      setShowNoResults(false);
     } else {
-      setFilteredData(searchData?.getProductsByTitle);
+      setFilteredData(searchData?.getProductsByTitle || []);
+      setShowNoResults(searchValue.length > 0 && (!searchData?.getProductsByTitle || searchData.getProductsByTitle.length === 0));
     }
   }, [searchData?.getProductsByTitle, searchValue]);
 
@@ -46,16 +51,18 @@ const SearchBar = ({ display }) => {
           onChange={onChange}
         />
       </InputContainer>
-      {filteredData?.length > 0 && (
+      {(filteredData?.length > 0 || showNoResults) && (
         <ClickAwayListener onClickAway={closeDropDown}>
-          <ResultContainer>
-            {filteredData?.map((value, index) => {
-              return (
+          <ResultContainer empty={showNoResults}>
+            {filteredData?.length > 0 ? (
+              filteredData?.map((value, index) => (
                 <Result key={index}>
                   <Link to={`/shop/${value.id}`}>{value.title}</Link>
                 </Result>
-              );
-            })}
+              ))
+            ) : (
+              <NoResults>Không có sản phẩm nào</NoResults>
+            )}
           </ResultContainer>
         </ClickAwayListener>
       )}
@@ -71,52 +78,100 @@ const Wrapper = styled.div`
   align-items: center;
   flex-direction: column;
   display: ${(props) => (props.display ? 'flex' : 'none')};
+  margin: 1rem 0;
 `;
 const InputContainer = styled.div`
   position: relative;
   display: flex;
+  width: 100%;
+  max-width: 400px;
 `;
 const IconContainer = styled.div`
   position: absolute;
-  top: 15px;
-  margin-left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 15px;
+  color: #db7093;
+  z-index: 1;
 `;
 const Input = styled.input`
-  background-color: #f9f9f9;
-  border: 1px solid grey;
-  border-radius: 2px;
-  font-size: 18px;
-  padding: 15px 35px;
-  width: 250px;
+  background: linear-gradient(to right, #fff5f5, #ffe4e1);
+  border: 2px solid #db7093;
+  border-radius: 12px;
+  font-size: 16px;
+  padding: 12px 20px 12px 45px;
+  width: 100%;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(219, 112, 147, 0.1);
+
+  &:focus {
+    outline: none;
+    border-color: #e75480;
+    box-shadow: 0 4px 8px rgba(219, 112, 147, 0.2);
+  }
+
   &::placeholder {
-    font-size: 15px;
+    color: #db7093;
+    opacity: 0.7;
+    font-size: 14px;
   }
 `;
 const ResultContainer = styled.div`
-  height: 20vh;
-  background-color: white;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  width: 250px;
-  margin-top: 0.3rem;
+  height: ${props => props.empty ? 'auto' : '20vh'};
+  background: linear-gradient(to bottom, #fff5f5, #ffe4e1);
+  box-shadow: 0 4px 15px rgba(219, 112, 147, 0.2);
+  width: 100%;
+  max-width: 400px;
+  margin-top: 0.5rem;
+  border-radius: 10px;
   overflow: hidden;
   overflow-y: scroll;
   z-index: 1;
+  border: 1px solid rgba(219, 112, 147, 0.2);
+
   &::-webkit-scrollbar-thumb {
     border-radius: 5px;
-    background-color: rgba(0, 0, 0, 0.15);
+    background-color: #db7093;
   }
+
   &::-webkit-scrollbar {
     width: 5px;
   }
 `;
 const Result = styled.p`
-  margin-bottom: 20px;
-  margin-left: 10px;
-  font-size: 15px;
+  margin: 0;
+  padding: 12px 20px;
+  font-size: 14px;
   display: flex;
-  color: black;
-  transition: all 0.3s ease-out;
-  &:hover {
-    background-color: var(--clr-mocha-hover);
+  color: #e75480;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid rgba(219, 112, 147, 0.1);
+
+  &:last-child {
+    border-bottom: none;
   }
+
+  a {
+    color: #e75480;
+    text-decoration: none;
+    width: 100%;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: #db7093;
+      transform: translateX(5px);
+    }
+  }
+
+  &:hover {
+    background-color: rgba(219, 112, 147, 0.1);
+  }
+`;
+
+const NoResults = styled.div`
+  padding: 1.5rem;
+  text-align: center;
+  color: #666;
+  font-size: 0.95rem;
+  font-weight: 500;
 `;

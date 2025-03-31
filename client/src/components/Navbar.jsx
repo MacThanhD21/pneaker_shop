@@ -12,85 +12,34 @@ import { useSelector, useDispatch } from 'react-redux';
 import { GET_USER_CART } from '../graphql/Queries/cartQueries';
 import { useQuery } from '@apollo/client';
 import { toggleMobileMenu } from '../features/filterSlice';
-const Navbar = () => {
-  const { userInfo } = useSelector((state) => state.user);
-  const { data } = useQuery(GET_USER_CART, {
-    variables: { userId: userInfo?.id },
-    skip: !userInfo,
-  });
-
-  // eslint-disable-next-line
-  const display = new Boolean();
-
-  const dispatch = useDispatch();
-
-  return (
-    <Wrapper>
-      <Logo />
-      <LinkContainer>
-        <NavLink>
-          <Link className='link' to='/'>
-            Home
-          </Link>
-        </NavLink>
-        <NavLink>
-          <Link className='link' to='/shop'>
-            Shop
-          </Link>
-        </NavLink>
-      </LinkContainer>
-      <SearchBarContainer>
-        <SearchBar display={display} />
-      </SearchBarContainer>
-
-      <UserContainer>
-        {userInfo ? (
-          <UserMenu />
-        ) : (
-          <Icon>
-            <Link to='/login'>
-              <UserLinks>
-                <PersonOutlineOutlinedIcon
-                  style={{ color: 'black', fontSize: '26px' }}
-                />
-                Sign in
-              </UserLinks>
-            </Link>
-          </Icon>
-        )}
-        {userInfo && (
-          <UserLinks>
-            <Link to='/cart' style={{ color: 'var(--clr-mocha-2)' }}>
-              <Badge
-                sx={{ color: 'var(--clr-mocha)' }}
-                color='primary'
-                style={{ paddingRight: '10px', marginTop: '3px' }}
-                badgeContent={data?.getUserCart.cartProducts.length || 0}
-              >
-                <Icon>
-                  <ShoppingCartOutlinedIcon style={{ color: 'black' }} />
-                </Icon>
-                Cart
-              </Badge>
-            </Link>
-          </UserLinks>
-        )}
-      </UserContainer>
-      <MobileMenu>
-        <MenuIcon
-          onClick={() => dispatch(toggleMobileMenu())}
-          style={{ cursor: 'pointer', fontSize: '36px', color: 'black' }}
-        />
-      </MobileMenu>
-    </Wrapper>
-  );
-};
 
 const Wrapper = styled.div`
   display: flex;
   margin-bottom: 1rem;
   width: 100%;
   border-bottom: 2px solid var(--clr-border);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  z-index: 1000;
+  padding: 0.5rem 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+  ${mobile({
+    padding: '0.5rem 1rem'
+  })}
+`;
+
+const NavbarSpacer = styled.div`
+  height: 100px;
+  width: 100%;
+  background: transparent;
+
+  ${mobile({
+    height: '60px'
+  })}
 `;
 
 const LinkContainer = styled.div`
@@ -162,4 +111,82 @@ const SearchBarContainer = styled.div`
   margin: 1rem;
   ${mobile({ display: 'none' })}
 `;
+
+const Navbar = () => {
+  const { userInfo } = useSelector((state) => state.user);
+  const { data } = useQuery(GET_USER_CART, {
+    variables: { userId: userInfo?.id },
+    skip: !userInfo,
+  });
+
+  // eslint-disable-next-line
+  const display = new Boolean();
+
+  const dispatch = useDispatch();
+
+  return (
+    <>
+      <NavbarSpacer />
+      <Wrapper>
+        <Logo />
+        <LinkContainer>
+          <NavLink>
+            <Link className='link' to='/'>
+              Home
+            </Link>
+          </NavLink>
+          <NavLink>
+            <Link className='link' to='/shop'>
+              Shop
+            </Link>
+          </NavLink>
+        </LinkContainer>
+        <SearchBarContainer>
+          <SearchBar display={display} />
+        </SearchBarContainer>
+
+        <UserContainer>
+          {userInfo ? (
+            <UserMenu />
+          ) : (
+            <Icon>
+              <Link to='/login'>
+                <UserLinks>
+                  <PersonOutlineOutlinedIcon
+                    style={{ color: 'black', fontSize: '26px' }}
+                  />
+                  Sign in
+                </UserLinks>
+              </Link>
+            </Icon>
+          )}
+          {userInfo && (
+            <UserLinks>
+              <Link to='/cart' style={{ color: 'var(--clr-mocha-2)' }}>
+                <Badge
+                  sx={{ color: 'var(--clr-mocha)' }}
+                  color='primary'
+                  style={{ paddingRight: '10px', marginTop: '3px' }}
+                  badgeContent={data?.getUserCart.cartProducts.length || 0}
+                >
+                  <Icon>
+                    <ShoppingCartOutlinedIcon style={{ color: 'black' }} />
+                  </Icon>
+                  Cart
+                </Badge>
+              </Link>
+            </UserLinks>
+          )}
+        </UserContainer>
+        <MobileMenu>
+          <MenuIcon
+            onClick={() => dispatch(toggleMobileMenu())}
+            style={{ cursor: 'pointer', fontSize: '36px', color: 'black' }}
+          />
+        </MobileMenu>
+      </Wrapper>
+    </>
+  );
+};
+
 export default Navbar;

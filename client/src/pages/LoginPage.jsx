@@ -24,13 +24,11 @@ const LoginPage = () => {
   const [login, { loading, error }] = useMutation(LOGIN_USER, {
     onCompleted({ login }) {
       dispatch(loginUser(login));
-
       setErrors('');
     },
     onError(err) {
       setErrors(err.graphQLErrors[0]?.extensions.errors);
     },
-
     variables: values,
   });
 
@@ -40,66 +38,64 @@ const LoginPage = () => {
   }
 
   return (
-    <>
-      <Wrapper>
-        <Container>
-          <FormSection>
-            <div className='logo'>
-              <Logo />
-            </div>
-            <Title>Login</Title>
-            <Form onSubmit={onSubmit}>
-              {loading && <Loading />}
+    <Wrapper>
+      <Container>
+        <FormSection>
+          <div className='logo'>
+            <Logo />
+          </div>
+          <Title>Login</Title>
+          <Form onSubmit={onSubmit}>
+            {loading && <Loading />}
 
-              {error?.message === 'Failed to fetch' && (
-                <MuiError
-                  value={'Something went wrong, Try again later'}
-                  type='error'
-                />
-              )}
-              <Label>Username</Label>
-              <Input
-                type='text'
-                name='username'
-                value={values.username || ''}
-                onChange={onChange}
-                className={errors?.username ? 'error' : ''}
+            {error?.message === 'Failed to fetch' && (
+              <MuiError
+                value={'Something went wrong, Try again later'}
+                type='error'
               />
-              <Label>Password</Label>
-              <Input
-                type='password'
-                name='password'
-                value={values.password || ''}
-                onChange={onChange}
-                className={errors?.password ? 'error' : ''}
-              />
-              <Button disabled={loading} type='submit'>
-                Submit
-              </Button>
-            </Form>
-            <Member>
-              Not a member yet?
-              <Link to='/register'>
-                <span> Register</span>
-              </Link>
-            </Member>
-            <Link to='/'>
-              <BackHome>Back home</BackHome>
+            )}
+            <Label>Username</Label>
+            <Input
+              type='text'
+              name='username'
+              value={values.username || ''}
+              onChange={onChange}
+              className={errors?.username ? 'error' : ''}
+            />
+            <Label>Password</Label>
+            <Input
+              type='password'
+              name='password'
+              value={values.password || ''}
+              onChange={onChange}
+              className={errors?.password ? 'error' : ''}
+            />
+            <Button disabled={loading} type='submit'>
+              Submit
+            </Button>
+          </Form>
+          <Member>
+            Not a member yet?
+            <Link to='/register'>
+              <span> Register</span>
             </Link>
-            {errors &&
-              Object.values(errors)?.map((err, index) => (
-                <MuiError value={err} key={index} type='error' />
-              ))}
-          </FormSection>
-          <ImageSection>
-            {/* Your image goes here */}
-            <img src={image}  alt="Login illustration" />
-          </ImageSection>
-        </Container>
-      </Wrapper>
-    </>
+          </Member>
+          <Link to='/'>
+            <BackHome>Back home</BackHome>
+          </Link>
+          {errors &&
+            Object.values(errors)?.map((err, index) => (
+              <MuiError value={err} key={index} type='error' />
+            ))}
+        </FormSection>
+        <ImageSection>
+          <img src={image} alt="Login illustration" />
+        </ImageSection>
+      </Container>
+    </Wrapper>
   );
 };
+
 export default LoginPage;
 
 const Title = styled.h1`

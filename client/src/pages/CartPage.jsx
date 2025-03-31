@@ -88,15 +88,16 @@ const CartPage = () => {
         {loading ? (
           <Loading />
         ) : !cartLength ? (
-          <MuiError fontSize={'25px'} type='warning' className='warning'>
-            Your cart is empty,
-            <Link
-              style={{ textDecoration: 'underline', margin: '0.2rem' }}
-              to='/shop'
-            >
-              Fill it
-            </Link>
-          </MuiError>
+          <EmptyCartContainer>
+            <EmptyCartMessage>
+              Chưa có sản phẩm nào trong giỏ hàng
+            </EmptyCartMessage>
+            <StyledLink to='/shop'>
+              <ShopButton>
+                QUAY TRỞ LẠI CỬA HÀNG
+              </ShopButton>
+            </StyledLink>
+          </EmptyCartContainer>
         ) : error ? (
           <MuiError
             type='error'
@@ -157,6 +158,9 @@ export default CartPage;
 const Wrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
+  min-height: 70vh;
+  justify-content: center;
+  align-items: center;
   .container {
     display: flex;
     width: 100%;
@@ -234,5 +238,59 @@ const SelectAllContainer = styled.div`
   label {
     cursor: pointer;
     user-select: none;
+  }
+`;
+
+const EmptyCartContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  text-align: center;
+  min-height: 300px;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  background: linear-gradient(to bottom, #fff5f5, #fff);
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+`;
+
+const EmptyCartMessage = styled.h2`
+  font-size: 1.5rem;
+  color: #666;
+  margin-bottom: 2rem;
+  font-weight: 500;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
+`;
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+`;
+
+const ShopButton = styled.button`
+  padding: 0.8rem 2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(45deg, #db7093, #e75480);
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(219, 112, 147, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(219, 112, 147, 0.3);
+    background: linear-gradient(45deg, #e75480, #db7093);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(219, 112, 147, 0.2);
   }
 `;

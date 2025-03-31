@@ -9,6 +9,7 @@ import { REGISTER_USER } from '../graphql/Mutations/userMutations';
 import Loading from '../assets/mui/Loading';
 import MuiError from '../assets/mui/Alert';
 import { loginUser } from '../features/userSlice';
+import image from '../assets/items/sneaker.jpg';
 
 const RegisterPage = () => {
   const initialState = {
@@ -45,66 +46,67 @@ const RegisterPage = () => {
   return (
     <Wrapper>
       <Container>
-        <div className='logo'>
-          <Logo />
-        </div>
-        <Title>Register</Title>
-        <Form onSubmit={onSubmit}>
-          {loading && <Loading />}
-          {error?.message === 'Failed to fetch' && (
-            <MuiError
-              value={'Something went wrong, Try again later'}
-              type='error'
+        <FormSection>
+          <div className='logo'>
+            <Logo />
+          </div>
+          <Title>Register</Title>
+          <Form onSubmit={onSubmit}>
+            {loading && <Loading />}
+            {error?.message === 'Failed to fetch' && (
+              <MuiError
+                value={'Something went wrong, Try again later'}
+                type='error'
+              />
+            )}
+            <Label>Email</Label>
+            <Input
+              type='email'
+              name='email'
+              value={values.email || ''}
+              onChange={onChange}
             />
-          )}
-          <Label>Email</Label>
-          <Input
-            type='email'
-            name='email'
-            value={values.email || ''}
-            onChange={onChange}
-            // className={errors.email ? 'error' : ''}
-          />
-          <Label>Username</Label>
-          <Input
-            type='text'
-            name='username'
-            value={values.username || ''}
-            onChange={onChange}
-            // className={errors.username ? 'error' : ''}
-          />
-          <Label>Password</Label>
-          <Input
-            type='password'
-            name='password'
-            value={values.password || ''}
-            onChange={onChange}
-            // className={errors.password ? 'error' : ''}
-          />
-          <Label>Confirmed Password</Label>
-          <Input
-            type='password'
-            name='confirmedPassword'
-            value={values.confirmedPassword || ''}
-            onChange={onChange}
-            // className={errors.confirmedPassword ? 'error' : ''}
-          />
-          <Button type='submit'>Submit</Button>
-        </Form>
+            <Label>Username</Label>
+            <Input
+              type='text'
+              name='username'
+              value={values.username || ''}
+              onChange={onChange}
+            />
+            <Label>Password</Label>
+            <Input
+              type='password'
+              name='password'
+              value={values.password || ''}
+              onChange={onChange}
+            />
+            <Label>Confirmed Password</Label>
+            <Input
+              type='password'
+              name='confirmedPassword'
+              value={values.confirmedPassword || ''}
+              onChange={onChange}
+            />
+            <Button type='submit'>Submit</Button>
+          </Form>
 
-        <Member>
-          Already a member?
-          <Link to='/login'>
-            <span> Login</span>
+          <Member>
+            Already a member?
+            <Link to='/login'>
+              <span> Login</span>
+            </Link>
+          </Member>
+          <Link to='/'>
+            <BackHome>Back home</BackHome>
           </Link>
-        </Member>
-        <Link to='/'>
-          <BackHome>Back home</BackHome>
-        </Link>
-        {errors &&
-          Object.values(errors)?.map((err, index) => (
-            <MuiError value={err} type='error' key={index} />
-          ))}
+          {errors &&
+            Object.values(errors)?.map((err, index) => (
+              <MuiError value={err} type='error' key={index} />
+            ))}
+        </FormSection>
+        <ImageSection>
+          <img src={image} alt="Register illustration" />
+        </ImageSection>
       </Container>
     </Wrapper>
   );
@@ -112,27 +114,40 @@ const RegisterPage = () => {
 export default RegisterPage;
 
 const Wrapper = styled.div`
-  height: 100vh;
-  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 100vh;
+  background-color: #f5f5f5;
 `;
 
 const Container = styled.div`
   display: flex;
-  border-top: 5px solid var(--clr-mocha-3);
-  border-radius: 0.25rem;
-  background: white;
-  width: 25%;
-  min-width: 350px;
+  width: 80%;
+  max-width: 1200px;
+  height: 600px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+`;
 
-  align-items: center;
+const FormSection = styled.div`
+  flex: 0 0 40%;
+  padding: 40px;
+  display: flex;
   flex-direction: column;
-  padding: 2rem 2.5rem;
-  .logo {
-    display: flex;
-    justify-content: center;
+  background-color: white;
+`;
+
+const ImageSection = styled.div`
+  flex: 0 0 60%;
+  background-color: #f0f0f0;
+  overflow: hidden;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 `;
 
@@ -142,6 +157,7 @@ const Title = styled.h1`
   margin-top: -0rem;
   margin-bottom: 2rem;
   font-weight: 600;
+  text-align: center;
 `;
 
 const Form = styled.form`
@@ -158,6 +174,7 @@ const Label = styled.label`
   letter-spacing: 0.5px;
   color: var(--clr-gray-2);
 `;
+
 const Input = styled.input`
   margin-bottom: 1rem;
   border-radius: 0.25rem;

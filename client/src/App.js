@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import jwtDecode from 'jwt-decode';
 import { useQuery } from '@apollo/client';
+import ChatScript from './components/ChatScript';
 
 import {
   CartPage,
@@ -17,7 +18,7 @@ import {
   AboutPage,
 } from './pages';
 
-import { ProtectedProfileRoute, ProtectedRoute, Footer } from './components';
+import { ProtectedProfileRoute, ProtectedRoute } from './components';
 import MobileMenu from './components/MoblieMenu';
 
 import {
@@ -32,6 +33,9 @@ import { loginUser } from './features/userSlice';
 import { GET_USER_DETAILS } from './graphql/Queries/userQueries';
 import ProtectedAdminRoute from './components/ProtectedAdminRoute';
 import { useLogout } from './utils/customHooks';
+import ShoeCareTips from './components/ShoeCareTips';
+import ShoeCareDetail from './components/ShoeCareDetail';
+import { tips } from './data/shoeCareTips';
 
 const App = () => {
   const { userInfo } = useSelector((state) => state.user);
@@ -59,6 +63,7 @@ const App = () => {
 
   return (
     <>
+      <ChatScript />
       <MobileMenu />
       <Routes>
         <Route exact path='/' element={<HomePage />} />
@@ -115,9 +120,9 @@ const App = () => {
             </ProtectedProfileRoute>
           }
         />
+        <Route path="/shoe-care" element={<ShoeCareTips />} />
+        <Route path="/shoe-care/:id" element={<ShoeCareDetail />} />
       </Routes>
-
-      <Footer />
     </>
   );
 };

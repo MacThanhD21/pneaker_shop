@@ -1,11 +1,32 @@
 import { UserInputError } from 'apollo-server-express';
 import User from '../../models/User.js';
 import { auth } from '../../utils/auth.js';
+import fetch from 'node-fetch';
 
 import {
   loginInputValidator,
   registerInputValidator,
 } from '../../utils/vaildators.js';
+
+const RECAPTCHA_SECRET_KEY = '6LdS6QQrAAAAACgNQ61zRWkGRbfcRoSCFbKhkgd9';
+// Hàm xác thực reCAPTCHA
+const verifyRecaptcha = async (token) => {
+  try {
+    const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `secret=${RECAPTCHA_SECRET_KEY}&response=${token}`,
+    });
+    
+    const data = await response.json();
+    return data.success;
+  } catch (error) {
+    console.error('reCAPTCHA verification error:', error);
+    return false;
+  }
+};
 
 export const users = {
   Query: {
