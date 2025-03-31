@@ -9,13 +9,17 @@ import Loading from '../assets/mui/Loading';
 import { Navbar, OrderSum } from '../components';
 import { mobile } from '../responsive';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { CREATE_ORDER } from '../graphql/Mutations/orderMutation';
 import { GET_USER_CART } from '../graphql/Queries/cartQueries';
 import { GET_USER_ORDER } from '../graphql/Queries/orderQueries';
 import { GET_PRODUCTS } from '../graphql/Queries/productQueries';
 import StripeContainer from '../components/StripeContainer';
 import PaymenStripeForm from '../components/StripePaymentForm';
-
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import PayPalButton from '../components/PaypalComponents';
+import { formatVNDPrice } from '../utils/formatPrice';
 // Payment Type Selector Component
 const PaymentTypeSelector = ({ cartProducts }) => {
   const [selectedPayment, setSelectedPayment] = useState(null);
@@ -23,6 +27,9 @@ const PaymentTypeSelector = ({ cartProducts }) => {
   const deliveryTax = 10000;
   const salesTax = 20000;
 
+  const { userInfo, isLoading } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const [paymentStatus, setPaymentStatus] = useState("");
   const originalPriceCalculated = cartProducts?.reduce(
     (acc, val) => Number(acc) + Number(val.productPrice),
     [0]
@@ -30,21 +37,44 @@ const PaymentTypeSelector = ({ cartProducts }) => {
   const totalPriceCalculated =
     originalPriceCalculated &&
     Number(originalPriceCalculated) + Number(deliveryTax) + Number(salesTax);
+  const [completeOrder] = useMutation(CREATE_ORDER, {
+    onCompleted() {
+     
+      navigate('/history');
+    },
+    refetchQueries: [
+      {
+        query: GET_USER_CART,
+        variables: { userId: userInfo?.id },
+        awaitRefetchQueries: true,
+      },
+      {
+        query: GET_PRODUCTS,
+      },
+      {
+        query: GET_USER_ORDER,
 
+
+      }]
+  });
   const paymentTypes = [
     {
       id: 'stripe',
       name: 'Stripe',
       logo: '💳',
       description: 'Pay with Stripe - secure international payments',
-      fields: ['Card Number', 'Expiry Date', 'CVC']
     },
     {
       id: 'paypal',
       name: 'PayPal',
       logo: '💰',
       description: 'Pay with PayPal - fast and secure online payments',
-      fields: ['Email', 'Password']
+    },
+    {
+      id: 'vnPay',
+      name: 'VNPay',
+      logo: '💰',
+      description: 'Pay with VNPay - fast and secure online payments',
     }
   ];
 
@@ -55,7 +85,7 @@ const PaymentTypeSelector = ({ cartProducts }) => {
   return (
     <PaymentContainer>
       <PaymentHeading>Select Payment Method</PaymentHeading>
-      
+
       <PaymentList>
         {paymentTypes.map((payment) => (
           <PaymentItem key={payment.id}>
@@ -65,16 +95,16 @@ const PaymentTypeSelector = ({ cartProducts }) => {
               <PaymentLogo>{payment.logo}</PaymentLogo>
               <PaymentName>{payment.name}</PaymentName>
               <ArrowIcon rotated={selectedPayment === payment.id}>
-                <svg 
-                  fill="none" 
-                  stroke="currentColor" 
+                <svg
+                  fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </ArrowIcon>
             </PaymentButton>
-            
+
             {
               selectedPayment === payment.id && payment.id === 'stripe' && (
                 <ExpandedContent>
@@ -82,12 +112,40 @@ const PaymentTypeSelector = ({ cartProducts }) => {
                     <PaymenStripeForm amount={totalPriceCalculated} />
                   </StripeContainer>
                 </ExpandedContent>
+              )}
+            {
+              selectedPayment === payment.id && payment.id === 'paypal' && (
+                <ExpandedContent>
+                  <PayPalScriptProvider options={{ "client-id": "Af5oZoPUQ1tTUv7sdLzxs3PGfa09k6ynefB4gqLwQtyBqNRTQ9HoJ2YEx1wvJk0JsMnWpYnBVxT4nsKD" }}>
+                    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+                      <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+                        <h2 className="text-xl font-semibold mb-4">Pay {formatVNDPrice(totalPriceCalculated)} with Paypal</h2>
+                        <PayPalButton
+                          amount={totalPriceCalculated}
+                          onSuccess={(details) => {
+                            setPaymentStatus(`Transaction completed by ${details.payer.name.given_name}`);
+
+                            completeOrder({})
+
+                          }}
+                          onError={(err) => {
+                            setPaymentStatus("Payment failed. Please try again.");
+                            console.error(err);
+                          }}
+                        />
+                        {paymentStatus && <p className="mt-4 text-gray-600">{paymentStatus}</p>}
+                      </div>
+                    </div>
+                  </PayPalScriptProvider>
+                </ExpandedContent>
               )
-              // selectedPayment === payment.id && payment.id === 'paypal' && (
-              //   <ExpandedContent>
-              //     <PaymentDescription>{payment.description}</PaymentDescription>
-              //   </ExpandedContent>
-              // )
+            }
+            {
+              selectedPayment===payment.id && payment.id === 'vnPay' && (
+                <ExpandedContent>
+                  
+                </ExpandedContent>
+              )
             }
           </PaymentItem>
         ))}
@@ -127,7 +185,9 @@ const PaymentPage = () => {
   return (
     <div className='section-center'>
       <Navbar />
+      <ToastContainer />
       <Wrapper>
+        
         {loading ? (
           <Loading />
         ) : orderLoading ? (
@@ -142,7 +202,7 @@ const PaymentPage = () => {
             <Container>
               <PaymentTypeSelector
                 cartProducts={cartProducts}
-               />
+              />
             </Container>
             <OrderSummary >
               <OrderSum
@@ -217,13 +277,13 @@ const OrderSummary = styled.div`
   flex-direction: column;
   border-left: 1px solid var(--clr-border);
   ${mobile({
-    display: 'flex',
-    padding: '0',
-    justifyContent: 'center',
-    width: '100%',
-    borderLeft: 'none',
-    borderTop: '1px solid var(--clr-border)',
-  })}
+  display: 'flex',
+  padding: '0',
+  justifyContent: 'center',
+  width: '100%',
+  borderLeft: 'none',
+  borderTop: '1px solid var(--clr-border)',
+})}
 `;
 const ErrorContainer = styled.div`
   display: flex;

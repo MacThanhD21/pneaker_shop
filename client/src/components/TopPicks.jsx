@@ -20,13 +20,11 @@ const TopPicks = (props) => {
 
   const query = userInfo ? GET_USER_TOP_PICKS : GET_DEFAULT_TOP_PICKS;
 
-  console.log("Hihi")
   const { data, error, loading } = useQuery(query);
 
   const mapValue = userInfo
     ? data?.getTopPicksProducts
     : data?.getDefaultTopPicks;
-  console.log(mapValue)
   return (
     <Wrapper>
       <HeaderContainer>

@@ -47,7 +47,7 @@ const OrderSum = ({ cartProducts, loading, link, onClick, orderPage}) => {
           </TotalContainer>
           {onClick ? (
             <Link to= {link}>
-              <Button onClick={onClick}>
+              <Button onClick={onClick == true}>
                 {orderPage ? 'Verify Information' : 'Proceed To Checkout'}
               </Button>
             </Link>

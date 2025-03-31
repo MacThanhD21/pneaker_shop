@@ -1,6 +1,6 @@
 import {Router} from 'express'
 import { asyncHandler } from '../utils/async.helper.js'
-import { doPayment } from '../app/controller/payment.controller.js'
+import { doPaypalPayment, doStripePayment } from '../app/controller/payment.controller.js'
 
 
 
@@ -11,9 +11,18 @@ function  route(app){
 
 const mainRoute = Router()
 
+
+// Ignore all the middleware since this shjt is no needed.
+
+
 mainRoute.post(
     '/payment-check',
-     asyncHandler(doPayment)
+     asyncHandler(doStripePayment)
+)
+
+mainRoute.post(
+    '/verify-payment',
+     asyncHandler(doPaypalPayment)
 )
 
 export default route

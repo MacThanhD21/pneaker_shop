@@ -18,9 +18,8 @@ const orderSchema = mongoose.Schema({
 orderSchema.pre('save', async function () {
   const cart = await Cart.findOne({ userId: this.purchasedBy });
   if (cart) {
-    cart.cartProducts = [];
+    cart.cartProducts = cart.cartProducts.filter(item => !item.selected);
   }
-
   await cart.save();
 });
 

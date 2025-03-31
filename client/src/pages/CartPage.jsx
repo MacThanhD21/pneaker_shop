@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
@@ -27,6 +27,14 @@ const CartPage = () => {
 
   // Add state for selected items
   const [selectedItems, setSelectedItems] = useState([]);
+
+  useEffect(() => {
+    if(cartProducts){
+      const initialSelected = cartProducts
+      .filter(item => item.selected)
+      .map(item => item.id);
+    setSelectedItems(initialSelected);
+  }}, [cartProducts])
 
   // Handle select all
   const handleSelectAll = async(e) => {
@@ -138,7 +146,7 @@ const CartPage = () => {
               <OrderSum 
                 cartProducts={cartProducts?.filter(item => selectedItems.includes(item.id))} 
                 loading={loading} 
-                onClick 
+                onClick={selectedItems.length > 0} 
                 link='/order'
                 selectedItemsCount={selectedItems.length}
               />
