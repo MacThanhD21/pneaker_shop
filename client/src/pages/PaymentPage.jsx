@@ -20,6 +20,10 @@ import PaymenStripeForm from '../components/StripePaymentForm';
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import PayPalButton from '../components/PaypalComponents';
 import { formatVNDPrice } from '../utils/formatPrice';
+
+import stripeIcon from '../assets/items/stripe.jpg';
+import paypalIcon from '../assets/items/images.png';
+import vnpayIcon from '../assets/items/vnpay.png';
 // Payment Type Selector Component
 const PaymentTypeSelector = ({ cartProducts }) => {
   const [selectedPayment, setSelectedPayment] = useState(null);
@@ -39,7 +43,7 @@ const PaymentTypeSelector = ({ cartProducts }) => {
     Number(originalPriceCalculated) + Number(deliveryTax) + Number(salesTax);
   const [completeOrder] = useMutation(CREATE_ORDER, {
     onCompleted() {
-     
+
       navigate('/history');
     },
     refetchQueries: [
@@ -61,19 +65,19 @@ const PaymentTypeSelector = ({ cartProducts }) => {
     {
       id: 'stripe',
       name: 'Stripe',
-      logo: '💳',
+      logo: <img src={stripeIcon} alt="Stripe" style={{ width: '24px', height: '24px' }} />,
       description: 'Pay with Stripe - secure international payments',
     },
     {
       id: 'paypal',
       name: 'PayPal',
-      logo: '💰',
+      logo: <img src={paypalIcon} alt="PayPal" style={{ width: '24px', height: '24px' }} />,
       description: 'Pay with PayPal - fast and secure online payments',
     },
     {
       id: 'vnPay',
       name: 'VNPay',
-      logo: '💰',
+      logo: <img src={vnpayIcon} alt="VNPay" style={{ width: '24px', height: '24px' }} />,
       description: 'Pay with VNPay - fast and secure online payments',
     }
   ];
@@ -141,9 +145,11 @@ const PaymentTypeSelector = ({ cartProducts }) => {
               )
             }
             {
-              selectedPayment===payment.id && payment.id === 'vnPay' && (
+              selectedPayment === payment.id && payment.id === 'vnPay' && (
                 <ExpandedContent>
-                  
+                  <CardContainer onClick={() => window.location.href = 'http://localhost:8888/order/create_payment_url'}>
+                  <CardText>Pay with VNPay</CardText>
+                  </CardContainer>
                 </ExpandedContent>
               )
             }
@@ -164,7 +170,7 @@ const PaymentPage = () => {
 
   const cartProducts = data?.getUserCart.cartProducts.filter(item => item.selected === true);
   console.log(cartProducts);
-  
+
 
   const [completeOrder, { loading: orderLoading, error: orderError }] =
     useMutation(CREATE_ORDER, {
@@ -187,7 +193,7 @@ const PaymentPage = () => {
       <Navbar />
       <ToastContainer />
       <Wrapper>
-        
+
         {loading ? (
           <Loading />
         ) : orderLoading ? (
@@ -349,8 +355,18 @@ const PaymentButton = styled.button`
 `;
 
 const PaymentLogo = styled.div`
-  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-right: 0.75rem;
+  width: 24px;
+  height: 24px;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
 `;
 
 const PaymentName = styled.div`
@@ -413,4 +429,31 @@ const SubmitButton = styled.button`
   &:hover {
     background-color: #1d4ed8;
   }
+`;
+
+const CardContainer = styled.div`
+  border: 2px solid #085fad;
+  border-radius: 8px;
+  padding: 1rem;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #085fad;  // Changed to blue background
+  box-shadow: 0 2px 4px rgba(8, 95, 173, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;  // Added cursor pointer
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(8, 95, 173, 0.2);
+    background-color: #0953a3;  // Slightly darker on hover
+  }
+`;
+
+const CardText = styled.span`
+  color: white;  // Changed to white text
+  font-size: 1.25rem;
+  font-weight: bold;
+  letter-spacing: 1px;
 `;

@@ -2,6 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { mobile } from '../responsive';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+
+
+const chatDomain = 'https://b470-34-34-59-139.ngrok-free.app/chatbot/query';
+
 
 const slideUpAnimation = keyframes`
   from {
@@ -34,7 +39,18 @@ const bounceAnimation = keyframes`
   }
 `;
 
+const preprocessAnswer = (answer) => {
+  
+    // Process the message
+    const response = answer.replace("<|im_end|>", "");
+
+    return response;
+}
+
 const Chatbox = () => {
+
+
+  const userInfo = useSelector((state) => state.user.userInfo);
   const [showChat, setShowChat] = useState(false);
   const [messages, setMessages] = useState([
     {
@@ -71,8 +87,20 @@ const Chatbox = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const sendRequest = async (message, user_id) => await fetch(chatDomain, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': '92a67cda7ffc411c92b19e204f28b762'
+    },
+    body: JSON.stringify({
+      question: message,
+      user_id: user_id
+    })
+  })
+    .then(response => response.json())
   // Xử lý gửi tin nhắn
-  const handleSendMessage = (e) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!inputMessage.trim()) return;
 
@@ -87,17 +115,23 @@ const Chatbox = () => {
     setMessages(prev => [...prev, newMessage]);
     setInputMessage("");
 
-    // Simulate bot response
-    setTimeout(() => {
-      const botResponse = generateBotResponse(inputMessage);
-      setMessages(prev => [...prev, botResponse]);
-    }, 1000);
+    const botResponse = await sendRequest(inputMessage, userInfo.id);
+    
+    const newMessaege = {
+      id: messages.length + 1,
+      text: preprocessAnswer(botResponse.answer),
+      sender: "bot",
+      timestamp: new Date().toISOString(),
+      type: "text"
+    }
+    setMessages(prev => [...prev, newMessaege]);
   };
 
+  
   // Tạo phản hồi từ bot
   const generateBotResponse = (userMessage) => {
     const lowerMessage = userMessage.toLowerCase();
-    
+
     if (lowerMessage.includes("giày") || lowerMessage.includes("sneaker")) {
       return {
         id: messages.length + 2,
@@ -152,8 +186,8 @@ const Chatbox = () => {
 
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
-    return date.toLocaleTimeString('vi-VN', { 
-      hour: '2-digit', 
+    return date.toLocaleTimeString('vi-VN', {
+      hour: '2-digit',
       minute: '2-digit'
     });
   };
@@ -162,39 +196,39 @@ const Chatbox = () => {
     <div ref={chatRef}>
       <ChatButton onClick={() => setShowChat(!showChat)}>
         <ChatIcon>
-          <svg 
-            width="24" 
-            height="24" 
-            viewBox="0 0 24 24" 
-            fill="none" 
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path 
-              d="M21 11.5C21 16.1944 17.1944 20 12.5 20C7.80558 20 4 16.1944 4 11.5C4 6.80558 7.80558 3 12.5 3C17.1944 3 21 6.80558 21 11.5Z" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
+            <path
+              d="M21 11.5C21 16.1944 17.1944 20 12.5 20C7.80558 20 4 16.1944 4 11.5C4 6.80558 7.80558 3 12.5 3C17.1944 3 21 6.80558 21 11.5Z"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
               strokeLinejoin="round"
             />
-            <path 
-              d="M8 11.5H17" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
+            <path
+              d="M8 11.5H17"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
               strokeLinejoin="round"
             />
-            <path 
-              d="M8 7.5H17" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
+            <path
+              d="M8 7.5H17"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
               strokeLinejoin="round"
             />
-            <path 
-              d="M8 15.5H13" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
+            <path
+              d="M8 15.5H13"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
               strokeLinejoin="round"
             />
           </svg>
@@ -207,7 +241,7 @@ const Chatbox = () => {
             <ChatTitle>Chat với chúng tôi</ChatTitle>
             <CloseButton onClick={() => setShowChat(false)}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </CloseButton>
           </ChatHeader>
@@ -240,14 +274,14 @@ const Chatbox = () => {
               <div ref={messagesEndRef} />
             </MessagesContainer>
             <ChatInput onSubmit={handleSendMessage}>
-              <Input 
-                placeholder="Nhập tin nhắn..." 
+              <Input
+                placeholder="Nhập tin nhắn..."
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
               />
               <SendButton type="submit">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </SendButton>
             </ChatInput>
@@ -281,11 +315,11 @@ const ChatButton = styled.button`
   }
 
   ${mobile({
-    bottom: '4.5rem',
-    right: '1.5rem',
-    width: '50px',
-    height: '50px'
-  })}
+  bottom: '4.5rem',
+  right: '1.5rem',
+  width: '50px',
+  height: '50px'
+})}
 `;
 
 const ChatIcon = styled.span`
@@ -301,11 +335,11 @@ const ChatIcon = styled.span`
   }
 
   ${mobile({
-    svg: {
-      width: '20px',
-      height: '20px'
-    }
-  })}
+  svg: {
+    width: '20px',
+    height: '20px'
+  }
+})}
 `;
 
 const ChatDialog = styled.div`
@@ -324,10 +358,10 @@ const ChatDialog = styled.div`
   z-index: 999;
 
   ${mobile({
-    width: '90%',
-    right: '5%',
-    bottom: '7.5rem'
-  })}
+  width: '90%',
+  right: '5%',
+  bottom: '7.5rem'
+})}
 `;
 
 const ChatHeader = styled.div`
@@ -440,6 +474,8 @@ const MessageText = styled.p`
   border-radius: 15px;
   margin: 0;
   font-size: 0.95rem;
+  white-space: pre-wrap;  // This preserves newlines
+  word-wrap: break-word;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   word-wrap: break-word;
 `;
