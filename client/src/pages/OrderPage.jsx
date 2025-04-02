@@ -1,6 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client';
-import React, { useMemo } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -22,11 +21,15 @@ const OrderPage = () => {
 
   const { loading, data } = useQuery(GET_USER_CART, {
     variables: { userId: userInfo?.id },
+    skip: !userInfo?.id
   });
   const cartProducts = data?.getUserCart.cartProducts;  
-  const selectedProducts = useMemo(() => {
-    return cartProducts?.filter(product => product.selected) || [];
-  }, [cartProducts]);
+
+  const selectedProducts = useMemo(() => 
+    cartProducts?.filter(product => product.selected) || []
+  , [cartProducts]);
+
+
   const { city, address, country, postalCode, phoneNumber } =
     !isLoading && userInfo?.shippingAddress;
 
@@ -42,7 +45,7 @@ const OrderPage = () => {
   );
   const errorsLength = Object.keys(errors).length;
 
-  const [completeOrder, { loading: orderLoading, error: orderError }] =
+  const [{ loading: orderLoading, error: orderError }] =
     useMutation(CREATE_ORDER, {
       refetchQueries: [
         {
@@ -60,10 +63,10 @@ const OrderPage = () => {
     });
 
   useEffect(() => {
-    if (selectedProducts.length < 0) {
+    if ( !loading && selectedProducts.length < 1) {
       navigate('/cart');
     }
-  }, [selectedProducts, navigate]);
+  }, [selectedProducts, navigate,loading]);
 
   return (
     <div className='section-center'>

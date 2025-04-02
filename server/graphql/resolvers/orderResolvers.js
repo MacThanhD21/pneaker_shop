@@ -22,31 +22,44 @@ export const order = {
       const userAuth = await auth(context);
       const cart = await Cart.findOne({ userId: userAuth._id });
       const products = await Product.find({
-        _id: cart.cartProducts.map((c) => c.productId && c.selected === true),
+        _id: cart.cartProducts.map((c) => c.productId),
       });
-      console.log("hello");
-      console.log(products);
       const topPicksBrands = products.map((p) => p.brand);
-
-      for (const cartInfo of cart.cartProducts) {
-        for (const product of products) {
-          product.size = product.size.filter((size) => size !== +cartInfo.size);
+    
+      // Fix: Only update the matching product
+      for (const cartItem of cart.cartProducts) {
+        if (!cartItem.selected) continue; // Skip unselected items
+        
+        const product = products.find(p => p._id.toString() === cartItem.productId.toString());
+        if (product) {
+          product.size = product.size.filter((size) => size !== +cartItem.size);
           await product.save();
         }
       }
+    
       if (cart.cartProducts.length < 1) {
         throw new UserInputError('No available order!');
       }
+    
       userAuth.topPicks.push(...topPicksBrands);
-
       await userAuth.save();
+    
+      
+      const orderMake = cart.cartProducts.filter((e) => e.selected === true);
+      
       const newOrder = new Order({
-        orderProducts: cart.cartProducts,
+        orderProducts:
+          orderMake.map((item) => ({
+            productId: item.productId,
+            size: item.size,
+            productPrice: item.productPrice,
+            _id: item._id
+          })),
         purchasedBy: userAuth._id,
         datePurchased: new Date(),
       });
       await newOrder.save();
-      return newOrder;
+      return newOrder ;
     },
   },
 };

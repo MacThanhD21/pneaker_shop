@@ -9,13 +9,21 @@ import Loading from '../assets/mui/Loading';
 import { Navbar, OrderSum } from '../components';
 import { mobile } from '../responsive';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { CREATE_ORDER } from '../graphql/Mutations/orderMutation';
 import { GET_USER_CART } from '../graphql/Queries/cartQueries';
 import { GET_USER_ORDER } from '../graphql/Queries/orderQueries';
 import { GET_PRODUCTS } from '../graphql/Queries/productQueries';
 import StripeContainer from '../components/StripeContainer';
 import PaymenStripeForm from '../components/StripePaymentForm';
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import PayPalButton from '../components/PaypalComponents';
+import { formatVNDPrice } from '../utils/formatPrice';
 
+import stripeIcon from '../assets/items/stripe.jpg';
+import paypalIcon from '../assets/items/images.png';
+import vnpayIcon from '../assets/items/vnpay.png';
 // Payment Type Selector Component
 const PaymentTypeSelector = ({ cartProducts }) => {
   const [selectedPayment, setSelectedPayment] = useState(null);
@@ -23,6 +31,9 @@ const PaymentTypeSelector = ({ cartProducts }) => {
   const deliveryTax = 10000;
   const salesTax = 20000;
 
+  const { userInfo, isLoading } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const [paymentStatus, setPaymentStatus] = useState("");
   const originalPriceCalculated = cartProducts?.reduce(
     (acc, val) => Number(acc) + Number(val.productPrice),
     [0]
@@ -30,21 +41,44 @@ const PaymentTypeSelector = ({ cartProducts }) => {
   const totalPriceCalculated =
     originalPriceCalculated &&
     Number(originalPriceCalculated) + Number(deliveryTax) + Number(salesTax);
+  const [completeOrder] = useMutation(CREATE_ORDER, {
+    onCompleted() {
 
+      navigate('/history');
+    },
+    refetchQueries: [
+      {
+        query: GET_USER_CART,
+        variables: { userId: userInfo?.id },
+        awaitRefetchQueries: true,
+      },
+      {
+        query: GET_PRODUCTS,
+      },
+      {
+        query: GET_USER_ORDER,
+
+
+      }]
+  });
   const paymentTypes = [
     {
       id: 'stripe',
       name: 'Stripe',
-      logo: '💳',
+      logo: <img src={stripeIcon} alt="Stripe" style={{ width: '24px', height: '24px' }} />,
       description: 'Pay with Stripe - secure international payments',
-      fields: ['Card Number', 'Expiry Date', 'CVC']
     },
     {
       id: 'paypal',
       name: 'PayPal',
-      logo: '💰',
+      logo: <img src={paypalIcon} alt="PayPal" style={{ width: '24px', height: '24px' }} />,
       description: 'Pay with PayPal - fast and secure online payments',
-      fields: ['Email', 'Password']
+    },
+    {
+      id: 'vnPay',
+      name: 'VNPay',
+      logo: <img src={vnpayIcon} alt="VNPay" style={{ width: '24px', height: '24px' }} />,
+      description: 'Pay with VNPay - fast and secure online payments',
     }
   ];
 
@@ -55,7 +89,7 @@ const PaymentTypeSelector = ({ cartProducts }) => {
   return (
     <PaymentContainer>
       <PaymentHeading>Select Payment Method</PaymentHeading>
-      
+
       <PaymentList>
         {paymentTypes.map((payment) => (
           <PaymentItem key={payment.id}>
@@ -65,16 +99,16 @@ const PaymentTypeSelector = ({ cartProducts }) => {
               <PaymentLogo>{payment.logo}</PaymentLogo>
               <PaymentName>{payment.name}</PaymentName>
               <ArrowIcon rotated={selectedPayment === payment.id}>
-                <svg 
-                  fill="none" 
-                  stroke="currentColor" 
+                <svg
+                  fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </ArrowIcon>
             </PaymentButton>
-            
+
             {
               selectedPayment === payment.id && payment.id === 'stripe' && (
                 <ExpandedContent>
@@ -82,12 +116,42 @@ const PaymentTypeSelector = ({ cartProducts }) => {
                     <PaymenStripeForm amount={totalPriceCalculated} />
                   </StripeContainer>
                 </ExpandedContent>
+              )}
+            {
+              selectedPayment === payment.id && payment.id === 'paypal' && (
+                <ExpandedContent>
+                  <PayPalScriptProvider options={{ "client-id": "Af5oZoPUQ1tTUv7sdLzxs3PGfa09k6ynefB4gqLwQtyBqNRTQ9HoJ2YEx1wvJk0JsMnWpYnBVxT4nsKD" }}>
+                    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+                      <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+                        <h2 className="text-xl font-semibold mb-4">Pay {formatVNDPrice(totalPriceCalculated)} with Paypal</h2>
+                        <PayPalButton
+                          amount={totalPriceCalculated}
+                          onSuccess={(details) => {
+                            setPaymentStatus(`Transaction completed by ${details.payer.name.given_name}`);
+
+                            completeOrder({})
+
+                          }}
+                          onError={(err) => {
+                            setPaymentStatus("Payment failed. Please try again.");
+                            console.error(err);
+                          }}
+                        />
+                        {paymentStatus && <p className="mt-4 text-gray-600">{paymentStatus}</p>}
+                      </div>
+                    </div>
+                  </PayPalScriptProvider>
+                </ExpandedContent>
               )
-              // selectedPayment === payment.id && payment.id === 'paypal' && (
-              //   <ExpandedContent>
-              //     <PaymentDescription>{payment.description}</PaymentDescription>
-              //   </ExpandedContent>
-              // )
+            }
+            {
+              selectedPayment === payment.id && payment.id === 'vnPay' && (
+                <ExpandedContent>
+                  <CardContainer onClick={() => window.location.href = 'http://localhost:8888/order/create_payment_url'}>
+                  <CardText>Pay with VNPay</CardText>
+                  </CardContainer>
+                </ExpandedContent>
+              )
             }
           </PaymentItem>
         ))}
@@ -106,7 +170,7 @@ const PaymentPage = () => {
 
   const cartProducts = data?.getUserCart.cartProducts.filter(item => item.selected === true);
   console.log(cartProducts);
-  
+
 
   const [completeOrder, { loading: orderLoading, error: orderError }] =
     useMutation(CREATE_ORDER, {
@@ -127,7 +191,9 @@ const PaymentPage = () => {
   return (
     <div className='section-center'>
       <Navbar />
+      <ToastContainer />
       <Wrapper>
+
         {loading ? (
           <Loading />
         ) : orderLoading ? (
@@ -142,7 +208,7 @@ const PaymentPage = () => {
             <Container>
               <PaymentTypeSelector
                 cartProducts={cartProducts}
-               />
+              />
             </Container>
             <OrderSummary >
               <OrderSum
@@ -217,13 +283,13 @@ const OrderSummary = styled.div`
   flex-direction: column;
   border-left: 1px solid var(--clr-border);
   ${mobile({
-    display: 'flex',
-    padding: '0',
-    justifyContent: 'center',
-    width: '100%',
-    borderLeft: 'none',
-    borderTop: '1px solid var(--clr-border)',
-  })}
+  display: 'flex',
+  padding: '0',
+  justifyContent: 'center',
+  width: '100%',
+  borderLeft: 'none',
+  borderTop: '1px solid var(--clr-border)',
+})}
 `;
 const ErrorContainer = styled.div`
   display: flex;
@@ -289,8 +355,18 @@ const PaymentButton = styled.button`
 `;
 
 const PaymentLogo = styled.div`
-  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-right: 0.75rem;
+  width: 24px;
+  height: 24px;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
 `;
 
 const PaymentName = styled.div`
@@ -353,4 +429,31 @@ const SubmitButton = styled.button`
   &:hover {
     background-color: #1d4ed8;
   }
+`;
+
+const CardContainer = styled.div`
+  border: 2px solid #085fad;
+  border-radius: 8px;
+  padding: 1rem;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #085fad;  // Changed to blue background
+  box-shadow: 0 2px 4px rgba(8, 95, 173, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;  // Added cursor pointer
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(8, 95, 173, 0.2);
+    background-color: #0953a3;  // Slightly darker on hover
+  }
+`;
+
+const CardText = styled.span`
+  color: white;  // Changed to white text
+  font-size: 1.25rem;
+  font-weight: bold;
+  letter-spacing: 1px;
 `;

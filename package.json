@@ -10,6 +10,7 @@
     "render-postbuild": "npm run install-client && npm run build-client",
     "client": "npm start --prefix client",
     "server": "nodemon server/index",
+    "vnpay": "cd vnpay_nodejs && node app.js",
     "render-start": "cd server && node index.js"
   },
   "keywords": [],
@@ -35,7 +36,7 @@
     "react-redux": "^8.0.2",
     "react-scripts": "^3.0.1",
     "react-stripe-checkout": "^2.6.3",
-    "sneakers-shop": "file:",
-    "stripe": "^12.18.0"
+    "stripe": "^12.18.0",
+    "axios": "^1.2.3"
   }
 }

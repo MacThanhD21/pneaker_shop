@@ -33,7 +33,7 @@ const CartItems = ({ productId, size, id, orderPage, historyPage, isSelected, on
           awaitRefetchQueries: true,
         },
       ],
-    });
+    }); 
 
   const { image, title, model, price } = cartItems;
 
