@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import styled from 'styled-components';
 import CloseIcon from '@mui/icons-material/Close';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
@@ -28,145 +27,93 @@ const MoblieMenu = () => {
   return (
     <>
       {mobileMenu && (
-        <Wrapper>
-          <Header>
+        <div className="fixed inset-0 z-50 h-screen w-full bg-white overflow-x-hidden flex flex-col md:hidden">
+          {/* Header */}
+          <div className="w-[90%] flex justify-between items-center mx-5 mb-10 border-b-2 border-gray-200">
             <Logo />
             <CloseIcon
-              className='close-icon'
+              className="text-red-500 text-3xl cursor-pointer hover:text-red-600 transition-colors"
               onClick={() => dispatch(toggleMobileMenu())}
-              style={{ color: 'red' }}
             />
-          </Header>
-          <SearchBar display={display} />
-          <LinksContainer>
-            <MenuLink>
-              <Link onClick={() => dispatch(toggleMobileMenu())} to='/'>
-                Home
-              </Link>
-            </MenuLink>
-            <MenuLink>
-              <Link onClick={() => dispatch(toggleMobileMenu())} to='/shop'>
-                Shop
-              </Link>
-            </MenuLink>
+          </div>
+
+          {/* Search Bar */}
+          <div className="px-4 mb-6">
+            <SearchBar display={display} />
+          </div>
+
+          {/* Main Links */}
+          <div className="w-full px-4 space-y-2">
+            <Link
+              onClick={() => dispatch(toggleMobileMenu())}
+              to="/"
+              className="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+            >
+              Home
+            </Link>
+            <Link
+              onClick={() => dispatch(toggleMobileMenu())}
+              to="/shop"
+              className="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+            >
+              Shop
+            </Link>
             {userInfo && (
-              <MenuLink>
-                <Link
-                  onClick={() => dispatch(toggleMobileMenu())}
-                  to='/profile'
-                >
-                  Profile
-                </Link>
-              </MenuLink>
+              <Link
+                onClick={() => dispatch(toggleMobileMenu())}
+                to="/profile"
+                className="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+              >
+                Profile
+              </Link>
             )}
             {userInfo && userInfo.isAdmin && (
-              <MenuLink>
-                <Link
-                  onClick={() => dispatch(toggleMobileMenu())}
-                  to='/new-item'
-                >
-                  Admin Panel
-                </Link>
-              </MenuLink>
+              <Link
+                onClick={() => dispatch(toggleMobileMenu())}
+                to="/new-item"
+                className="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+              >
+                Admin Panel
+              </Link>
             )}
-          </LinksContainer>
-          <UserLinks>
+          </div>
+
+          {/* User Links */}
+          <div className="mt-auto px-4 py-6 space-y-4">
             {userInfo ? (
-              <MenuLink>
-                <Link
-                  onClick={logoutHandler}
-                  to='/'
-                  style={{ color: 'var(--clr-primary-2)' }}
-                >
-                  <PersonOutlineOutlinedIcon />
-                  Sign Out
-                </Link>
-              </MenuLink>
+              <Link
+                onClick={logoutHandler}
+                to="/"
+                className="flex items-center px-4 py-3 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <PersonOutlineOutlinedIcon className="mr-2" />
+                Sign Out
+              </Link>
             ) : (
-              <MenuLink>
-                <Link
-                  onClick={() => dispatch(toggleMobileMenu())}
-                  to='/login'
-                  style={{ color: 'var(--clr-primary-2)' }}
-                >
-                  <PersonOutlineOutlinedIcon />
-                  Sign in
-                </Link>
-              </MenuLink>
+              <Link
+                onClick={() => dispatch(toggleMobileMenu())}
+                to="/login"
+                className="flex items-center px-4 py-3 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <PersonOutlineOutlinedIcon className="mr-2" />
+                Sign in
+              </Link>
             )}
             {userInfo && (
-              <MenuLink>
-                <Link
-                  onClick={() => dispatch(toggleMobileMenu())}
-                  to='/cart'
-                  style={{ color: 'var(--clr-primary-2)' }}
-                >
-                  <ShoppingCartOutlinedIcon />
-                  Cart
-                </Link>
-              </MenuLink>
+              <Link
+                onClick={() => dispatch(toggleMobileMenu())}
+                to="/cart"
+                className="flex items-center px-4 py-3 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <ShoppingCartOutlinedIcon className="mr-2" />
+                Cart
+              </Link>
             )}
-          </UserLinks>
-        </Wrapper>
+          </div>
+        </div>
       )}
     </>
   );
 };
 
 export default MoblieMenu;
-
-const Wrapper = styled.div`
-  height: 100vh;
-  width: 100%;
-  position: fixed;
-  z-index: 1;
-  background-color: var(--bgc-main);
-  top: 0;
-  left: 0;
-  overflow-x: hidden;
-  flex-direction: column;
-  @media only screen and (min-width: 780px) {
-    display: none;
-  }
-`;
-
-const Header = styled.div`
-  width: 90%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 0px 20px 40px;
-  border-bottom: 2px solid var(--clr-border);
-
-  .close-icon {
-    background-color: transparent;
-    border: transparent;
-    font-size: 30px;
-    color: darkred;
-    cursor: pointer;
-  }
-`;
-
-const LinksContainer = styled.div`
-  padding: 1rem;
-  width: 100%;
-`;
-
-const MenuLink = styled.p`
-  padding: 1rem;
-  display: flex;
-  align-items: center;
-
-  a {
-    display: flex;
-    color: var(--clr-mocha);
-    border-radius: 4px;
-    line-height: 1.75;
-    letter-spacing: 0.02em;
-  }
-`;
-
-const UserLinks = styled.div`
-  display: flex;
-  justify-content: center;
-`;
