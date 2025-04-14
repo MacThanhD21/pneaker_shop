@@ -41,7 +41,8 @@ import { useLogout } from './utils/customHooks';
 import ShoeCareTips from './components/ShoeCareTips';
 import ShoeCareDetail from './components/ShoeCareDetail';
 import SocialIcons from './components/SocialIcons';
-
+import AdminDashboard from './pages/NewAdminDashboard/AdminPage';
+import { tips } from './data/shoeCareTips';
 const App = () => {
   const { userInfo } = useSelector((state) => state.user);
   const { data, loading } = useQuery(GET_USER_DETAILS, {
@@ -84,6 +85,7 @@ const App = () => {
         <Route path='/news' element={<News />} />
         <Route path='/services' element={<SpaServices />} />
         <Route path='*' element={<ErrorPage />} />
+        <Route path='/admin' element={<AdminDashboard />} />
         <Route
           path='/login'
           element={

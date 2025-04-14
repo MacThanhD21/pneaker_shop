@@ -95,7 +95,7 @@ export const users = {
         token: res.createJWT(),
       };
     },
-    login: async (_, { username, password }, { res }) => {
+    login: async (_, { username, password }) => {
       const { valid, errors } = loginInputValidator(username, password);
 
       if (!valid) {
@@ -195,5 +195,95 @@ export const users = {
         token: user.createJWT(),
       };
     },
+
+    adminUpdateUser: async (
+      _,
+      {
+        updateUserInput: {
+          email,
+          username,
+          firstName,
+          lastName,
+          shoeSize,
+          password,
+          currentPassword,
+          isAdmin,
+          shippingAddress,
+          orders,
+          cart,
+          wishlist,
+          createdAt,
+          updatedAt
+        },
+      },
+      context
+    ) => {
+      const userAuth = await auth(context);
+      const user = await User.findOne(userAuth);
+
+      if (!user) {
+        throw new UserInputError('User not found');
+      }
+// Check if username or email already exists if they're being changed
+      if (username && username !== user.username) {
+        const existingUsername = await User.findOne({ username });
+        if (existingUsername) {
+          throw new UserInputError('Username already exists');
+        }
+      }
+
+      if (email && email !== user.email) {
+        const existingEmail = await User.findOne({ email });
+        if (existingEmail) {
+          throw new UserInputError('Email already exists');
+        }
+      }
+
+      // Update basic fields
+      user.email = email || user.email;
+      user.firstName = firstName || user.firstName;
+      user.lastName = lastName || user.lastName;
+      user.username = username || user.username;
+      user.shoeSize = shoeSize || user.shoeSize;
+      user.isAdmin = isAdmin !== undefined ? isAdmin : user.isAdmin;
+      
+      // Update shipping address if provided
+      if (shippingAddress) {
+        user.shippingAddress = {
+          ...user.shippingAddress,
+          ...shippingAddress
+        };
+      }
+
+      // Update arrays if provided
+      if (orders) user.orders = orders;
+      if (cart) user.cart = cart;
+      if (wishlist) user.wishlist = wishlist;
+       // Handle password update
+       if (password) {
+        if (password.length < 6 || !currentPassword) {
+          throw new UserInputError('Password must be at least 6 characters');
+        }
+        const isMatch = await user.comparePasswords(currentPassword);
+        if (!isMatch) {
+          throw new UserInputError('Current password is incorrect');
+        }
+        user.password = password;
+      }
+
+      // Update timestamps
+      user.updatedAt = new Date();
+
+      await user.save();
+      return {
+        ...user._doc,
+        id: user._id,
+        token: user.createJWT(),
+      };
+    },
+
+
+
+    
   },
 };

@@ -7,5 +7,5 @@ export const formatVNDPrice = (price) => {
   // Split the number into groups of 3 from right to left
   const formattedPrice = numPrice.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   
-  return `${formattedPrice} ₫`;
+  return `₫${formattedPrice} `;
 }; 
