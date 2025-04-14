@@ -9,7 +9,7 @@ import { CREATE_PRODUCT } from '../../graphql/Mutations/productMutation';
 import { GET_PRODUCTS } from '../../graphql/Queries/productQueries';
 import MuiError from '../../assets/mui/Alert';
 
-const NewItem = () => {
+const NewItem = ({onCancel}) => {
   const [publicId, setPublicId] = useState('');
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
@@ -282,6 +282,13 @@ const NewItem = () => {
                 </div>
 
                 <div className="flex flex-col items-center space-y-4">
+                <button
+                    type="button"
+                    onClick={onCancel}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                    Cancel
+                </button>
                   <button
                     type="submit"
                     className="w-full md:w-1/2 bg-gradient-to-r from-rose-600 to-rose-800 text-white font-medium py-3 px-6 rounded-xl 

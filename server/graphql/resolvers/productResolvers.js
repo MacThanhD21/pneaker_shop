@@ -204,5 +204,16 @@ export const products = {
 
       return product;
     },
+    deleteProduct: async (_, { productId }, context) => {
+      const userAuth = await auth(context);
+      const product = await Product.findByIdAndDelete(productId);
+      if (!userAuth.isAdmin) {
+        throw new UserInputError('Must be an admin to delete an item');
+      }
+      if (!product) {
+        throw new UserInputError('Sorry, no product found.');
+      }
+      return product;
+    },
   },
 };

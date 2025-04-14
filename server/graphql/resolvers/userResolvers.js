@@ -196,94 +196,82 @@ export const users = {
       };
     },
 
-    adminUpdateUser: async (
+    updateRoleUser: async (
       _,
-      {
-        updateUserInput: {
-          email,
-          username,
-          firstName,
-          lastName,
-          shoeSize,
-          password,
-          currentPassword,
-          isAdmin,
-          shippingAddress,
-          orders,
-          cart,
-          wishlist,
-          createdAt,
-          updatedAt
-        },
-      },
-      context
+      { userId, isAdmin },
     ) => {
-      const userAuth = await auth(context);
-      const user = await User.findOne(userAuth);
+      const user = await User.findById(userId);
 
       if (!user) {
         throw new UserInputError('User not found');
       }
-// Check if username or email already exists if they're being changed
-      if (username && username !== user.username) {
-        const existingUsername = await User.findOne({ username });
-        if (existingUsername) {
-          throw new UserInputError('Username already exists');
-        }
-      }
-
-      if (email && email !== user.email) {
-        const existingEmail = await User.findOne({ email });
-        if (existingEmail) {
-          throw new UserInputError('Email already exists');
-        }
-      }
-
-      // Update basic fields
-      user.email = email || user.email;
-      user.firstName = firstName || user.firstName;
-      user.lastName = lastName || user.lastName;
-      user.username = username || user.username;
-      user.shoeSize = shoeSize || user.shoeSize;
-      user.isAdmin = isAdmin !== undefined ? isAdmin : user.isAdmin;
-      
-      // Update shipping address if provided
-      if (shippingAddress) {
-        user.shippingAddress = {
-          ...user.shippingAddress,
-          ...shippingAddress
+      else{
+        user.isAdmin = isAdmin;
+        await user.save();
+        return {
+          ...user._doc,
+          id: user._id,
         };
       }
+    },
 
-      // Update arrays if provided
-      if (orders) user.orders = orders;
-      if (cart) user.cart = cart;
-      if (wishlist) user.wishlist = wishlist;
-       // Handle password update
-       if (password) {
-        if (password.length < 6 || !currentPassword) {
-          throw new UserInputError('Password must be at least 6 characters');
-        }
-        const isMatch = await user.comparePasswords(currentPassword);
-        if (!isMatch) {
-          throw new UserInputError('Current password is incorrect');
-        }
-        user.password = password;
+    // Delete user
+    deleteUser: async (_, { userId }, context) => {
+      const userAuth = await auth(context);
+      
+      // Check if user is admin or deleting their own account
+      if (!userAuth.isAdmin && userAuth._id.toString() !== userId) {
+        throw new UserInputError('Not authorized to delete this user');
       }
 
-      // Update timestamps
-      user.updatedAt = new Date();
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new UserInputError('User not found');
+      }
 
-      await user.save();
+      await User.findByIdAndDelete(userId);
       return {
-        ...user._doc,
-        id: user._id,
-        token: user.createJWT(),
+        id: userId,
+        message: 'User deleted successfully'
       };
     },
 
+    // addFullUserInformation: async (_, {
+    //   userInput: {
+    //     username,
+    //     email,
+    //     firstName,
+    //     lastName,
+    //     password,
+    //     confirmedPassword,
+    //   }
+    // }) => {
+    //   const existUser = await User.findOne({ username });
 
+    //   if (existUser) {
+    //     throw new UserInputError('User is already exist', {
+    //       errors: {
+    //         username: 'Username is already exist',
+    //       },
+    //     });
+    //   }
 
+    //   const newUser = new User({
+    //     username,
+    //     email,
+    //     firstName,
+    //     lastName,
+    //     password,
+    //     confirmedPassword,
+    //   });
+    //   const res = await newUser.save();
+
+    //   return {
+    //     ...res._doc,
+    //     id: res._id,
+    //     token: res.createJWT(),
+    //   };
+    // }
     
   },
 };

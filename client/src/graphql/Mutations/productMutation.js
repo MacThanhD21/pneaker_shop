@@ -8,7 +8,12 @@ const CREATE_REVIEW = gql`
     }
   }
 `;
-
+const DELETE_PRODUCT = gql`
+  mutation ($productId: ID!) {
+    deleteProduct(productId: $productId) {
+      id
+    }
+  }`;
 const CREATE_PRODUCT = gql`
   mutation (
     $title: String!
@@ -90,4 +95,4 @@ const UPDATE_PRODUCT = gql`
     }
   }
 `;
-export { CREATE_REVIEW, CREATE_PRODUCT, UPDATE_PRODUCT };
+export { CREATE_REVIEW, CREATE_PRODUCT, UPDATE_PRODUCT, DELETE_PRODUCT };

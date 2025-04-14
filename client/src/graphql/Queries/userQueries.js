@@ -47,4 +47,18 @@ const GET_DEFAULT_TOP_PICKS = gql`
     }
   }
 `;
-export { GET_USER_DETAILS, GET_USER_TOP_PICKS, GET_DEFAULT_TOP_PICKS };
+
+
+const GET_ALL_USERS = gql`
+  query {
+    getAllUsers {
+      id
+      username
+      email
+      firstName
+      lastName
+      isAdmin
+      shoeSize
+  }
+}`;
+export { GET_USER_DETAILS, GET_USER_TOP_PICKS, GET_DEFAULT_TOP_PICKS, GET_ALL_USERS };

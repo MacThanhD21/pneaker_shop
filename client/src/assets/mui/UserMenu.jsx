@@ -43,12 +43,12 @@ const UserMenu = () => {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <StyledMenuItem onClick={handleClose}>
+        <StyledMenuItem onClick={handleClose}>  
           <StyledLink to='/profile'>Profile</StyledLink>
         </StyledMenuItem>
         {userInfo.isAdmin && (
           <StyledMenuItem onClick={handleClose}>
-            <StyledLink to='/new-item'>Admin Panel</StyledLink>
+            <StyledLink to='/admin'>Admin Panel</StyledLink>
           </StyledMenuItem>
         )}
         <StyledMenuItem onClick={handleLogout}>Logout</StyledMenuItem>

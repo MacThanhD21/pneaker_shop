@@ -71,6 +71,7 @@ const App = () => {
     <>
       <MobileMenu />
       <Routes>
+        <Route path='/admin' element={<AdminDashboard />} />
         <Route exact path='/' element={<HomePage />} />
         <Route path='/about' element={<AboutPage />} />
         <Route path='/shop' element={<ShopPage />} />
@@ -85,7 +86,6 @@ const App = () => {
         <Route path='/news' element={<News />} />
         <Route path='/services' element={<SpaServices />} />
         <Route path='*' element={<ErrorPage />} />
-        <Route path='/admin' element={<AdminDashboard />} />
         <Route
           path='/login'
           element={

@@ -150,7 +150,13 @@ export const typeDefs = gql`
     color: String
     size: String
   }
-
+  input FullUserInput {
+    email: String
+    username: String
+    firstName: String
+    lastName: String
+    password: String
+  }
   type Mutation {
     login(username: String!, password: String!): User!
     register(registerInput: RegisterInput): User!
@@ -168,5 +174,10 @@ export const typeDefs = gql`
     createProductReview(productId: ID!, userRate: Int!): Product!
     createOrder: Order!
     updateCartItemsSelection(cartProductIds: [ID!]!, selected: Boolean!): Cart!
+    updateRoleUser(userId: ID!, isAdmin: Boolean!): User!
+    deleteUser(userId: ID!): User!
+    deleteProduct(productId: ID!): Product!
   }
+
+
 `;

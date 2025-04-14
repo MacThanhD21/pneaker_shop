@@ -7,32 +7,30 @@ import Loading from '../../assets/mui/Loading';
 import { EditItemForm } from '../AdminDashboard';
 import { useForm } from '../../utils/customHooks';
 
-const EditItem = () => {
-  const initialState = {
-    product: '',
-    errors: '',
-    productId: '',
-  };
-
-  const { onChange, onSubmit, values } = useForm(
-    getProductFunction,
-    initialState
-  );
-
+const EditItem = (productId) => {
+  
   const [getProduct, { loading, error }] = useLazyQuery(GET_PRODUCT_BY_ID, {
+
+    
     onCompleted({ getProductById }) {
       values.product = getProductById;
       values.errors = '';
     },
   });
 
-  function getProductFunction() {
-    getProduct({ variables: { productId: values.productId } });
-  }
+  useEffect(() => {
+    if (productId) {
+      getProduct({ 
+        variables: { 
+          productId 
+        } 
+      });
+    }
+  }, [productId, getProduct]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      {values.product ? (
+      {/* {values.product ? (
         <EditItemForm product={values.product} />
       ) : (
         <div className="max-w-md mx-auto bg-white rounded-xl shadow-lg overflow-hidden p-6">
@@ -85,7 +83,9 @@ const EditItem = () => {
             </form>
           )}
         </div>
-      )}
+      )} */}
+      
+      <EditItemForm product={values.product} />
     </div>
   );
 };

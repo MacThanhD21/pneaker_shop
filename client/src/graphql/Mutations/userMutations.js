@@ -135,5 +135,22 @@ const UPDATE_SHIPPING = gql`
     }
   }
 `;
+export const UPDATE_ROLE = gql`
+    mutation UpdateRole($userId: ID!, $isAdmin: Boolean!) {
+        updateRoleUser(userId: $userId, isAdmin: $isAdmin) {
+            id
+            username
+            email
+            isAdmin
+        }
+    }
+`;
 
-export { REGISTER_USER, LOGIN_USER, UPDATE_USER, UPDATE_SHIPPING };
+export const DELETE_USER = gql`
+    mutation DeleteUser($userId: ID!) {
+        deleteUser(userId: $userId) {
+            id
+        }
+    }
+`;
+export { REGISTER_USER, LOGIN_USER, UPDATE_USER, UPDATE_SHIPPING};
