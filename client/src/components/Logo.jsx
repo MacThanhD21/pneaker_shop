@@ -1,81 +1,29 @@
 import React from 'react';
-import styled from 'styled-components';
 import logo from '../assets/items/unnamed.png';
 import { Link } from 'react-router-dom';
+
 const Logo = () => {
   return (
-    <Wrapper>
-      <Image src={logo} />
-      <Title>
-        <StyledLink to='/'>
-          <LogoText>PSneaker</LogoText>
-        </StyledLink>
-      </Title>
-    </Wrapper>
+    <div className="flex items-center gap-3 w-[20%] min-w-[245px]">
+      <img 
+        src={logo} 
+        alt="PSneaker Logo"
+        className="w-16 h-16 object-contain hover:scale-105 transition-transform duration-300"
+      />
+      <h1 className="m-0 text-2xl font-extrabold tracking-wider">
+        <Link to='/' className="no-underline flex items-center">
+          <span className="bg-gradient-to-r from-pink-500 to-pink-600 bg-clip-text text-transparent 
+            relative inline-block transition-all duration-300 hover:scale-105
+            after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-[-2px] after:left-0 
+            after:bg-gradient-to-r after:from-pink-500 after:to-pink-600 after:scale-x-0 
+            after:origin-right after:transition-transform after:duration-300
+            hover:after:scale-x-100 hover:after:origin-left">
+            PSneaker
+          </span>
+        </Link>
+      </h1>
+    </div>
   );
 };
 
 export default Logo;
-
-const Wrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 20%;
-  min-width: 245px;
-`;
-
-const Title = styled.h1`
-  margin: 0;
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  display: flex;
-  align-items: center;
-`;
-
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-`;
-
-const LogoText = styled.span`
-  background: linear-gradient(45deg, #db7093, #e75480);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 2px 2px 4px rgba(219, 112, 147, 0.2);
-  position: relative;
-  display: inline-block;
-  transition: all 0.3s ease;
-  line-height: 1;
-
-  &:hover {
-    transform: scale(1.05);
-    text-shadow: 3px 3px 6px rgba(219, 112, 147, 0.3);
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 2px;
-    bottom: -2px;
-    left: 0;
-    background: linear-gradient(90deg, #db7093, #e75480);
-    transform: scaleX(0);
-    transform-origin: right;
-    transition: transform 0.3s ease;
-  }
-
-  &:hover::after {
-    transform: scaleX(1);
-    transform-origin: left;
-  }
-`;  
-
-const Image = styled.img`
-  width: 100px;
-  height: 100px;
-  object-fit: contain;
-`;

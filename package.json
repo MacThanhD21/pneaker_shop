@@ -20,6 +20,7 @@
     "@reduxjs/toolkit": "^1.8.1",
     "apollo-server": "^3.8.2",
     "apollo-server-express": "^3.8.2",
+    "axios": "^1.8.4",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -36,7 +37,6 @@
     "react-redux": "^8.0.2",
     "react-scripts": "^3.0.1",
     "react-stripe-checkout": "^2.6.3",
-    "stripe": "^12.18.0",
-    "axios": "^1.2.3"
+    "stripe": "^12.18.0"
   }
 }

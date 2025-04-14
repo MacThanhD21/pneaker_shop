@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --bgc-main: #fff5f5;
   --clr-border: #ffcccc;

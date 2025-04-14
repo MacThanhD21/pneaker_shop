@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import styled from 'styled-components';
 import { useMutation } from '@apollo/client';
 import { useDispatch } from 'react-redux';
 import { useForm } from '../utils/customHooks';
@@ -43,15 +42,18 @@ const RegisterPage = () => {
   function registerUserCallback() {
     register();
   }
+
   return (
-    <Wrapper>
-      <Container>
-        <FormSection>
-          <div className='logo'>
+    <div className="flex justify-center items-center min-h-screen bg-gray-50">
+      <div className="flex w-[80%] max-w-6xl h-[600px] shadow-lg rounded-lg overflow-hidden">
+        <div className="flex-1 p-6 flex flex-col bg-white">
+          <div className="flex justify-center mb-2">
             <Logo />
           </div>
-          <Title>Register</Title>
-          <Form onSubmit={onSubmit}>
+          <h1 className="text-2xl font-semibold text-rose-800 text-center tracking-wide mb-4">
+            Register
+          </h1>
+          <form onSubmit={onSubmit} className="flex flex-col w-full space-y-3">
             {loading && <Loading />}
             {error?.message === 'Failed to fetch' && (
               <MuiError
@@ -59,161 +61,103 @@ const RegisterPage = () => {
                 type='error'
               />
             )}
-            <Label>Email</Label>
-            <Input
-              type='email'
-              name='email'
-              value={values.email || ''}
-              onChange={onChange}
-            />
-            <Label>Username</Label>
-            <Input
-              type='text'
-              name='username'
-              value={values.username || ''}
-              onChange={onChange}
-            />
-            <Label>Password</Label>
-            <Input
-              type='password'
-              name='password'
-              value={values.password || ''}
-              onChange={onChange}
-            />
-            <Label>Confirmed Password</Label>
-            <Input
-              type='password'
-              name='confirmedPassword'
-              value={values.confirmedPassword || ''}
-              onChange={onChange}
-            />
-            <Button type='submit'>Submit</Button>
-          </Form>
-
-          <Member>
-            Already a member?
-            <Link to='/login'>
-              <span> Login</span>
+            <div className="grid grid-cols-1 gap-3">
+              <div className="flex flex-col space-y-1">
+                <label className="text-sm font-medium text-gray-700">
+                  Email
+                </label>
+                <input
+                  type='email'
+                  name='email'
+                  value={values.email || ''}
+                  onChange={onChange}
+                  className={`w-full px-3 py-1.5 text-sm text-gray-700 bg-gray-50 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 ${
+                    errors?.email ? 'bg-red-50 border-red-200' : ''
+                  }`}
+                  placeholder="Enter your email"
+                />
+              </div>
+              <div className="flex flex-col space-y-1">
+                <label className="text-sm font-medium text-gray-700">
+                  Username
+                </label>
+                <input
+                  type='text'
+                  name='username'
+                  value={values.username || ''}
+                  onChange={onChange}
+                  className={`w-full px-3 py-1.5 text-sm text-gray-700 bg-gray-50 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 ${
+                    errors?.username ? 'bg-red-50 border-red-200' : ''
+                  }`}
+                  placeholder="Choose a username"
+                />
+              </div>
+              <div className="flex flex-col space-y-1">
+                <label className="text-sm font-medium text-gray-700">
+                  Password
+                </label>
+                <input
+                  type='password'
+                  name='password'
+                  value={values.password || ''}
+                  onChange={onChange}
+                  className={`w-full px-3 py-1.5 text-sm text-gray-700 bg-gray-50 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 ${
+                    errors?.password ? 'bg-red-50 border-red-200' : ''
+                  }`}
+                  placeholder="Create a password"
+                />
+              </div>
+              <div className="flex flex-col space-y-1">
+                <label className="text-sm font-medium text-gray-700">
+                  Confirm Password
+                </label>
+                <input
+                  type='password'
+                  name='confirmedPassword'
+                  value={values.confirmedPassword || ''}
+                  onChange={onChange}
+                  className={`w-full px-3 py-1.5 text-sm text-gray-700 bg-gray-50 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 ${
+                    errors?.confirmedPassword ? 'bg-red-50 border-red-200' : ''
+                  }`}
+                  placeholder="Confirm your password"
+                />
+              </div>
+            </div>
+            <button 
+              type='submit'
+              disabled={loading}
+              className="w-full py-2 mt-1 bg-rose-800 text-white rounded-md transition-all duration-300 hover:bg-rose-700 text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Creating account...' : 'Register'}
+            </button>
+          </form>
+          <div className="mt-3 text-center text-gray-600">
+            Already a member?{' '}
+            <Link to='/login' className="text-rose-800 font-medium hover:text-rose-700 transition-colors">
+              Login
             </Link>
-          </Member>
-          <Link to='/'>
-            <BackHome>Back home</BackHome>
+          </div>
+          <Link to='/' className="mt-1 text-center">
+            <span className="text-rose-800 hover:text-rose-700 transition-colors">
+              Back home
+            </span>
           </Link>
           {errors &&
             Object.values(errors)?.map((err, index) => (
               <MuiError value={err} type='error' key={index} />
             ))}
-        </FormSection>
-        <ImageSection>
-          <img src={image} alt="Register illustration" />
-        </ImageSection>
-      </Container>
-    </Wrapper>
+        </div>
+        <div className="flex-1 bg-gray-100 overflow-hidden">
+          <img 
+            src={image} 
+            alt="Register illustration" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+      </div>
+    </div>
   );
 };
+
 export default RegisterPage;
 
-const Wrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #f5f5f5;
-`;
-
-const Container = styled.div`
-  display: flex;
-  width: 80%;
-  max-width: 1200px;
-  height: 600px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  overflow: hidden;
-`;
-
-const FormSection = styled.div`
-  flex: 0 0 40%;
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  background-color: white;
-`;
-
-const ImageSection = styled.div`
-  flex: 0 0 60%;
-  background-color: #f0f0f0;
-  overflow: hidden;
-  
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-`;
-
-const Title = styled.h1`
-  letter-spacing: 1px;
-  color: var(--clr-primary-2);
-  margin-top: -0rem;
-  margin-bottom: 2rem;
-  font-weight: 600;
-  text-align: center;
-`;
-
-const Form = styled.form`
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  .error {
-    background-color: rgb(253, 237, 237);
-  }
-`;
-
-const Label = styled.label`
-  margin-bottom: 0.5rem;
-  letter-spacing: 0.5px;
-  color: var(--clr-gray-2);
-`;
-
-const Input = styled.input`
-  margin-bottom: 1rem;
-  border-radius: 0.25rem;
-  padding: 0.357rem 0.75rem;
-  border: 1px solid var(--clr-gray);
-  background-color: var(--clr-mocha-hover);
-  font-size: 100%;
-  line-height: 1.15;
-  font-weight: 500;
-`;
-
-const Button = styled.button`
-  background-color: var(--clr-mocha-3);
-  border: transparent;
-  cursor: pointer;
-  padding: 0.375rem 0.75rem;
-  text-transform: capitalize;
-  border-radius: 0.25rem;
-  line-height: 1.2;
-  letter-spacing: 0.5px;
-  font-size: 16px;
-  color: #fff;
-  margin-top: 1rem;
-  transition: all 0.3s;
-  &:hover {
-    background-color: var(--clr-mocha-2);
-  }
-`;
-
-const Member = styled.p`
-  span {
-    color: var(--clr-mocha-2);
-    cursor: pointer;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-  }
-`;
-
-const BackHome = styled.span`
-  color: var(--clr-primary-2);
-  cursor: pointer;
-`;

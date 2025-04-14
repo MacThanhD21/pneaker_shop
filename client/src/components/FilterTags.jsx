@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   clearFilters,
@@ -9,6 +8,7 @@ import {
   removeColorFilter,
 } from '../features/filterSlice';
 import FilterTag from './FilterTag';
+
 const FilterTags = () => {
   const filters = useSelector((state) => state.filter);
   const dispatch = useDispatch();
@@ -20,61 +20,45 @@ const FilterTags = () => {
   };
 
   return (
-    <>
-      <Wrapper>
-        {size !== null ? (
-          <FilterTag
-            removeFilter={() => dispatch(removeSizeFilter())}
-            clearIcon
-            label={`Size: ${size}`}
-          />
-        ) : null}
-        {brand !== null ? (
-          <FilterTag
-            removeFilter={() => dispatch(removeBrandFilter())}
-            clearIcon
-            label={`Brand: ${brand}`}
-          />
-        ) : null}
-        {color !== null ? (
-          <FilterTag
-            removeFilter={() => dispatch(removeColorFilter())}
-            clearIcon
-            label={`Color: ${color}`}
-          />
-        ) : null}
-        {price.length > 0 ? (
-          <FilterTag
-            removeFilter={() => dispatch(removePriceFilter())}
-            clearIcon
-            label={`Price: ${price[0]}~${price[1]}`}
-          />
-        ) : null}
-        {size || brand || color || price.length > 0 ? (
-          <ClearAll onClick={clearFiltersHandler}>Clear All</ClearAll>
-        ) : null}
-      </Wrapper>
-    </>
+    <div className="flex flex-wrap w-full">
+      {size !== null && (
+        <FilterTag
+          removeFilter={() => dispatch(removeSizeFilter())}
+          clearIcon
+          label={`Size: ${size}`}
+        />
+      )}
+      {brand !== null && (
+        <FilterTag
+          removeFilter={() => dispatch(removeBrandFilter())}
+          clearIcon
+          label={`Brand: ${brand}`}
+        />
+      )}
+      {color !== null && (
+        <FilterTag
+          removeFilter={() => dispatch(removeColorFilter())}
+          clearIcon
+          label={`Color: ${color}`}
+        />
+      )}
+      {price.length > 0 && (
+        <FilterTag
+          removeFilter={() => dispatch(removePriceFilter())}
+          clearIcon
+          label={`Price: ${price[0]}~${price[1]}`}
+        />
+      )}
+      {(size || brand || color || price.length > 0) && (
+        <button
+          onClick={clearFiltersHandler}
+          className="flex text-gray-500 cursor-pointer text-sm h-5 bg-transparent border-none hover:text-gray-700 transition-colors duration-300"
+        >
+          Clear All
+        </button>
+      )}
+    </div>
   );
 };
 
 export default FilterTags;
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-`;
-
-const ClearAll = styled.button`
-  display: flex;
-  color: var(--clr-gray);
-  cursor: pointer;
-  font-size: 14px;
-  height: 20px;
-  background: transparent;
-  border: none;
-  &:hover {
-    color: var(--clr-gray-2);
-  }
-`;

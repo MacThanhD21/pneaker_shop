@@ -1,116 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
 import { Badge } from '@mui/material';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import UserMenu from '../assets/mui/UserMenu';
-import { mobile } from '../responsive';
 import MenuIcon from '@mui/icons-material/Menu';
+import UserMenu from '../assets/mui/UserMenu';
 import { Logo, SearchBar } from '../components';
 import { useSelector, useDispatch } from 'react-redux';
 import { GET_USER_CART } from '../graphql/Queries/cartQueries';
 import { useQuery } from '@apollo/client';
 import { toggleMobileMenu } from '../features/filterSlice';
-
-const Wrapper = styled.div`
-  display: flex;
-  margin-bottom: 1rem;
-  width: 100%;
-  border-bottom: 2px solid var(--clr-border);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: white;
-  z-index: 1000;
-  padding: 0.5rem 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-
-  ${mobile({
-    padding: '0.5rem 1rem'
-  })}
-`;
-
-const NavbarSpacer = styled.div`
-  height: 100px;
-  width: 100%;
-  background: transparent;
-
-  ${mobile({
-    height: '60px'
-  })}
-`;
-
-const LinkContainer = styled.div`
-  display: flex;
-  align-items: center;
-  width: 30%;
-  justify-content: center;
-  ${mobile({ display: 'none' })}
-`;
-
-const NavLink = styled.p`
-  margin: 0.5rem;
-  cursor: pointer;
-  .link {
-  color: var(--clr-gray-3);
-    padding: 6px 8px;
-    border-radius: 4px;
-    line-height: 1.75;
-    letter-spacing: 0.02em;
-    transition: all 0.3s;
-    &:hover {
-      color: var(--clr-mocha-2);
-      background-color: var(--clr-mocha-hover);
-    }
-  }
-`;
-
-const UserContainer = styled.div`
-  display: flex;
-  width: 35%;
-  align-items: center;
-  justify-content: flex-end;
-  ${mobile({ display: 'none' })}
-`;
-const UserLinks = styled.div`
-  display: flex;
-  color: var(--clr-mocha-2);
-  justify-content: center;
-  align-items: center;
-  margin: 0.5rem;
-  padding: 6px 8px;
-  border-radius: 4px;
-  letter-spacing: 0.02em;
-  transition: all 0.3s;
-  cursor: pointer;
-  &:hover {
-    background-color: var(--clr-mocha-hover);
-  }
-`;
-
-const Icon = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const MobileMenu = styled.div`
-  display: none;
-  ${mobile({
-  display: 'flex',
-  width: '100%',
-  justifyContent: 'flex-end',
-  alignItems: 'center',
-})}
-`;
-const SearchBarContainer = styled.div`
-  height: 0px;
-  width: 30%;
-  margin: 1rem;
-  ${mobile({ display: 'none' })}
-`;
 
 const Navbar = () => {
   const { userInfo } = useSelector((state) => state.user);
@@ -126,65 +25,70 @@ const Navbar = () => {
 
   return (
     <>
-      <NavbarSpacer />
-      <Wrapper>
-        <Logo />
-        <LinkContainer>
-          <NavLink>
-            <Link className='link' to='/'>
-              Home
-            </Link>
-          </NavLink>
-          <NavLink>
-            <Link className='link' to='/shop'>
-              Shop
-            </Link>
-          </NavLink>
-        </LinkContainer>
-        <SearchBarContainer>
+      {/* Navbar Spacer */}
+      <div className="h-24 w-full bg-transparent md:h-24"></div>
+      
+      {/* Navbar */}
+      <div className="fixed top-0 left-0 right-0 z-50 flex w-full border-b border-rose-200/50 bg-gradient-to-r from-rose-50 to-rose-100/50 px-4 py-2 shadow-sm md:mb-4 md:px-8">
+        {/* Logo Section */}
+        <div className="flex w-1/6 items-center justify-start">
+          <Logo />
+        </div>
+        
+        {/* Link Container - Hidden on mobile */}
+        <div className="hidden w-1/4 flex-row items-center justify-center gap-4 md:flex">
+          <Link 
+            className="rounded px-3 py-1.5 text-base font-medium tracking-wide text-rose-800 transition-all duration-300 hover:bg-rose-200/50 hover:text-rose-800" 
+            to='/'
+          >
+            Home
+          </Link>
+          <Link 
+            className="rounded px-3 py-1.5 text-base font-medium tracking-wide text-rose-800 transition-all duration-300 hover:bg-rose-200/50 hover:text-rose-800" 
+            to='/shop'
+          >
+            Shop
+          </Link>
+        </div>
+        
+        {/* Search Bar - Hidden on mobile */}
+        <div className="hidden w-2/5 items-center justify-center md:flex">
           <SearchBar display={display} />
-        </SearchBarContainer>
+        </div>
 
-        <UserContainer>
+        {/* User Container - Hidden on mobile */}
+        <div className="hidden w-1/4 flex-row items-center justify-end gap-4 md:flex">
           {userInfo ? (
             <UserMenu />
           ) : (
-            <Icon>
-              <Link to='/login'>
-                <UserLinks>
-                  <PersonOutlineOutlinedIcon
-                    style={{ color: 'black', fontSize: '26px' }}
-                  />
-                  Sign in
-                </UserLinks>
-              </Link>
-            </Icon>
+            <Link to='/login' className="flex items-center gap-2 rounded px-3 py-1.5 text-base font-medium tracking-wide text-rose-800 transition-all duration-300 hover:bg-rose-200/50">
+              <PersonOutlineOutlinedIcon style={{ fontSize: '24px' }} />
+              Sign in
+            </Link>
           )}
+          
           {userInfo && (
-            <UserLinks>
-              <Link to='/cart' style={{ color: 'var(--clr-mocha-2)' }}>
-                <Badge
-                  sx={{ color: 'var(--clr-mocha)' }}
-                  color='primary'
-                  style={{ paddingRight: '10px', marginTop: '3px' }}
-                  badgeContent={data?.getUserCart.cartProducts.length || 0}
-                >
-                  <Icon>
-                    <ShoppingCartOutlinedIcon style={{ color: 'black' }} />
-                  </Icon>
-                  Cart
-                </Badge>
-              </Link>
-            </UserLinks>
+            <Link to='/cart' className="flex items-center gap-2 rounded px-3 py-1.5 text-base font-medium tracking-wide text-rose-800 transition-all duration-300 hover:bg-rose-200/50">
+              <Badge
+                sx={{ color: 'var(--clr-mocha)' }}
+                color='primary'
+                badgeContent={data?.getUserCart.cartProducts.length || 0}
+              >
+                <ShoppingCartOutlinedIcon style={{ fontSize: '24px' }} />
+              </Badge>
+              Cart
+            </Link>
           )}
-        </UserContainer>
-        <MobileMenu>
+        </div>
+        
+        {/* Mobile Menu - Shown only on mobile */}
+        <div className="flex w-5/6 items-center justify-end md:hidden">
           <MenuIcon
             onClick={() => dispatch(toggleMobileMenu())}
-            style={{ cursor: 'pointer', fontSize: '36px', color: 'black' }}
+            style={{ cursor: 'pointer', fontSize: '32px', color: 'var(--clr-mocha)' }}
           />
-        </MobileMenu>
-      </Wrapper>
+        </div>
+      </div>
     </>
   );
 };

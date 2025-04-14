@@ -14,6 +14,7 @@ import {
 import ScrollToTop from './components/ScrollToTop';
 import { BrowserRouter } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material';
+import { HelmetProvider } from 'react-helmet-async'; // ✅ NEW
 
 const theme = createTheme({
   palette: {
@@ -57,7 +58,9 @@ root.render(
       <BrowserRouter>
         <ScrollToTop />
         <ThemeProvider theme={theme}>
-          <App />
+          <HelmetProvider>
+            <App />
+          </HelmetProvider>
         </ThemeProvider>
       </BrowserRouter>
     </Provider>

@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,95 +22,42 @@ const SizeChart = () => {
   }
 
   return (
-    <Container>
-      <SizeTitle>
+    <div className="border-b-2 border-gray-200">
+      <h4 className="flex justify-between items-center font-medium py-4">
         Size
         {menuState ? (
           <ArrowDropUpIcon
-            style={{ cursor: 'pointer' }}
+            className="cursor-pointer text-gray-600 hover:text-gray-800 transition-colors"
             onClick={handleToggle}
           />
         ) : (
           <ArrowDropDownIcon
-            style={{ cursor: 'pointer' }}
+            className="cursor-pointer text-gray-600 hover:text-gray-800 transition-colors"
             onClick={handleToggle}
           />
         )}
-      </SizeTitle>
+      </h4>
       {menuState && (
-        <Wrapper>
-          <SizeContainer>
+        <div className="w-full mt-5 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+          <div className="flex flex-wrap h-[22vh] pr-8">
             {sizes.map((item) => (
-              <Size
-                disabled={size === item}
-                className={size === item ? 'disabled' : ''}
-                onClick={() => handleSizeClick(item)}
+              <button
                 key={item}
+                disabled={size === item}
+                className={`flex-1 min-w-[15%] m-2 py-2 px-0 text-center text-base rounded-lg border-2 transition-all duration-300
+                  ${size === item 
+                    ? 'bg-gray-600 text-white border-gray-600 cursor-not-allowed' 
+                    : 'border-gray-300 text-gray-600 hover:bg-gray-200 hover:text-gray-800 cursor-pointer'}`}
+                onClick={() => handleSizeClick(item)}
               >
                 {item}
-              </Size>
+              </button>
             ))}
-          </SizeContainer>
-        </Wrapper>
+          </div>
+        </div>
       )}
-    </Container>
+    </div>
   );
 };
 
 export default SizeChart;
-
-const Container = styled.div`
-  border-bottom: 2px solid var(--clr-border);
-  .disabled {
-    background-color: var(--clr-mocha);
-    color: white;
-  }
-`;
-
-const Wrapper = styled.div`
-  width: 100%;
-  &::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    background-color: var(--clr-mocha);
-  }
-  &::-webkit-scrollbar {
-    width: 5px;
-  }
-  margin-top: 20px;
-  overflow-y: scroll;
-`;
-
-const SizeContainer = styled.div`
-  flex-wrap: wrap;
-  display: flex;
-
-  height: 22vh;
-  padding-right: 2rem;
-`;
-
-const SizeTitle = styled.h4`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  font-weight: 500;
-`;
-
-const Size = styled.button`
-  transition: all 0.3s ease;
-  display: flex;
-  justify-content: center;
-  flex: 15%;
-  border: 2px solid var(--clr-gray);
-  border-radius: 8px;
-  margin: 0.5rem;
-  padding: 7px 0px;
-  background: transparent;
-  font-size: 16px;
-  cursor: pointer;
-  color: var(--clr-gray);
-  &:hover {
-    background-color: var(--clr-mocha-2);
-    color: #fff;
-  }
-`;

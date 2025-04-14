@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import icon from '../assets/utils/yeezy.svg';
 import { Link } from 'react-router-dom';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -12,93 +11,70 @@ import {
 import Loading from '../assets/mui/Loading';
 import { useSelector } from 'react-redux';
 import MuiError from '../assets/mui/Alert';
-import { mobile } from '../responsive';
 
-const TopPicks = (props) => {
+const TopPicks = ({ cartPage }) => {
   const { userInfo } = useSelector((state) => state.user);
-  const { cartPage } = props;
-
   const query = userInfo ? GET_USER_TOP_PICKS : GET_DEFAULT_TOP_PICKS;
-
   const { data, error, loading } = useQuery(query);
 
   const mapValue = userInfo
     ? data?.getTopPicksProducts
     : data?.getDefaultTopPicks;
+
   return (
-    <Wrapper>
-      <HeaderContainer>
-        <Header>
-          <Icon src={icon} />
-          TOP PICK
-        </Header>
-        <Link to='/shop'>
-          <ViewButton cartPage={cartPage && cartPage}>
-            View all <ChevronRightIcon /> 
-          </ViewButton>
-        </Link>
-        
-      </HeaderContainer>
+    <div className="mt-10 md:mt-14 px-4 md:px-8">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6 md:mb-8">
+        <div className="flex items-center space-x-3">
+          <img
+            src={icon}
+            alt="Top Pick Icon"
+            className="w-10 md:w-12 rotate-45 drop-shadow"
+          />
+          <h3 className="text-[var(--clr-primary)] font-['Poppins'] text-2xl md:text-4xl font-extrabold tracking-tight">
+            Top Picks
+          </h3>
+        </div>
+
+        {/* View All Button */}
+        {!cartPage && (
+          <Link to="/shop">
+            <p className="hidden md:flex items-center font-medium text-base md:text-lg text-[var(--clr-primary)] px-4 py-2 rounded-lg border border-[var(--clr-border)] hover:bg-[var(--clr-mocha-hover)] hover:text-[var(--clr-mocha)] transition-all duration-300 shadow-sm">
+              View All <ChevronRightIcon className="ml-1" />
+            </p>
+          </Link>
+        )}
+      </div>
+
+      {/* Content */}
       {loading ? (
         <Loading />
       ) : error ? (
-        <MuiError type='error' value={'Something went wrong..'} />
+        <MuiError type="error" value="Something went wrong.." />
       ) : (
-        <ItemsContainer cartPage={cartPage && cartPage}>
-          {mapValue?.map((item) => (
-            <ProductsContainer key={item.id} {...item} />
-          ))}
-        </ItemsContainer>
+        <div
+          className={`w-full overflow-x-auto whitespace-nowrap scroll-smooth px-2 py-4 rounded-2xl transition-all duration-300 ${
+            cartPage
+              ? 'bg-transparent shadow-none border-none'
+              : 'bg-[var(--clr-white)] shadow-[0_4px_20px_rgba(0,0,0,0.06)] border border-[var(--clr-border)]'
+          }`}
+        >
+          <div className="flex justify-center">
+            <div className="inline-flex space-x-4 md:space-x-6 px-1">
+              {mapValue?.map((item) => (
+                <div
+                  key={item.id}
+                  className="inline-block w-60 md:w-64 flex-shrink-0"
+                >
+                  <ProductsContainer {...item} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       )}
-    </Wrapper>
+    </div>
   );
 };
 
 export default TopPicks;
-
-const Wrapper = styled.div`
-  margin-top: 0.5rem;
-`;
-const Header = styled.h3`
-  color: var(--clr-primary);
-  ${mobile({ justifyContent: 'center', display: 'flex', marginBottom: '3rem' })}
-`;
-const Icon = styled.img`
-  width: 6%;
-  margin-right: 10px;
-  transform: rotate(40deg);
-`;
-
-const ViewButton = styled.p`
-  font-weight: 600;
-  display: ${(props) => (props.cartPage ? 'none' : 'flex')};
-  justify-content: center;
-  align-items: center;
-  height: 0;
-  cursor: pointer;
-  padding: 6px 8px;
-  border-radius: 4px;
-  line-height: 1.75;
-  letter-spacing: 0.02em;
-  transition: all 0.3s;
-  &:hover {
-    color: var(--clr-mocha);
-    background-color: var(--clr-mocha-hover);
-  }
-  ${mobile({ display: 'none' })}
-`;
-
-const HeaderContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const ItemsContainer = styled.div`
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: 2rem;
-  border-bottom: ${(props) =>
-    props.cartPage ? 'none' : '2px solid var(--clr-border)'};
-  ${mobile({ flexDirection: 'column' })}
-`;

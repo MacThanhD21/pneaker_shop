@@ -8,6 +8,13 @@ import RegisterPage from './RegisterPage';
 import ShopPage from './ShopPage';
 import PaymentPage from './PaymentPage';
 import AboutPage from './AboutPage';
+import Help from './Help';
+import ReturnPolicy from './ReturnPolicy';
+import PaymentPolicy from './PaymentPolicy';
+import Terms from './Terms';
+import Careers from './Careers';
+import News from './News';
+import SpaServices from './SpaServices';
 
 export {
   HomePage,
@@ -19,5 +26,12 @@ export {
   ErrorPage,
   OrderPage,
   PaymentPage,
-  AboutPage
+  AboutPage,
+  Help,
+  ReturnPolicy,
+  PaymentPolicy,
+  Terms,
+  Careers,
+  News,
+  SpaServices
 };

@@ -67,6 +67,8 @@ const GET_PRODUCTS_BY_TITLE = gql`
     getProductsByTitle(searchQuery: $searchQuery) {
       title
       id
+      image
+      price
     }
   }
 `;

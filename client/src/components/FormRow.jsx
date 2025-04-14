@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 
 const FormRow = ({
   labelText,
@@ -13,11 +12,12 @@ const FormRow = ({
   exampleText,
 }) => {
   return (
-    <Wrapper>
-      <Label>{labelText}</Label>
-      {exampleText && <Example>{exampleText}</Example>}
-
-      <Input
+    <div className="mb-4">
+      <h3 className="text-primary-600 font-medium">{labelText}</h3>
+      {exampleText && (
+        <p className="text-gray-400 text-sm mt-1">{exampleText}</p>
+      )}
+      <input
         name={name}
         value={value}
         type={type}
@@ -25,29 +25,10 @@ const FormRow = ({
         min={min}
         max={max}
         step={step}
+        className="w-full px-3 py-2 mt-[-2rem] rounded border border-gray-300 bg-transparent text-base font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-200"
       />
-    </Wrapper>
+    </div>
   );
 };
 
 export default FormRow;
-
-const Wrapper = styled.div``;
-const Label = styled.h3`
-  color: var(--clr-primary-2);
-`;
-const Input = styled.input`
-  margin-top: -2rem;
-  border-radius: 0.25rem;
-  padding: 0.357rem 0.75rem;
-  border: 1px solid var(--clr-gray);
-  background-color: transparent;
-  font-size: 100%;
-  line-height: 1.15;
-  width: 100%;
-  font-weight: 500;
-`;
-
-const Example = styled.p`
-  color: var(--clr-gray-4);
-`;

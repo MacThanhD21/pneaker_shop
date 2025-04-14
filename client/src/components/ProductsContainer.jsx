@@ -1,105 +1,53 @@
 import React from 'react';
-import styled from 'styled-components';
-
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import Stars from './Stars';
 import { Link } from 'react-router-dom';
-import { mobile } from '../responsive';
 import { formatVNDPrice } from '../utils/formatPrice';
 
 const ProductsContainer = ({ title, image, price, rates, id }) => {
   return (
-    <>
-      <Wrapper>
-        <Link to={`/shop/${id}`}>
-          <ImageContainer>
-            <Image src={image} />
-          </ImageContainer>
+    <div className="w-64 min-h-[420px] flex-shrink-0 mx-2">
+      <div className="relative h-full bg-white rounded-2xl p-5 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden group border border-pink-100">
+        {/* Top Border Accent */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 via-rose-400 to-pink-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-          <Title>{title}</Title>
+        {/* Image */}
+        <Link to={`/shop/${id}`} className="block">
+          <div className="bg-pink-50 rounded-xl p-4 mb-4 shadow-sm group-hover:shadow-md transition-all duration-300">
+            <img 
+              src={image} 
+              alt={title}
+              className="w-3/5 mx-auto object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-105"
+            />
+          </div>
+
+          {/* Title */}
+          <h3 className="text-black font-semibold text-base text-center mb-2 line-clamp-2 group-hover:text-red-600 transition-colors duration-300 relative">
+            {title}
+            <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-0.5 bg-rose-500 opacity-0 group-hover:opacity-100 transition-all duration-300"></span>
+          </h3>
         </Link>
-        <InfoContainer>
-          <RatesContainer>
-            <Stars stars={rates} />
-          </RatesContainer>
-        </InfoContainer>
 
-        <PriceContainer>
+        {/* Rating */}
+        <div className="flex justify-center mb-3 text-rose-500">
+          <Stars stars={rates} />
+        </div>
+
+        {/* Price & Button */}
+        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
           <Link to={`/shop/${id}`}>
-            <Button>
-              Buy <AddShoppingCartIcon style={{ fontSize: '18px' }} />
-            </Button>
+            <button className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-md text-sm font-medium shadow hover:bg-rose-600 transition-all duration-300">
+              Buy <AddShoppingCartIcon className="text-base" />
+            </button>
           </Link>
-          <Price>{formatVNDPrice(price)}</Price>
-        </PriceContainer>
-      </Wrapper>
-    </>
+          
+          <p className="text-red-600 text-lg font-bold">
+            {formatVNDPrice(price)}
+          </p>
+        </div>
+      </div>
+    </div>
   );
 };
 
 export default ProductsContainer;
-
-const Wrapper = styled.div`
-  background-color: #fff;
-  border-radius: 16px;
-  margin-right: 2rem;
-  padding: 0px 1rem;
-  width: 100%;
-  margin-bottom: 2rem;
-  ${mobile({ minWidth: '350px' })}
-`;
-const ImageContainer = styled.div`
-  display: flex;
-  justify-content: center;
-`;
-const Image = styled.img`
-  width: 50%;
-`;
-const InfoContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-const Title = styled.p`
-  color: var(--clr-primary);
-  margin-bottom: 1rem;
-  text-align: center;
-  width: 100%;
-  font-weight: 500;
-  text-decoration: underline;
-`;
-const RatesContainer = styled.div`
-  display: flex;
-  align-items: center;
-  color: var(--clr-primary);
-`;
-
-const PriceContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-`;
-
-const Button = styled.button`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 4rem;
-  background: none;
-  border: 1px solid lightgray;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 0.3s;
-  cursor: pointer;
-  &:hover {
-    color: black;
-    background-color: var(--clr-mocha-hover);
-  }
-  padding: 0.4rem 0.4rem;
-`;
-const Price = styled.p`
-  color: var(--clr-red);
-  font-size: 22px;
-`;

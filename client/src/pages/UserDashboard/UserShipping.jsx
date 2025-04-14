@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import styled from 'styled-components';
 import Loading from '../../assets/mui/Loading';
-import { mobile } from '../../responsive';
 import EditingShipping from './EditingShipping';
+
 const UserShipping = () => {
   const [isEditing, setIsEditing] = useState(false);
   const { userInfo, isLoading } = useSelector((state) => state.user);
@@ -21,112 +20,59 @@ const UserShipping = () => {
         <EditingShipping
           toggleEdit={toggleEdit}
           title='Shipping Update'
-          InfoContainer={InfoContainer}
-          Wrapper={Wrapper}
-          TitleContainer={TitleContainer}
-          Title={Title}
-          EditButton={EditButton}
-          Info={Info}
-          Label={Label}
-          Value={Value}
           userInfo={userInfo}
         />
       ) : (
-        <Wrapper>
-          <TitleContainer>
-            <Title>Shipping Info</Title>
-            <EditButton onClick={toggleEdit}>Edit</EditButton>
-          </TitleContainer>
+        <div className="flex w-[80%] flex-col p-8 mx-12 my-8 bg-white rounded-lg shadow-sm border border-rose-100/50">
+          <div className="flex w-full justify-between items-center pb-4 border-b border-rose-200/50">
+            <h2 className="text-2xl font-bold text-rose-800">Shipping Info</h2>
+            <button 
+              onClick={toggleEdit}
+              className="w-[10%] h-10 bg-rose-800 text-white rounded-md transition-all duration-300 hover:bg-rose-700 text-sm tracking-wide md:w-[25%]"
+            >
+              Edit
+            </button>
+          </div>
           {isLoading ? (
             <Loading />
           ) : (
-            <InfoContainer>
-              <Info>
-                <Label>Address</Label>
-                <Value>{address || 'Not defined yet'}</Value>
-              </Info>
-              <Info>
-                <Label>City</Label>
-                <Value>{city || 'Not defined yet'}</Value>
-              </Info>
-              <Info>
-                <Label>State/Region</Label>
-                <Value>{country || 'Not defined yet'}</Value>
-              </Info>
-              <Info>
-                <Label>Zip/Postal Code</Label>
-                <Value>{postalCode || 'Not defined yet'}</Value>
-              </Info>
-              <Info>
-                <Label>Phone Number</Label>
-                <Value>{phoneNumber || 'Not defined yet'}</Value>
-              </Info>
-            </InfoContainer>
+            <div className="grid grid-cols-2 gap-6 mt-6 md:grid-cols-1">
+              <div className="flex flex-col space-y-2">
+                <h3 className="text-sm font-medium text-rose-800">Address</h3>
+                <p className="w-full px-4 py-2.5 text-base text-gray-700 bg-gray-50 rounded-md">
+                  {address || 'Not defined yet'}
+                </p>
+              </div>
+              <div className="flex flex-col space-y-2">
+                <h3 className="text-sm font-medium text-rose-800">City</h3>
+                <p className="w-full px-4 py-2.5 text-base text-gray-700 bg-gray-50 rounded-md">
+                  {city || 'Not defined yet'}
+                </p>
+              </div>
+              <div className="flex flex-col space-y-2">
+                <h3 className="text-sm font-medium text-rose-800">State/Region</h3>
+                <p className="w-full px-4 py-2.5 text-base text-gray-700 bg-gray-50 rounded-md">
+                  {country || 'Not defined yet'}
+                </p>
+              </div>
+              <div className="flex flex-col space-y-2">
+                <h3 className="text-sm font-medium text-rose-800">Zip/Postal Code</h3>
+                <p className="w-full px-4 py-2.5 text-base text-gray-700 bg-gray-50 rounded-md">
+                  {postalCode || 'Not defined yet'}
+                </p>
+              </div>
+              <div className="flex flex-col space-y-2">
+                <h3 className="text-sm font-medium text-rose-800">Phone Number</h3>
+                <p className="w-full px-4 py-2.5 text-base text-gray-700 bg-gray-50 rounded-md">
+                  {phoneNumber || 'Not defined yet'}
+                </p>
+              </div>
+            </div>
           )}
-        </Wrapper>
+        </div>
       )}
     </>
   );
 };
 
 export default UserShipping;
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 80%;
-  margin: 2rem 3rem;
-  ${mobile({ padding: '1rem', margin: '0 auto', height: '80vh' })}
-`;
-const TitleContainer = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 2px solid var(--clr-border);
-`;
-
-const Title = styled.h2`
-  color: var(--clr-primary-2);
-`;
-
-const EditButton = styled.button`
-  width: 10%;
-  height: 5vh;
-  background: transparent;
-  border: none;
-  background-color: var(--clr-primary-2);
-  cursor: pointer;
-  transition: all 0.3s;
-  color: white;
-  font-size: 14px;
-  letter-spacing: 0.5px;
-  ${mobile({ width: '25%' })}
-  &:hover {
-    background-color: var(--clr-primary);
-  }
-`;
-
-const Label = styled.h3`
-  color: var(--clr-primary-2);
-`;
-const Value = styled.p`
-  margin-top: -20px;
-  .reset-btn {
-    min-width: 30%;
-    margin-top: 0.5rem;
-  }
-`;
-
-const InfoContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-  height: 30vh;
-`;
-
-const Info = styled.div`
-  flex: 50%;
-  flex-direction: column;
-  ${mobile({ flex: '100%' })}
-`;

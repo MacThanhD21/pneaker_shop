@@ -6,6 +6,7 @@ import { useQuery } from '@apollo/client';
 import { GET_USER_ORDER } from '../../graphql/Queries/orderQueries';
 import Loading from '../../assets/mui/Loading';
 import MuiError from '../../assets/mui/Alert';
+import moment from 'moment';
 
 const PurchaseHistory = () => {
   const { loading, error, data } = useQuery(GET_USER_ORDER);
@@ -23,6 +24,13 @@ const PurchaseHistory = () => {
     }
   }, [ordersLength, navigate, loading]);
 
+  // Sắp xếp các đơn hàng theo thời gian mua gần nhất
+  const sortedOrders = data?.getUserOrders ? [...data.getUserOrders].sort((a, b) => {
+    const dateA = moment(a.datePurchased);
+    const dateB = moment(b.datePurchased);
+    return dateB.diff(dateA);
+  }) : [];
+
   return (
     <>
       <Wrapper>
@@ -32,10 +40,9 @@ const PurchaseHistory = () => {
           <MuiError type='error' value={'Please try again later..'} />
         ) : (
           <div>
-            {data &&
-              data?.getUserOrders?.map((c, index) => {
-                return <OrderComponent key={index} {...c} />;
-              })}
+            {sortedOrders.map((c, index) => {
+              return <OrderComponent key={index} {...c} />;
+            })}
           </div>
         )}
       </Wrapper>

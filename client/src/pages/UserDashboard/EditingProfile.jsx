@@ -1,203 +1,141 @@
-import { useMutation } from '@apollo/client';
-import styled from 'styled-components';
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import SizeSelection from '../../assets/mui/SizeSelection';
+import { useDispatch, useSelector } from 'react-redux';
 import { UPDATE_USER } from '../../graphql/Mutations/userMutations';
-import { useForm } from '../../utils/customHooks';
+import { useMutation } from '@apollo/client';
 import { updateUser } from '../../features/userSlice';
 import Loading from '../../assets/mui/Loading';
-import MuiError from '../../assets/mui/Alert';
 
-const EditingProfile = ({
-  toggleEdit,
-  title,
-  InfoContainer,
-  Wrapper,
-  TitleContainer,
-  Title,
-  EditButton,
-  Info,
-  Label,
-  userInfo,
-}) => {
-  const initialState = {
-    username: userInfo.username,
-    email: userInfo.email,
+const EditingProfile = ({ toggleEdit, title, userInfo }) => {
+  const [formData, setFormData] = useState({
     firstName: userInfo.firstName || '',
     lastName: userInfo.lastName || '',
-    shoeSize: userInfo.shoeSize || null,
-  };
-
-  const [errors, setErrors] = useState({});
-  const dispatch = useDispatch();
-
-  let sizes = [];
-  for (let i = 37; i <= 47; i += 1) {
-    sizes.push(i);
-  }
-
-  const { onChange, onSubmit, values } = useForm(updateUserCallback, initialState);
-
-  const [update, { loading }] = useMutation(UPDATE_USER, {
-    update(_, data) {
-      dispatch(updateUser(data.data.updateUser));
-      toggleEdit();
-    },
-    onError(err) {
-      setErrors({ form: err.message });
-    },
-    variables: values,
+    email: userInfo.email || '',
+    username: userInfo.username || '',
+    shoeSize: userInfo.shoeSize || '',
   });
 
-  function updateUserCallback() {
-    // Validate fields
-    const validationErrors = validateFields(values);
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return; // Không tiếp tục nếu có lỗi
-    }
-    update();
-  }
+  const [updateUserMutation, { loading }] = useMutation(UPDATE_USER);
+  const dispatch = useDispatch();
+  const { userInfo: currentUser } = useSelector((state) => state.user);
 
-  const validateFields = (values) => {
-    const errors = {};
-
-    // Kiểm tra first name
-    if (!values.firstName.trim()) {
-      errors.firstName = 'First name is required';
-    } else if (!/^[A-Za-z\s]+$/.test(values.firstName)) {
-      errors.firstName = 'First name must contain only letters and spaces';
-    } else if (values.firstName.length < 2 || values.firstName.length > 50) {
-      errors.firstName = 'First name must be between 2 and 50 characters';
-    }
-
-    // Kiểm tra last name
-    if (!values.lastName.trim()) {
-      errors.lastName = 'Last name is required';
-    } else if (!/^[A-Za-z\s]+$/.test(values.lastName)) {
-      errors.lastName = 'Last name must contain only letters and spaces';
-    } else if (values.lastName.length < 2 || values.lastName.length > 50) {
-      errors.lastName = 'Last name must be between 2 and 50 characters';
-    }
-
-    return errors;
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  return (
-    <>
-      <Wrapper>
-        <TitleContainer>
-          <Title>{title}</Title>
-          <EditButton onClick={toggleEdit}>Cancel</EditButton>
-        </TitleContainer>
-        <InfoContainer>
-          <Form onSubmit={onSubmit}>
-            <Info>
-              <Label>First name</Label>
-              <Input
-                type='text'
-                name='firstName'
-                value={values.firstName}
-                onChange={onChange}
-              />
-              {errors.firstName && <ErrorText>{errors.firstName}</ErrorText>}
-            </Info>
-            <Info>
-              <Label>Last Name</Label>
-              <Input
-                type='text'
-                name='lastName'
-                value={values.lastName}
-                onChange={onChange}
-              />
-              {errors.lastName && <ErrorText>{errors.lastName}</ErrorText>}
-            </Info>
-            <Info>
-              <Label>Email Address</Label>
-              <Input
-                type='email'
-                name='email'
-                value={values.email}
-                onChange={onChange}
-              />
-            </Info>
-            <Info>
-              <Label>Shoe Size(US)</Label>
-              <SizeSelection
-                width={'50%'}
-                sizes={sizes}
-                value={values.shoeSize}
-                name='shoeSize'
-                onChange={onChange}
-              />
-            </Info>
-            <Info>
-              <Label>Username</Label>
-              <Input
-                type='text'
-                name='username'
-                value={values.username}
-                onChange={onChange}
-              />
-            </Info>
-            <Info>
-              <Label>
-                {loading ? (
-                  <Loading />
-                ) : (
-                  <SubmitButton type='submit'>Submit</SubmitButton>
-                )}
-              </Label>
-            </Info>
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await updateUserMutation({
+        variables: {
+          userId: currentUser.id,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          username: formData.username,
+          shoeSize: formData.shoeSize,
+        },
+      });
 
-            {errors.form && <MuiError value={errors.form} type='error' />}
-          </Form>
-        </InfoContainer>
-      </Wrapper>
-    </>
+      if (data.updateUser) {
+        dispatch(updateUser(data.updateUser));
+        toggleEdit();
+      }
+    } catch (error) {
+      console.error('Error updating user:', error);
+    }
+  };
+
+  // Generate shoe sizes from 37 to 47
+  const shoeSizes = Array.from({ length: 11 }, (_, i) => i + 37);
+
+  return (
+    <div className="flex w-[80%] flex-col p-8 mx-12 my-8 bg-white rounded-lg shadow-sm border border-rose-100/50">
+      <div className="flex w-full justify-between items-center pb-4 border-b border-rose-200/50">
+        <h2 className="text-2xl font-bold text-rose-800">{title}</h2>
+        <button 
+          onClick={toggleEdit}
+          className="w-[10%] h-10 bg-rose-800 text-white rounded-md transition-all duration-300 hover:bg-rose-700 text-sm tracking-wide md:w-[25%]"
+        >
+          Cancel
+        </button>
+      </div>
+
+      {loading ? (
+        <Loading />
+      ) : (
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6 mt-6 md:grid-cols-1">
+          <div className="flex flex-col space-y-2">
+            <label className="text-sm font-medium text-rose-800">First Name</label>
+            <input
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              className="w-full px-4 py-2.5 text-base border border-rose-200 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
+              placeholder="Enter your first name"
+            />
+          </div>
+          <div className="flex flex-col space-y-2">
+            <label className="text-sm font-medium text-rose-800">Last Name</label>
+            <input
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              className="w-full px-4 py-2.5 text-base border border-rose-200 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
+              placeholder="Enter your last name"
+            />
+          </div>
+          <div className="flex flex-col space-y-2">
+            <label className="text-sm font-medium text-rose-800">Email Address</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full px-4 py-2.5 text-base border border-rose-200 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
+              placeholder="Enter your email"
+            />
+          </div>
+          <div className="flex flex-col space-y-2">
+            <label className="text-sm font-medium text-rose-800">Username</label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              className="w-full px-4 py-2.5 text-base border border-rose-200 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
+              placeholder="Enter your username"
+            />
+          </div>
+          <div className="flex flex-col space-y-2">
+            <label className="text-sm font-medium text-rose-800">Shoe Size(US)</label>
+            <select
+              name="shoeSize"
+              value={formData.shoeSize}
+              onChange={handleChange}
+              className="w-full px-4 py-2.5 text-base border border-rose-200 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
+            >
+              <option value="">Select size</option>
+              {shoeSizes.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="col-span-2 flex justify-end mt-6">
+            <button
+              type="submit"
+              className="px-8 py-2.5 bg-rose-800 text-white rounded-md transition-all duration-300 hover:bg-rose-700 text-base font-medium"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      )}
+    </div>
   );
 };
 
 export default EditingProfile;
-
-const Input = styled.input`
-  margin-top: -2rem;
-  border-radius: 0.25rem;
-  padding: 0.357rem 0.75rem;
-  border: 1px solid var(--clr-gray);
-  background-color: transparent;
-  font-size: 100%;
-  line-height: 1.15;
-  font-weight: 500;
-`;
-
-const SubmitButton = styled.button`
-  height: 5vh;
-  margin-top: 1.8rem;
-  min-width: 50%;
-  background: transparent;
-  border: none;
-  background-color: var(--clr-primary-2);
-  cursor: pointer;
-  transition: all 0.3s;
-  color: white;
-  font-size: 14px;
-  letter-spacing: 0.5px;
-  &:hover {
-    background-color: var(--clr-primary);
-  }
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-  height: 30vh;
-`;
-
-const ErrorText = styled.p`
-  color: red;
-  font-size: 12px;
-  margin-top: 0.5rem;
-`;

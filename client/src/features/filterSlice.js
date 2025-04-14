@@ -8,12 +8,16 @@ const filterSlice = createSlice({
     price: [],
     sort: null,
     color: null,
+    searchQuery: '',
     gridView: true,
     listView: false,
     mobileMenu: false,
   },
 
   reducers: {
+    setSearchQuery: (state, action) => {
+      state.searchQuery = action.payload;
+    },
     addSize: (state, action) => {
       state.size = action.payload;
     },
@@ -46,6 +50,7 @@ const filterSlice = createSlice({
       state.price = [];
       state.sort = null;
       state.color = null;
+      state.searchQuery = '';
     },
     removeSizeFilter: (state, action) => {
       state.size = null;
@@ -63,6 +68,7 @@ const filterSlice = createSlice({
 });
 
 export const {
+  setSearchQuery,
   addSize,
   addBrand,
   addPrice,

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import ClearIcon from '@mui/icons-material/Clear';
 import Stars from './Stars';
 import { useMutation, useQuery } from '@apollo/client';
@@ -9,7 +8,6 @@ import { useSelector } from 'react-redux';
 import { DELETE_FROM_CART } from '../graphql/Mutations/cartMutations';
 import { GET_USER_CART } from '../graphql/Queries/cartQueries';
 import MuiError from '../assets/mui/Alert';
-import { mobile } from '../responsive';
 import { formatVNDPrice } from '../utils/formatPrice';
 
 const CartItems = ({ productId, size, id, orderPage, historyPage, isSelected, onSelect, onDisableCheckbox }) => {
@@ -37,197 +35,59 @@ const CartItems = ({ productId, size, id, orderPage, historyPage, isSelected, on
 
   const { image, title, model, price } = cartItems;
 
-  return (
-    <>
-      <Container>
-        <Wrapper orderPage={orderPage}>
-          {loading ? (
-            <Loading />
-          ) : deleteLoading ? (
-            <Loading />
-          ) : deleteError ? (
-            <MuiError
-              type='error'
-              value={'Something went wrong.. Please try again later'}
-            />
-          ) : (
-            <ItemContainer>
-              { !onDisableCheckbox && (
-                <CheckboxContainer>
-                  <input
-                    type="checkbox"
-                    checked={isSelected}
-                    onChange={onSelect}
-                    id={`item-${id}`}
-                  />
-                </CheckboxContainer>
-              )}
-              <ImageContainer>
-                <Image src={image} />
-              </ImageContainer>
-              <InfoContainer>
-                <Title>{title} </Title>
-                <Model>{model}</Model>
-                <Size>{`Sizes: ${size} US`}</Size>
+  if (loading || deleteLoading) return <Loading />;
+  if (deleteError) return <MuiError type='error' value={'Something went wrong.. Please try again later'} />;
 
-                <Qty>{`Qty: ${size?.length}`}</Qty>
-              </InfoContainer>
-            </ItemContainer>
+  return (
+    <div className="mb-4">
+      <div className="flex bg-white w-full rounded-lg shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+        <div className="flex w-full items-center p-4">
+          {!onDisableCheckbox && (
+            <div className="flex items-center px-4">
+              <input
+                type="checkbox"
+                checked={isSelected}
+                onChange={onSelect}
+                id={`item-${id}`}
+                className="w-4 h-4 cursor-pointer accent-primary-500"
+              />
+            </div>
           )}
-          {historyPage ? (
-            <SaleInfo>
-              <h4>Sale Info:</h4>
-              <div className='info'>
-                Date Purchased: <span>21/11/2021</span>
-              </div>
-              <div className='info'>
-                Day: <span>Sunday</span>
-              </div>
-              <div className='rating-container'>
-                <h3>Rate this item</h3>
-                <Stars />
-              </div>
-            </SaleInfo>
-          ) : (
-            <PriceContainer>
-              {loading ? (
-                ''
-              ) : deleteLoading ? (
-                ''
-              ) : deleteError ? (
-                ''
-              ) : (
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-evenly',
-                    flexDirection: 'column',
-                  }}
-                >
-                  {orderPage ? (
-                    ''
-                  ) : (
-                    <ClearIcon
-                      className='icon'
-                      onClick={() => deleteProduct()}
-                    />
-                  )}
-                  <Price>{formatVNDPrice(price * size?.length)}</Price>
-                </div>
+          
+          <div className="mr-4">
+            <img 
+              src={image} 
+              alt={title}
+              className="w-24 h-24 md:w-24 md:h-24 object-cover rounded"
+            />
+          </div>
+
+          <div className="flex-1 mr-4">
+            <h4 className="text-base text-gray-900 font-medium">{title}</h4>
+            <p className="text-sm text-gray-500 mt-1">{model}</p>
+            <div className="flex gap-4 mt-2">
+              <p className="text-sm text-gray-900">Size: {size}</p>
+              <p className="text-sm text-gray-900">Số lượng: {size?.length}</p>
+            </div>
+          </div>
+
+          <div className="flex items-center px-4">
+            <div className="flex flex-col items-end gap-2">
+              {!orderPage && (
+                <ClearIcon
+                  className="text-gray-400 hover:text-red-500 hover:bg-gray-100 rounded-full p-1 cursor-pointer transition-colors duration-300"
+                  onClick={() => deleteProduct()}
+                />
               )}
-            </PriceContainer>
-          )}
-        </Wrapper>
-      </Container>
-    </>
+              <h2 className="text-lg text-primary-500 font-semibold">
+                {formatVNDPrice(price * size?.length)}
+              </h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
 export default CartItems;
-
-const Container = styled.div``;
-const Wrapper = styled.div`
-  display: flex;
-  background-color: #fff;
-  width: 100%;
-  margin: 2rem 0 0;
-  border-radius: 1rem;
-`;
-const ItemContainer = styled.div`
-  display: flex;
-  width: 100%;
-  min-width: 290px;
-  justify-content: space-evenly;
-`;
-const ImageContainer = styled.div``;
-const Image = styled.img`
-  width: 180px;
-  ${mobile({ width: '120px', marginTop: '1rem' })}
-`;
-const InfoContainer = styled.div`
-  width: ${(props) => (props.historyPage ? '60%' : '40%')};
-  margin-top: 1rem;
-`;
-
-const Title = styled.h4``;
-const Model = styled.p`
-  font-size: 14px;
-  color: var(--clr-gray);
-  margin-top: -1rem;
-`;
-const Size = styled.p`
-  font-size: 14px;
-  font-weight: 500;
-  /* color: var(--clr-gray); */
-  margin-top: 0.5rem;
-`;
-
-const Qty = styled.p`
-  font-size: 14px;
-  font-weight: 500;
-`;
-
-const Price = styled.h2`
-  color: var(--clr-red);
-  align-self: end;
-  margin-right: 2rem;
-  ${mobile({
-    margin: '0.5rem',
-    padding: '0',
-  })}
-`;
-
-const PriceContainer = styled.div`
-  display: ${(props) => (props.historyPage ? 'none' : 'flex')};
-  width: 10%;
-  margin-top: 0.5rem;
-  flex-direction: column;
-  justify-content: space-around;
-
-  .icon {
-    transition: all 0.3s;
-    color: var(--clr-gray);
-    cursor: pointer;
-    font-size: 22px;
-    &:hover {
-      color: red;
-    }
-  }
-`;
-
-const SaleInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  border-left: 1px solid var(--clr-border);
-  width: 60%;
-  padding-top: 1rem;
-  padding-left: 1rem;
-  h4 {
-  }
-  .info {
-    display: flex;
-    width: 85%;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-  }
-  .rating-container {
-    display: flex;
-    width: 95%;
-    justify-content: space-between;
-    h3 {
-      font-weight: 600;
-    }
-  }
-`;
-
-const CheckboxContainer = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 0 1rem;
-  
-  input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-  }
-`;

@@ -1,100 +1,47 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import styled from 'styled-components';
 import { sidebarLinks, adminSidebarLinks } from '../utils/constants';
 import { useLogout } from '../utils/customHooks';
-import { mobile } from '../responsive';
+
 const LeftSidebar = ({ admin }) => {
   const { userInfo } = useSelector((state) => state.user);
   const { handleLogout } = useLogout();
-
   const mapValue = admin ? adminSidebarLinks : sidebarLinks;
 
   return (
-    <Wrapper>
-      <UserTitle>
-        {`Hello ${userInfo.firstName ? userInfo.firstName : userInfo.username}`}
-      </UserTitle>
-      {mapValue?.map((link) => {
-        const { name, id, icon, path, handler } = link;
-        return (
-          <LinksContainer key={id}>
-            <SidebarLink>
+    <div className="hidden md:block w-[30%] h-[75vh] bg-gradient-to-b from-rose-50 to-rose-100/50 rounded-lg shadow-sm border border-rose-100/50 transition-all duration-300">
+      <div className="p-6">
+        <h2 className="text-2xl font-medium text-rose-800 text-center tracking-wide">
+          Hello {userInfo.firstName ? userInfo.firstName : userInfo.username}
+        </h2>
+      </div>
+      
+      <div className="flex flex-col space-y-2 px-4">
+        {mapValue?.map((link) => {
+          const { name, id, icon, path, handler } = link;
+          return (
+            <div key={id} className="w-full">
               <NavLink
-                activeclassname='active'
-                style={{
-                  display: 'flex',
-                  width: '100%',
-                }}
-                to={`${path}`}
+                to={path}
                 onClick={() => handler && handleLogout()}
+                className={({ isActive }) => 
+                  `flex items-center w-full p-3 rounded-lg transition-all duration-300
+                  ${isActive 
+                    ? 'bg-rose-800 text-white shadow-md' 
+                    : 'text-rose-800 hover:bg-rose-200/50 hover:shadow-sm'
+                  }`
+                }
               >
-                <Icon>{icon}</Icon>
-                <LinkTitle>{name}</LinkTitle>
+                <span className="mr-3 text-lg">{icon}</span>
+                <span className="font-medium">{name}</span>
               </NavLink>
-            </SidebarLink>
-          </LinksContainer>
-        );
-      })}
-    </Wrapper>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 };
 
 export default LeftSidebar;
-
-const Wrapper = styled.div`
-  background-color: var(--clr-gray-3);
-  width: 30%;
-  height: 75vh;
-  transition: all 0.3s;
-  border-radius: 0.25rem;
-  ${mobile({ display: 'none' })}
-`;
-
-const UserTitle = styled.h2`
-  padding: 1rem;
-  text-align: center;
-  font-weight: 500;
-  font-size: 24px;
-  letter-spacing: 0.5px;
-  color: var(--clr-primary-2);
-`;
-
-const LinksContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  cursor: pointer;
-  width: 100%;
-  .active {
-    background-color: var(--clr-light-gray);
-    width: 100%;
-    border-radius: 0.25rem;
-    padding-left: 10px;
-    transition: all 0.2s;
-  }
-`;
-
-const SidebarLink = styled.div`
-  display: flex;
-  width: 80%;
-  height: auto;
-  align-items: center;
-  transition: all 0.3s;
-  margin-bottom: 0.6rem;
-  border-radius: 0.25rem;
-
-  cursor: pointer;
-  &:hover {
-    padding-left: 10px;
-    background-color: var(--clr-light-gray);
-  }
-`;
-
-const LinkTitle = styled.h4`
-  font-weight: 500;
-`;
-
-const Icon = styled.p`
-  padding-right: 2.5px;
-`;

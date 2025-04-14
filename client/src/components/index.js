@@ -34,6 +34,11 @@ import NewArrivals from './NewArrivals';
 import ShoeCareTips from './ShoeCareTips';
 import SpecialOffers from './SpecialOffers';
 import FadeInSection from './FadeInSection';
+import PopupBanner from './PopupBanner';
+import SummerCollectionBanner from './SummerCollectionBanner';
+import LimitedEditionBanner from './LimitedEditionBanner';
+import TrendingBanner from './TrendingBanner';
+
 
 export {
   Logo,
@@ -70,5 +75,9 @@ export {
   NewArrivals,
   ShoeCareTips,
   SpecialOffers,
-  FadeInSection
+  FadeInSection,
+  PopupBanner,
+  SummerCollectionBanner,
+  LimitedEditionBanner,
+  TrendingBanner
 };

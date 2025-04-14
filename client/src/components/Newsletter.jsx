@@ -1,18 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import axios from 'axios';
 
 const Newsletter = () => {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState(''); // 'success', 'error', 'loading'
   const [message, setMessage] = useState('');
+  const [subscribedEmails, setSubscribedEmails] = useState([]);
+
+  // Load subscribed emails from localStorage on component mount
+  useEffect(() => {
+    const savedEmails = localStorage.getItem('newsletterSubscribers');
+    if (savedEmails) {
+      setSubscribedEmails(JSON.parse(savedEmails));
+    }
+  }, []);
 
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     
     // Validate email
@@ -22,20 +30,35 @@ const Newsletter = () => {
       return;
     }
 
+    // Check if email is already subscribed
+    if (subscribedEmails.includes(email)) {
+      setStatus('error');
+      setMessage('Email này đã được đăng ký trước đó');
+      return;
+    }
+
     // Set loading state
     setStatus('loading');
     setMessage('Đang xử lý...');
 
-    try {
-      const response = await axios.post('/api/newsletter/subscribe', { email });
-      
-      setStatus('success');
-      setMessage(response.data.message);
-      setEmail(''); // Reset form
-    } catch (error) {
-      setStatus('error');
-      setMessage(error.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại sau.');
-    }
+    // Simulate API call delay
+    setTimeout(() => {
+      try {
+        // Add new email to the list
+        const updatedEmails = [...subscribedEmails, email];
+        setSubscribedEmails(updatedEmails);
+        
+        // Save to localStorage
+        localStorage.setItem('newsletterSubscribers', JSON.stringify(updatedEmails));
+        
+        setStatus('success');
+        setMessage('Đăng ký thành công! Cảm ơn bạn đã quan tâm.');
+        setEmail(''); // Reset form
+      } catch (error) {
+        setStatus('error');
+        setMessage('Có lỗi xảy ra, vui lòng thử lại sau.');
+      }
+    }, 1000);
   };
 
   return (

@@ -1,30 +1,19 @@
 import React from 'react';
 import ProductsContainer from './ProductsContainer';
-import styled from 'styled-components';
-import { mobile } from '../responsive';
+
 const GridView = ({ data }) => {
   return (
-    <Wrapper>
+    <div className="grid grid-cols-3 gap-2 w-full px-6 max-w-7xl mx-auto
+      md:grid-cols-3 md:px-4 md:gap-4
+      sm:grid-cols-2 sm:px-3 sm:gap-3">
       {data &&
         data.map((product) => (
-          <Product key={product.id}>
+          <div key={product.id} className="flex justify-center w-full h-full">
             <ProductsContainer {...product} />
-          </Product>
+          </div>
         ))}
-    </Wrapper>
+    </div>
   );
 };
 
 export default GridView;
-const Wrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  width: 100%;
-  margin-left: 3rem;
-  margin-top: 1.5rem;
-  ${mobile({ display: 'flex', flexDirection: 'column', margin: '1rem auto' })}
-`;
-
-const Product = styled.div`
-  display: flex;
-`;

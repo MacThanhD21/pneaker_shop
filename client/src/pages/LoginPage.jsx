@@ -1,7 +1,6 @@
 import { useMutation } from '@apollo/client';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
 import { Logo } from '../components';
 import image from '../assets/items/sneaker.jpg'
 import { LOGIN_USER } from '../graphql/Mutations/userMutations';
@@ -33,19 +32,20 @@ const LoginPage = () => {
   });
 
   function loginUserCallback() {
-    console.log(values)
     login();
   }
 
   return (
-    <Wrapper>
-      <Container>
-        <FormSection>
-          <div className='logo'>
+    <div className="flex justify-center items-center min-h-screen bg-gray-50">
+      <div className="flex w-[80%] max-w-6xl h-[600px] shadow-lg rounded-lg overflow-hidden">
+        <div className="flex-1 p-10 flex flex-col bg-white">
+          <div className="flex justify-center mb-6">
             <Logo />
           </div>
-          <Title>Login</Title>
-          <Form onSubmit={onSubmit}>
+          <h1 className="text-3xl font-semibold text-rose-800 text-center tracking-wide mb-8">
+            Login
+          </h1>
+          <form onSubmit={onSubmit} className="flex flex-col w-full space-y-4">
             {loading && <Loading />}
 
             {error?.message === 'Failed to fetch' && (
@@ -54,152 +54,70 @@ const LoginPage = () => {
                 type='error'
               />
             )}
-            <Label>Username</Label>
-            <Input
-              type='text'
-              name='username'
-              value={values.username || ''}
-              onChange={onChange}
-              className={errors?.username ? 'error' : ''}
-            />
-            <Label>Password</Label>
-            <Input
-              type='password'
-              name='password'
-              value={values.password || ''}
-              onChange={onChange}
-              className={errors?.password ? 'error' : ''}
-            />
-            <Button disabled={loading} type='submit'>
-              Submit
-            </Button>
-          </Form>
-          <Member>
-            Not a member yet?
-            <Link to='/register'>
-              <span> Register</span>
+            <div className="flex flex-col space-y-2">
+              <label className="text-sm font-medium text-gray-700 tracking-wide">
+                Username
+              </label>
+              <input
+                type='text'
+                name='username'
+                value={values.username || ''}
+                onChange={onChange}
+                className={`w-full px-4 py-2.5 text-base text-gray-700 bg-gray-50 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 ${
+                  errors?.username ? 'bg-red-50 border-red-200' : ''
+                }`}
+                placeholder="Enter your username"
+              />
+            </div>
+            <div className="flex flex-col space-y-2">
+              <label className="text-sm font-medium text-gray-700 tracking-wide">
+                Password
+              </label>
+              <input
+                type='password'
+                name='password'
+                value={values.password || ''}
+                onChange={onChange}
+                className={`w-full px-4 py-2.5 text-base text-gray-700 bg-gray-50 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 ${
+                  errors?.password ? 'bg-red-50 border-red-200' : ''
+                }`}
+                placeholder="Enter your password"
+              />
+            </div>
+            <button 
+              disabled={loading}
+              type='submit'
+              className="w-full py-3 mt-6 bg-rose-800 text-white rounded-md transition-all duration-300 hover:bg-rose-700 text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Logging in...' : 'Login'}
+            </button>
+          </form>
+          <div className="mt-6 text-center text-gray-600">
+            Not a member yet?{' '}
+            <Link to='/register' className="text-rose-800 font-medium hover:text-rose-700 transition-colors">
+              Register
             </Link>
-          </Member>
-          <Link to='/'>
-            <BackHome>Back home</BackHome>
+          </div>
+          <Link to='/' className="mt-4 text-center">
+            <span className="text-rose-800 hover:text-rose-700 transition-colors">
+              Back home
+            </span>
           </Link>
           {errors &&
             Object.values(errors)?.map((err, index) => (
               <MuiError value={err} key={index} type='error' />
             ))}
-        </FormSection>
-        <ImageSection>
-          <img src={image} alt="Login illustration" />
-        </ImageSection>
-      </Container>
-    </Wrapper>
+        </div>
+        <div className="flex-1 bg-gray-100 overflow-hidden">
+          <img 
+            src={image} 
+            alt="Login illustration" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+      </div>
+    </div>
   );
 };
 
 export default LoginPage;
-
-const Title = styled.h1`
-  letter-spacing: 1px;
-  color: var(--clr-primary-2);
-  margin-top: -0rem;
-  margin-bottom: 2rem;
-  font-weight: 600;
-  text-align: center;
-  
-`;
-
-const Form = styled.form`
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  .error {
-    background-color: rgb(253, 237, 237);
-  }
-`;
-
-const Label = styled.label`
-  margin-bottom: 0.5rem;
-  letter-spacing: 0.5px;
-  color: var(--clr-gray-2);
-`;
-const Input = styled.input`
-  margin-bottom: 1rem;
-  border-radius: 0.25rem;
-  padding: 0.357rem 0.75rem;
-  border: 1px solid var(--clr-gray);
-  background-color: var(--clr-mocha-hover);
-  font-size: 100%;
-  line-height: 1.15;
-  font-weight: 500;
-`;
-
-const Button = styled.button`
-  background-color: var(--clr-mocha-3);
-  border: transparent;
-  cursor: pointer;
-  padding: 0.375rem 0.75rem;
-  text-transform: capitalize;
-  border-radius: 0.25rem;
-  line-height: 1.2;
-  letter-spacing: 0.5px;
-  font-size: 16px;
-  color: #fff;
-  margin-top: 1rem;
-  transition: all 0.3s;
-  &:hover {
-    background-color: var(--clr-mocha-2);
-  }
-`;
-
-const Member = styled.p`
-  span {
-    color: var(--clr-mocha-2);
-    cursor: pointer;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-  }
-`;
-
-const BackHome = styled.span`
-  color: var(--clr-primary-2);
-  cursor: pointer;
-`;
-
-// CSS styles (using styled-components syntax)
-const Wrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #f5f5f5;
-`;
-
-const Container = styled.div`
-  display: flex;
-  width: 80%;
-  max-width: 1200px;
-  height: 600px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  overflow: hidden;
-`;
-
-const FormSection = styled.div`
-  flex: 0 0 40%;
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  background-color: white;
-`;
-
-const ImageSection = styled.div`
-  flex: 0 0 60%;
-  background-color: #f0f0f0;
-  overflow: hidden;
-  
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-`;

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 const FeaturedCollections = () => {
@@ -101,193 +100,67 @@ const FeaturedCollections = () => {
     };
 
     return (
-        <Section>
-            <SectionTitle>Bộ Sưu Tập Nổi Bật</SectionTitle>
-            <SliderContainer>
-                <SliderWrapper>
-                    <SliderTrack style={{ transform: `translateX(-${currentIndex * (100 / itemsPerSlide)}%)` }}>
+        <section className="py-16 px-8 bg-gradient-to-b from-pink-50 to-rose-50 overflow-hidden">
+            <h2 className="text-4xl font-bold text-center text-rose-600 mb-12">
+                Bộ Sưu Tập Nổi Bật
+            </h2>
+            <div className="max-w-7xl mx-auto px-4 relative">
+                <div className="relative overflow-hidden px-10">
+                    <div 
+                        className="flex transition-transform duration-500 ease-in-out"
+                        style={{ transform: `translateX(-${currentIndex * (100 / itemsPerSlide)}%)` }}
+                    >
                         {collections.map((collection) => (
-                            <CollectionCard key={collection.id}>
-                                <CollectionImage src={collection.image} alt={collection.title} />
-                                <CollectionInfo>
-                                    <h3>{collection.title}</h3>
-                                    <p>{collection.description}</p>
-                                    <StyledLink to={collection.link}>
-                                        <Button>Xem Thêm</Button>
-                                    </StyledLink>
-                                </CollectionInfo>
-                            </CollectionCard>
+                            <div 
+                                key={collection.id}
+                                className="relative rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex-shrink-0 w-1/3 mx-2"
+                            >
+                                <img 
+                                    src={collection.image} 
+                                    alt={collection.title}
+                                    className="w-full h-[300px] object-cover transition-transform duration-300 hover:scale-105"
+                                />
+                                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent text-white">
+                                    <h3 className="text-2xl font-semibold mb-2">{collection.title}</h3>
+                                    <p className="text-base mb-4 opacity-90">{collection.description}</p>
+                                    <Link to={collection.link} className="no-underline">
+                                        <button className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-6 py-2 rounded-full hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                                            Xem Thêm
+                                        </button>
+                                    </Link>
+                                </div>
+                            </div>
                         ))}
-                    </SliderTrack>
-                    <NavButton prev onClick={prevSlide}>❮</NavButton>
-                    <NavButton next onClick={nextSlide}>❯</NavButton>
-                    <DotsContainer>
-                        {Array.from({ length: Math.ceil(collections.length / itemsPerSlide) }).map((_, index) => (
-                            <Dot
-                                key={index}
-                                active={index === Math.floor(currentIndex / itemsPerSlide)}
-                                onClick={() => setCurrentIndex(index * itemsPerSlide)}
-                            />
-                        ))}
-                    </DotsContainer>
-                </SliderWrapper>
-            </SliderContainer>
-        </Section>
+                    </div>
+                    <button 
+                        onClick={prevSlide}
+                        className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-rose-500/80 text-white flex items-center justify-center hover:bg-rose-500 transition-colors duration-300"
+                    >
+                        ❮
+                    </button>
+                    <button 
+                        onClick={nextSlide}
+                        className="absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-rose-500/80 text-white flex items-center justify-center hover:bg-rose-500 transition-colors duration-300"
+                    >
+                        ❯
+                    </button>
+                </div>
+                <div className="flex justify-center gap-2 mt-8">
+                    {Array.from({ length: Math.ceil(collections.length / itemsPerSlide) }).map((_, index) => (
+                        <button
+                            key={index}
+                            onClick={() => setCurrentIndex(index * itemsPerSlide)}
+                            className={`w-3 h-3 rounded-full transition-colors duration-300 ${
+                                index === Math.floor(currentIndex / itemsPerSlide) 
+                                    ? 'bg-rose-500' 
+                                    : 'bg-gray-300 hover:bg-rose-300'
+                            }`}
+                        />
+                    ))}
+                </div>
+            </div>
+        </section>
     );
 };
 
 export default FeaturedCollections;
-
-const Section = styled.section`
-  padding: 4rem 2rem;
-  background: linear-gradient(to bottom, #fff5f5, #ffe4e1);
-  overflow: hidden;
-`;
-
-const SectionTitle = styled.h2`
-  text-align: center;
-  font-size: 2.5rem;
-  color: #db7093;
-  margin-bottom: 3rem;
-  text-shadow: 2px 2px 4px rgba(219, 112, 147, 0.2);
-`;
-
-const SliderContainer = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-  position: relative;
-`;
-
-const SliderWrapper = styled.div`
-  position: relative;
-  overflow: hidden;
-  padding: 0 40px;
-`;
-
-const SliderTrack = styled.div`
-  display: flex;
-  transition: transform 0.5s ease;
-  width: 100%;
-`;
-
-const CollectionCard = styled.div`
-  position: relative;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(219, 112, 147, 0.2);
-  transition: all 0.3s ease;
-  flex: 0 0 calc(100% / 3);
-  margin: 0 10px;
-
-  @media (max-width: 1024px) {
-    flex: 0 0 calc(100% / 2);
-  }
-
-  @media (max-width: 768px) {
-    flex: 0 0 100%;
-  }
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 20px rgba(219, 112, 147, 0.3);
-  }
-`;
-
-const CollectionImage = styled.img`
-  width: 100%;
-  height: 300px;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-
-  ${CollectionCard}:hover & {
-    transform: scale(1.05);
-  }
-`;
-
-const CollectionInfo = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 1.5rem;
-  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-  color: white;
-
-  h3 {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-  }
-
-  p {
-    font-size: 1rem;
-    margin-bottom: 1rem;
-    opacity: 0.9;
-  }
-`;
-
-const Button = styled.button`
-  background: linear-gradient(45deg, #db7093, #e75480);
-  color: white;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 25px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(219, 112, 147, 0.3);
-  }
-`;
-
-const StyledLink = styled(Link)`
-  text-decoration: none;
-`;
-
-const NavButton = styled.button`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(219, 112, 147, 0.8);
-  color: white;
-  border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  transition: all 0.3s ease;
-  z-index: 2;
-
-  &:hover {
-    background: rgba(219, 112, 147, 1);
-  }
-
-  ${props => props.prev ? 'left: 0;' : 'right: 0;'}
-`;
-
-const DotsContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 20px;
-`;
-
-const Dot = styled.button`
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: none;
-  background: ${props => props.active ? '#db7093' : '#ddd'};
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: #db7093;
-  }
-`; 

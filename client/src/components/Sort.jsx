@@ -1,6 +1,5 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import styled from 'styled-components';
 import { addSort } from '../features/filterSlice';
 
 const Sort = () => {
@@ -11,32 +10,19 @@ const Sort = () => {
   };
 
   return (
-    <Form>
-      <Label>Sort by</Label>
-      <Select onChange={handleSelect}>
-        <Option>Sort</Option>
-        <Option value='price-lowest'>Price (Lowest)</Option>
-        <Option value='price-highest'>Price (Highest)</Option>
-        <Option value='top-rated'>Top rated</Option>
-      </Select>
-    </Form>
+    <div className="flex items-center gap-2">
+      <label className="text-sm font-medium text-gray-700">Sort by</label>
+      <select
+        onChange={handleSelect}
+        className="px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[var(--clr-mocha-2)] focus:border-transparent transition-all duration-200 appearance-none cursor-pointer"
+      >
+        <option value="" className="py-2">Sort</option>
+        <option value="price-lowest" className="py-2">Price (Lowest)</option>
+        <option value="price-highest" className="py-2">Price (Highest)</option>
+        <option value="top-rated" className="py-2">Top rated</option>
+      </select>
+    </div>
   );
 };
 
 export default Sort;
-
-const Form = styled.form``;
-const Label = styled.label``;
-const Select = styled.select`
-  border: 1px solid var(--clr-gray);
-  border-radius: 16px;
-  padding: 4px;
-  margin-left: 10px;
-  background: transparent;
-  margin-bottom: 1rem;
-`;
-const Option = styled.option`
-  font-size: 16px;
-  margin-bottom: 1rem;
-  padding: 20px;
-`;

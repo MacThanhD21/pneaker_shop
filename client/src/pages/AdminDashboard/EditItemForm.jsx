@@ -2,7 +2,6 @@ import { useMutation } from '@apollo/client';
 import axios from 'axios';
 import { Image } from 'cloudinary-react';
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import MuiError from '../../assets/mui/Alert';
 import Loading from '../../assets/mui/Loading';
 import { FormRow } from '../../components';
@@ -67,162 +66,136 @@ const EditItemForm = ({ product }) => {
   }
 
   return (
-    <Wrapper>
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       {productLoading ? (
-        <Loading />
+        <div className="flex justify-center items-center h-64">
+          <Loading />
+        </div>
       ) : (
-        <LoadingContainer>
-          <Container>
-            <Title>EDIT AN ITEM</Title>
-            <Label>Choose an image:</Label>
-            {loading ? (
-              <Loading />
-            ) : (
-              <Image
-                className='image'
-                cloudName='dsrhwv8to'
-                publicId={publicId}
-              />
-            )}
-            <Input type='file' onChange={(e) => uploadImage(e.target.files)} />
-          </Container>
+        <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden p-6">
+          <div className="flex flex-col md:flex-row gap-8">
+            {/* Image Upload Section */}
+            <div className="w-full md:w-1/3 space-y-4">
+              <h2 className="text-2xl font-bold text-gray-800">Chỉnh sửa sản phẩm</h2>
+              
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-700">Hình ảnh sản phẩm</h3>
+                {loading ? (
+                  <div className="flex justify-center items-center h-48 bg-gray-100 rounded-lg">
+                    <Loading />
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <Image
+                      className="w-full h-48 object-cover rounded-lg shadow-md"
+                      cloudName="dsrhwv8to"
+                      publicId={publicId}
+                    />
+                    <input
+                      type="file"
+                      onChange={(e) => uploadImage(e.target.files)}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg opacity-0 hover:opacity-100 transition-opacity duration-200">
+                      <span className="text-white font-medium">Thay đổi hình ảnh</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
 
-          <Form onSubmit={onSubmit}>
-            <InputContainer>
-              <FormRow
-                exampleText={'e.g. Yeezy Boost 350 V2 Zebra'}
-                labelText={'Shoe Title'}
-                name='title'
-                type='text'
-                value={values.title}
-                onChange={onChange}
-              />
-            </InputContainer>
-            <InputContainer>
-              <FormRow
-                exampleText={'e.g. Yeezy'}
-                labelText={'Shoe Brand'}
-                name='brand'
-                type='text'
-                value={values.brand}
-                onChange={onChange}
-              />
-            </InputContainer>
-            <InputContainer>
-              <FormRow
-                exampleText={'e.g. V2 Zebra'}
-                labelText={'Shoe Model'}
-                name='model'
-                type='text'
-                value={values.model}
-                onChange={onChange}
-              />
-            </InputContainer>
-            <InputContainer>
-              <FormRow
-                exampleText={'e.g. red,black,blue'}
-                labelText={'Shoe Colors'}
-                name='color'
-                type='text'
-                value={values.color}
-                onChange={onChange}
-              />
-            </InputContainer>
-            <InputContainer>
-              <FormRow
-                exampleText={'e.g. 350'}
-                labelText={'Shoe Price'}
-                name='price'
-                type='number'
-                value={values.price}
-                onChange={onChange}
-              />
-            </InputContainer>
-            <InputContainer>
-              <FormRow
-                exampleText={'e.g. 7.5,8,11'}
-                labelText={'Shoe Size'}
-                name='size'
-                value={values.size}
-                type='text'
-                onChange={onChange}
-              />
-            </InputContainer>
-            <ButtonContainer>
-              <Button type='submit'>EDIT ITEM</Button>
-              {success ? (
-                <MuiError type='success'>Edited Item Successfully</MuiError>
-              ) : error ? (
-                <MuiError type='error'>{error.message}</MuiError>
-              ) : (
-                ''
-              )}
-            </ButtonContainer>
-          </Form>
-        </LoadingContainer>
+            {/* Form Section */}
+            <div className="w-full md:w-2/3">
+              <form onSubmit={onSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormRow
+                    exampleText="VD: Yeezy Boost 350 V2 Zebra"
+                    labelText="Tên sản phẩm"
+                    name="title"
+                    type="text"
+                    value={values.title}
+                    onChange={onChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition duration-200"
+                  />
+
+                  <FormRow
+                    exampleText="VD: Yeezy"
+                    labelText="Thương hiệu"
+                    name="brand"
+                    type="text"
+                    value={values.brand}
+                    onChange={onChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition duration-200"
+                  />
+
+                  <FormRow
+                    exampleText="VD: V2 Zebra"
+                    labelText="Mẫu mã"
+                    name="model"
+                    type="text"
+                    value={values.model}
+                    onChange={onChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition duration-200"
+                  />
+
+                  <FormRow
+                    exampleText="VD: đỏ,đen,xanh"
+                    labelText="Màu sắc"
+                    name="color"
+                    type="text"
+                    value={values.color}
+                    onChange={onChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition duration-200"
+                  />
+
+                  <FormRow
+                    exampleText="VD: 3500000"
+                    labelText="Giá tiền"
+                    name="price"
+                    type="number"
+                    value={values.price}
+                    onChange={onChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition duration-200"
+                  />
+
+                  <FormRow
+                    exampleText="VD: 7.5,8,11"
+                    labelText="Kích thước"
+                    name="size"
+                    value={values.size}
+                    type="text"
+                    onChange={onChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition duration-200"
+                  />
+                </div>
+
+                <div className="flex flex-col items-center space-y-4">
+                  <button
+                    type="submit"
+                    className="w-full md:w-1/2 bg-gradient-to-r from-rose-600 to-rose-800 text-white font-medium py-3 px-6 rounded-xl 
+                      hover:from-rose-700 hover:to-rose-900 transition-all duration-300 shadow-md hover:shadow-lg 
+                      transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
+                  >
+                    Cập nhật sản phẩm
+                  </button>
+
+                  {(success || error) && (
+                    <div className="w-full md:w-1/2">
+                      {success ? (
+                        <MuiError type="success">Cập nhật sản phẩm thành công</MuiError>
+                      ) : (
+                        <MuiError type="error">{error?.message}</MuiError>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       )}
-    </Wrapper>
+    </div>
   );
 };
 
 export default EditItemForm;
-
-const Wrapper = styled.div`
-  display: flex;
-  width: 80%;
-  margin: 2rem 3rem;
-  .image {
-    width: 250px;
-  }
-`;
-const LoadingContainer = styled.div`
-  display: flex;
-`;
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
-const Title = styled.h1`
-  color: var(--clr-primary-2);
-`;
-const Input = styled.input``;
-
-const InputContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-wrap: wrap;
-  align-content: start;
-  justify-content: space-around;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 100%;
-  align-items: center;
-  margin-top: 2rem;
-`;
-const Button = styled.button`
-  color: white;
-  cursor: pointer;
-  font-weight: 500;
-  letter-spacing: 1px;
-  background-color: var(--clr-primary);
-  border-radius: 12px;
-  padding: 12px;
-  transition: all 0.3s;
-  width: 50%;
-  &:hover {
-    background-color: var(--clr-primary-2);
-  }
-`;
-
-const Label = styled.h3`
-  color: var(--clr-primary-2);
-`;

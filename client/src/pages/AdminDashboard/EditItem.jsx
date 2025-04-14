@@ -1,6 +1,5 @@
 import { useLazyQuery } from '@apollo/client';
 import React from 'react';
-import styled from 'styled-components';
 import MuiError from '../../assets/mui/Alert';
 import { FormRow } from '../../components';
 import { GET_PRODUCT_BY_ID } from '../../graphql/Queries/productQueries';
@@ -32,60 +31,63 @@ const EditItem = () => {
   }
 
   return (
-    <>
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       {values.product ? (
         <EditItemForm product={values.product} />
       ) : (
-        <Wrapper>
+        <div className="max-w-md mx-auto bg-white rounded-xl shadow-lg overflow-hidden p-6">
           {loading ? (
-            <Loading />
+            <div className="flex justify-center items-center h-64">
+              <Loading />
+            </div>
           ) : (
-            <Form onSubmit={onSubmit}>
-              <Title>Please type the ID of the item</Title>
-              <FormRow
-                name='productId'
-                type='text'
-                value={values.productId}
-                onChange={onChange}
-              />
-              <Button type='submit'>Search</Button>
-              {values.errors ? (
-                <MuiError type='error'>{values.errors}</MuiError>
-              ) : error ? (
-                <MuiError type='error'>{error.message}</MuiError>
-              ) : (
-                ''
+            <form onSubmit={onSubmit} className="space-y-6">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  Tìm kiếm sản phẩm
+                </h2>
+                <p className="text-gray-600">
+                  Vui lòng nhập ID sản phẩm cần chỉnh sửa
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <FormRow
+                  name="productId"
+                  type="text"
+                  value={values.productId}
+                  onChange={onChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition duration-200"
+                  placeholder="Nhập ID sản phẩm..."
+                />
+
+                <button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-rose-600 to-rose-800 text-white font-medium py-3 px-6 rounded-xl 
+                    hover:from-rose-700 hover:to-rose-900 transition-all duration-300 shadow-md hover:shadow-lg 
+                    transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
+                >
+                  Tìm kiếm
+                </button>
+              </div>
+
+              {(values.errors || error) && (
+                <div className="mt-4">
+                  <MuiError type="error">
+                    {values.errors || error?.message}
+                  </MuiError>
+                </div>
               )}
-            </Form>
+
+              <div className="mt-6 text-center text-sm text-gray-500">
+                <p>Lưu ý: Vui lòng nhập đúng ID sản phẩm để tìm kiếm</p>
+              </div>
+            </form>
           )}
-        </Wrapper>
+        </div>
       )}
-    </>
+    </div>
   );
 };
 
 export default EditItem;
-
-const Wrapper = styled.div`
-  display: flex;
-  width: 80%;
-  margin: 2rem 3rem;
-`;
-
-const Form = styled.form``;
-const Title = styled.h2``;
-const Button = styled.button`
-  color: white;
-  cursor: pointer;
-  font-weight: 500;
-  letter-spacing: 1px;
-  margin-top: 1rem;
-  background-color: var(--clr-primary);
-  border-radius: 12px;
-  padding: 6px;
-  transition: all 0.3s;
-  width: 50%;
-  &:hover {
-    background-color: var(--clr-primary-2);
-  }
-`;

@@ -1,6 +1,5 @@
 import React from 'react';
 import { useInView } from 'react-intersection-observer';
-import styled from 'styled-components';
 
 const FadeInSection = ({ children, delay = 0 }) => {
   const [ref, inView] = useInView({
@@ -9,23 +8,18 @@ const FadeInSection = ({ children, delay = 0 }) => {
   });
 
   return (
-    <FadeInWrapper
+    <div
       ref={ref}
-      style={{
-        opacity: inView ? 1 : 0,
-        transform: inView ? 'translateY(0)' : 'translateY(20px)',
-        transitionDelay: `${delay}s`
-      }}
+      className={`transition-all duration-600 ease-out ${
+        inView 
+          ? 'opacity-100 translate-y-0' 
+          : 'opacity-0 translate-y-5'
+      }`}
+      style={{ transitionDelay: `${delay}s` }}
     >
       {children}
-    </FadeInWrapper>
+    </div>
   );
 };
-
-const FadeInWrapper = styled.div`
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.6s ease-out;
-`;
 
 export default FadeInSection; 

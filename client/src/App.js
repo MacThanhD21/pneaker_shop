@@ -3,8 +3,6 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import jwtDecode from 'jwt-decode';
 import { useQuery } from '@apollo/client';
-import ChatScript from './components/ChatScript';
-
 import {
   CartPage,
   ErrorPage,
@@ -16,6 +14,13 @@ import {
   ShopPage,
   PaymentPage,
   AboutPage,
+  Help,
+  ReturnPolicy,
+  PaymentPolicy,
+  Terms,
+  Careers,
+  News,
+  SpaServices,
 } from './pages';
 
 import { ProtectedProfileRoute, ProtectedRoute } from './components';
@@ -35,7 +40,7 @@ import ProtectedAdminRoute from './components/ProtectedAdminRoute';
 import { useLogout } from './utils/customHooks';
 import ShoeCareTips from './components/ShoeCareTips';
 import ShoeCareDetail from './components/ShoeCareDetail';
-import { tips } from './data/shoeCareTips';
+import SocialIcons from './components/SocialIcons';
 
 const App = () => {
   const { userInfo } = useSelector((state) => state.user);
@@ -63,7 +68,6 @@ const App = () => {
 
   return (
     <>
-      <ChatScript />
       <MobileMenu />
       <Routes>
         <Route exact path='/' element={<HomePage />} />
@@ -72,6 +76,13 @@ const App = () => {
         <Route path='/shop/:id' element={<ProductPage />} />
         <Route path='/cart' element={<CartPage />} />
         <Route path='/payment' element={<PaymentPage />} />
+        <Route path='/help' element={<Help />} />
+        <Route path='/return-policy' element={<ReturnPolicy />} />
+        <Route path='/payment-policy' element={<PaymentPolicy />} />
+        <Route path='/terms' element={<Terms />} />
+        <Route path='/careers' element={<Careers />} />
+        <Route path='/news' element={<News />} />
+        <Route path='/services' element={<SpaServices />} />
         <Route path='*' element={<ErrorPage />} />
         <Route
           path='/login'
@@ -123,6 +134,7 @@ const App = () => {
         <Route path="/shoe-care" element={<ShoeCareTips />} />
         <Route path="/shoe-care/:id" element={<ShoeCareDetail />} />
       </Routes>
+      <SocialIcons />
     </>
   );
 };

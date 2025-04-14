@@ -1,9 +1,10 @@
 import React from 'react';
-import { Header, Navbar, TopPicks, FeaturedCollections, BrandShowcase, NewArrivals, SpecialOffers, CustomerReviews, ShoeCareTips, Newsletter, FadeInSection, Footer } from '../components';
+import { Header, Navbar, TopPicks, FeaturedCollections, BrandShowcase, NewArrivals, SpecialOffers, CustomerReviews, ShoeCareTips, Newsletter, FadeInSection, Footer, PopupBanner, SummerCollectionBanner, LimitedEditionBanner, TrendingBanner } from '../components';
 
 const HomePage = () => {
   return (
     <>
+      <PopupBanner />
       <main className='section-center'>
         <Navbar />
         <Header />
@@ -28,9 +29,9 @@ const HomePage = () => {
         <FadeInSection delay={0.35}>
           <ShoeCareTips />
         </FadeInSection>
-          <Newsletter />
+        <Newsletter />
       </main>
-        <Footer />
+      <Footer />
     </>
   );
 };

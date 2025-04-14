@@ -1,106 +1,69 @@
 import React from 'react';
-import styled from 'styled-components';
 
 const BrandShowcase = () => {
   const brands = [
     {
       id: 1,
       name: "Nike",
-      logo: "https://cdn-icons-png.flaticon.com/512/732/732084.png"
+      logo: "https://cdn-icons-png.flaticon.com/512/732/732084.png",
+      website: "https://www.nike.com"
     },
     {
       id: 2,
       name: "Adidas",
-      logo: "https://cdn-icons-png.flaticon.com/512/731/731962.png"
+      logo: "https://cdn-icons-png.flaticon.com/512/731/731962.png",
+      website: "https://www.adidas.com"
     },
     {
       id: 3,
       name: "Puma",
-      logo: "https://cdn-icons-png.flaticon.com/512/731/731966.png"
+      logo: "https://cdn-icons-png.flaticon.com/512/731/731966.png",
+      website: "https://www.puma.com"
     },
     {
       id: 4,
       name: "New Balance",
-      logo: "https://cdn-icons-png.flaticon.com/512/731/731964.png"
+      logo: "https://cdn-icons-png.flaticon.com/512/731/731964.png",
+      website: "https://www.newbalance.com"
     },
     {
       id: 5,
       name: "Converse",
-      logo: "https://cdn-icons-png.flaticon.com/512/731/731965.png"
+      logo: "https://cdn-icons-png.flaticon.com/512/731/731965.png",
+      website: "https://www.converse.com"
     }
   ];
 
   return (
-    <Section>
-      <SectionTitle>Thương Hiệu Hợp Tác</SectionTitle>
-      <BrandGrid>
+    <section className="py-16 px-8 bg-white">
+      <h2 className="text-4xl text-pink-600 text-center mb-12 font-bold drop-shadow-md">
+        Thương Hiệu Hợp Tác
+      </h2>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 max-w-7xl mx-auto">
         {brands.map((brand) => (
-          <BrandCard key={brand.id}>
-            <BrandLogo src={brand.logo} alt={brand.name} />
-            <BrandName>{brand.name}</BrandName>
-          </BrandCard>
+          <a 
+            href={brand.website} 
+            key={brand.id} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="no-underline group"
+          >
+            <div className="flex flex-col items-center p-8 bg-white rounded-xl shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+              <img 
+                src={brand.logo} 
+                alt={brand.name}
+                className="w-32 h-16 object-contain mb-4 grayscale group-hover:grayscale-0 transition-all duration-300"
+              />
+              <h3 className="text-pink-600 text-lg font-medium text-center">
+                {brand.name}
+              </h3>
+            </div>
+          </a>
         ))}
-      </BrandGrid>
-    </Section>
+      </div>
+    </section>
   );
 };
 
-export default BrandShowcase;
-
-const Section = styled.section`
-  padding: 4rem 2rem;
-  background: white;
-`;
-
-const SectionTitle = styled.h2`
-  text-align: center;
-  font-size: 2.5rem;
-  color: #db7093;
-  margin-bottom: 3rem;
-  text-shadow: 2px 2px 4px rgba(219, 112, 147, 0.2);
-`;
-
-const BrandGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  align-items: center;
-`;
-
-const BrandCard = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(219, 112, 147, 0.1);
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 20px rgba(219, 112, 147, 0.2);
-  }
-`;
-
-const BrandLogo = styled.img`
-  width: 120px;
-  height: 60px;
-  object-fit: contain;
-  margin-bottom: 1rem;
-  filter: grayscale(100%);
-  transition: all 0.3s ease;
-
-  ${BrandCard}:hover & {
-    filter: grayscale(0%);
-  }
-`;
-
-const BrandName = styled.h3`
-  color: #db7093;
-  font-size: 1.2rem;
-  margin: 0;
-  text-align: center;
-`; 
+export default BrandShowcase; 

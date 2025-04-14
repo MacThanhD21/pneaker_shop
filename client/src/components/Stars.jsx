@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import StarIcon from '@mui/icons-material/Star';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
 import StarOutlineIcon from '@mui/icons-material/StarOutline';
-import styled from 'styled-components';
 
 const Stars = ({ stars, condition, getUserRates, createReview, userRates }) => {
   const onClick = (index) => {
@@ -18,50 +17,34 @@ const Stars = ({ stars, condition, getUserRates, createReview, userRates }) => {
   const tempStars = Array.from({ length: 5 }, (_, index) => {
     const number = index + 0.5;
     return (
-      <Star
-        condition={condition}
-        onClick={() => condition && onClick(index)}
+      <span
         key={index}
+        onClick={() => condition && onClick(index)}
+        className={`cursor-pointer transition-colors duration-200 ${
+          condition 
+            ? 'hover:text-yellow-600' 
+            : 'hover:text-yellow-500'
+        }`}
       >
         {stars > number ? (
-          <StarIcon />
+          <StarIcon className="text-yellow-500" />
         ) : stars > index ? (
-          <StarHalfIcon />
+          <StarHalfIcon className="text-yellow-500" />
         ) : (
-          <StarOutlineIcon />
+          <StarOutlineIcon className="text-yellow-500" />
         )}
-      </Star>
+      </span>
     );
   });
 
   return (
-    <StarWrapper>
+    <div className="flex items-center font-medium text-yellow-500">
       {tempStars}
-      <span style={{ color: 'var(--clr-gray-2)', marginLeft: '10px' }}>
+      <span className="text-gray-400 ml-2.5">
         {stars?.toFixed(1)}
       </span>
-    </StarWrapper>
+    </div>
   );
 };
 
 export default Stars;
-
-const StarWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  font-weight: 500;
-  color: #ffb900;
-  .single-star {
-    &:hover {
-      color: red;
-    }
-  }
-`;
-
-const Star = styled.span`
-  &:hover {
-    color: ${(props) => (props.condition ? '#d1a837' : '#ffb900')};
-  }
-`;
-
-/* width: ${(props) => (props.historyPage ? '60%' : '40%')}; */

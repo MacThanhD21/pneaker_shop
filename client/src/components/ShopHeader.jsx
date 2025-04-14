@@ -1,12 +1,10 @@
 import React from 'react';
-import styled from 'styled-components';
 import FilterTags from './FilterTags';
 import Sort from './Sort';
 import GridViewIcon from '@mui/icons-material/GridView';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleGridView, toggleListView } from '../features/filterSlice';
-import { mobile } from '../responsive';
 
 const ShopHeader = ({ filteredProducts }) => {
   const dispatch = useDispatch();
@@ -21,72 +19,54 @@ const ShopHeader = ({ filteredProducts }) => {
   };
 
   return (
-    <Wrapper>
-      <Title>PNEAKER SHOP</Title>
-      <SortContainer>
-        <TotalSneakers>
-          {filteredProducts && filteredProducts.length + ' sneakers'}
-        </TotalSneakers>
-        <Sort />
-      </SortContainer>
-      <ViewIcons>
-        <GridViewIcon
-          onClick={toggleGrid}
-          className={`icon ${gridView ? 'active' : ''}`}
-        />
-        <ViewListIcon
-          onClick={toggleList}
-          className={`icon ${listView ? 'active' : ''}`}
-        />
-      </ViewIcons>
+    <div className="w-full flex flex-col gap-4 px-6 mb-4 md:px-8">
+      {/* Header Top */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-[var(--clr-primary)] tracking-tight">
+          PNEAKER SHOP
+        </h1>
 
-      <FilterTags />
-    </Wrapper>
+        <div className="flex items-center justify-between md:justify-end gap-6">
+          <span className="text-gray-600 font-medium">
+            {filteredProducts && filteredProducts.length + ' sneakers'}
+          </span>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleGrid}
+              className={`p-2 rounded-lg border transition-all duration-200 ${
+                gridView
+                  ? 'bg-[var(--clr-mocha-2)] text-white border-[var(--clr-mocha-2)]'
+                  : 'border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300'
+              }`}
+              title="Grid View"
+            >
+              <GridViewIcon className="text-xl" />
+            </button>
+
+            <button
+              onClick={toggleList}
+              className={`p-2 rounded-lg border transition-all duration-200 ${
+                listView
+                  ? 'bg-[var(--clr-mocha-2)] text-white border-[var(--clr-mocha-2)]'
+                  : 'border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300'
+              }`}
+              title="List View"
+            >
+              <ViewListIcon className="text-xl" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Header Bottom */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <Sort />
+        <FilterTags />
+      </div>
+    </div>
   );
 };
 
 export default ShopHeader;
 
-const Wrapper = styled.div`
-  width: 90%;
-  min-width: 350px;
-  margin-left: 3rem;
-  display: flex;
-  flex-direction: column;
-  margin-top: 2rem;
-  ${mobile({ margin: '2rem 0' })}
-`;
-const Title = styled.h1`
-  color: var(--clr-primary);
-  font-size: 36px;
-`;
-const SortContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  font-weight: 500;
-  margin: -1rem 0px;
-  margin-bottom: 1rem;
-  ${mobile({ margin: '0.5rem 0' })}
-`;
-
-const ViewIcons = styled.div`
-  display: flex;
-  .icon {
-    margin-right: 0.5rem;
-    border: 1px solid black;
-    height: 25px;
-    width: 25px;
-    padding: 1px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: -1rem;
-    margin-bottom: 1rem;
-  }
-  .active {
-    background-color: var(--clr-mocha-2);
-    color: white;
-  }
-  ${mobile({ display: 'none' })}
-`;
-
-const TotalSneakers = styled.span``;

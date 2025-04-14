@@ -4,8 +4,6 @@ import axios from "axios";
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 
-
-
 export async function doStripePayment(req, res) {
   try {
     const { amount, currency = 'vnd' } = req.body;

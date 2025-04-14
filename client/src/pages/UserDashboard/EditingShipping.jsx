@@ -1,4 +1,3 @@
-import styled from "styled-components";
 import { useForm } from "../../utils/customHooks";
 import { useState } from "react";
 import { useMutation } from "@apollo/client";
@@ -13,12 +12,6 @@ import provinces from "../../utils/provinces.js";
 const EditingShipping = ({
   toggleEdit,
   title,
-  Wrapper,
-  TitleContainer,
-  Title,
-  EditButton,
-  Info,
-  Label,
   userInfo,
 }) => {
   const { city, address, postalCode, phoneNumber, country } =
@@ -70,9 +63,8 @@ const EditingShipping = ({
       return "Phone number must have 10 or 11 digits.";
     }
 
-    // Kiểm tra số điện thoại qua API
     try {
-      const apiKey = "503e582c7742d1af11602ddda4378e54"; // Thay bằng API Key của bạn
+      const apiKey = "503e582c7742d1af11602ddda4378e54";
       const response = await axios.get(
         `https://apilayer.net/api/validate?access_key=${apiKey}&number=${trimmedPhone}&country_code=VN&format=1`
       );
@@ -83,174 +75,146 @@ const EditingShipping = ({
         return "Phone number is invalid or does not exist.";
       }
 
-      return ""; // ✅ Số điện thoại hợp lệ
+      return "";
     } catch (error) {
       console.error("Error validating phone number:", error);
       return "Error checking phone number. Please try again.";
     }
   };
 
-  // Hàm kiểm tra Address & State/Region (chỉ cho phép chữ cái, số và khoảng trắng)
   const validateAddress = (address) => {
     const regex = /^[\p{L}0-9]+(?:\s[\p{L}0-9]+)*$/u;
     return regex.test(address.trim());
   };
 
-  // Hàm kiểm tra Zipcode (chỉ chứa số, không có chữ cái hoặc ký tự đặc biệt)
   const validateZipCode = (postalCode) => {
     const regex = /^[0-9]+$/;
     return regex.test(postalCode);
   };
 
-  // Hàm xử lý submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     let validationErrors = {};
 
-    // Kiểm tra số điện thoại
     const phoneError = await validatePhoneNumber(values.phoneNumber);
     if (phoneError) {
       validationErrors.phoneNumber = phoneError;
     }
 
-    // Kiểm tra Address
     if (!validateAddress(values.address)) {
       validationErrors.address = "Address must not contain special characters!";
     }
 
-    // Kiểm tra State/Region
     if (!validateAddress(values.country)) {
       validationErrors.country = "State/Region must not contain special characters!";
     }
 
-    // Kiểm tra Zip/Postal Code
     if (!validateZipCode(values.postalCode)) {
       validationErrors.postalCode = "Zip/Postal Code must contain only numbers!";
     }
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      return; // Nếu có lỗi, không tiếp tục
+      return;
     }
 
-    // Nếu tất cả hợp lệ, tiến hành cập nhật thông tin
     updateShipping();
   };
 
-  // Hàm gọi mutation cập nhật thông tin
   function updateShippingCallback() {
     updateShipping();
   }
 
   return (
-    <>
-      <Wrapper>
-        <TitleContainer>
-          <Title>{title}</Title>
-          <EditButton onClick={toggleEdit}>Cancel</EditButton>
-        </TitleContainer>
-        <Form onSubmit={handleSubmit}>
-          <Info>
-            <Label>Address</Label>
-            <Input
-              name="address"
-              value={values.address || ""}
-              onChange={onChange}
-              type="text"
-            />
-            {errors.address && <MuiError value={errors.address} type="error" />}
-          </Info>
-          <Info>
-            <Label>City</Label>
-            <select name="city" value={values.city} onChange={onChange}>
-              <option value="">-- Chọn tỉnh/thành phố --</option>
-              {provinces.map((province) => (
-                <option key={province} value={province}>
-                  {province}
-                </option>
-              ))}
-            </select>
-            {errors.city && <MuiError value={errors.city} type="error" />}
-          </Info>
-          <Info>
-            <Label>State/Region</Label>
-            <Input
-              name="country"
-              value={values.country || ""}
-              onChange={onChange}
-              type="text"
-            />
-            {errors.country && <MuiError value={errors.country} type="error" />}
-          </Info>
-          <Info>
-            <Label>Zip/Postal Code</Label>
-            <Input
-              name="postalCode"
-              value={values.postalCode || ""}
-              onChange={onChange}
-              type="text"
-            />
-            {errors.postalCode && <MuiError value={errors.postalCode} type="error" />}
-          </Info>
-          <Info>
-            <Label>Phone Number</Label>
-            <Input
-              name="phoneNumber"
-              value={values.phoneNumber || ""}
-              onChange={onChange}
-              type="text"
-            />
-            {errors.phoneNumber && <MuiError value={errors.phoneNumber} type="error" />}
-          </Info>
-          <Info>
-            <Label>
-              {loading ? (
-                <Loading style={{ margin: "0 auto" }} />
-              ) : (
-                <SubmitButton disabled={loading}>Submit</SubmitButton>
-              )}
-            </Label>
-          </Info>
-        </Form>
-      </Wrapper>
-    </>
+    <div className="flex w-[80%] flex-col p-8 mx-12 my-8 bg-white rounded-lg shadow-sm border border-rose-100/50">
+      <div className="flex w-full justify-between items-center pb-4 border-b border-rose-200/50">
+        <h2 className="text-2xl font-bold text-rose-800">{title}</h2>
+        <button 
+          onClick={toggleEdit}
+          className="w-[10%] h-10 bg-rose-800 text-white rounded-md transition-all duration-300 hover:bg-rose-700 text-sm tracking-wide md:w-[25%]"
+        >
+          Cancel
+        </button>
+      </div>
+      <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6 mt-6 md:grid-cols-1">
+        <div className="flex flex-col space-y-2">
+          <label className="text-sm font-medium text-rose-800">Address</label>
+          <input
+            name="address"
+            value={values.address || ""}
+            onChange={onChange}
+            type="text"
+            className="w-full px-4 py-2.5 text-base text-gray-700 bg-gray-50 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+          />
+          {errors.address && <MuiError value={errors.address} type="error" />}
+        </div>
+        <div className="flex flex-col space-y-2">
+          <label className="text-sm font-medium text-rose-800">City</label>
+          <select 
+            name="city" 
+            value={values.city} 
+            onChange={onChange}
+            className="w-full px-4 py-2.5 text-base text-gray-700 bg-gray-50 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+          >
+            <option value="">-- Chọn tỉnh/thành phố --</option>
+            {provinces.map((province) => (
+              <option key={province} value={province}>
+                {province}
+              </option>
+            ))}
+          </select>
+          {errors.city && <MuiError value={errors.city} type="error" />}
+        </div>
+        <div className="flex flex-col space-y-2">
+          <label className="text-sm font-medium text-rose-800">State/Region</label>
+          <input
+            name="country"
+            value={values.country || ""}
+            onChange={onChange}
+            type="text"
+            className="w-full px-4 py-2.5 text-base text-gray-700 bg-gray-50 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+          />
+          {errors.country && <MuiError value={errors.country} type="error" />}
+        </div>
+        <div className="flex flex-col space-y-2">
+          <label className="text-sm font-medium text-rose-800">Zip/Postal Code</label>
+          <input
+            name="postalCode"
+            value={values.postalCode || ""}
+            onChange={onChange}
+            type="text"
+            className="w-full px-4 py-2.5 text-base text-gray-700 bg-gray-50 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+          />
+          {errors.postalCode && <MuiError value={errors.postalCode} type="error" />}
+        </div>
+        <div className="flex flex-col space-y-2">
+          <label className="text-sm font-medium text-rose-800">Phone Number</label>
+          <input
+            name="phoneNumber"
+            value={values.phoneNumber || ""}
+            onChange={onChange}
+            type="text"
+            className="w-full px-4 py-2.5 text-base text-gray-700 bg-gray-50 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+          />
+          {errors.phoneNumber && <MuiError value={errors.phoneNumber} type="error" />}
+        </div>
+        <div className="col-span-2 flex justify-center mt-4">
+          {loading ? (
+            <Loading style={{ margin: "0 auto" }} />
+          ) : (
+            <button 
+              type="submit"
+              disabled={loading}
+              className="w-[50%] h-12 bg-rose-800 text-white rounded-md transition-all duration-300 hover:bg-rose-700 text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Submit
+            </button>
+          )}
+        </div>
+      </form>
+    </div>
   );
 };
 
 export default EditingShipping;
-
-const Input = styled.input`
-  margin-top: -2rem;
-  border-radius: 0.25rem;
-  padding: 0.357rem 0.75rem;
-  border: 1px solid var(--clr-gray);
-  background-color: transparent;
-  font-size: 100%;
-  line-height: 1.15;
-  font-weight: 500;
-`;
-
-const SubmitButton = styled.button`
-  height: 5vh;
-  margin-top: 1.8rem;
-  min-width: 50%;
-  background: transparent;
-  border: none;
-  background-color: var(--clr-primary-2);
-  cursor: pointer;
-  transition: all 0.3s;
-  color: white;
-  font-size: 14px;
-  letter-spacing: 0.5px;
-  &:hover {
-    background-color: var(--clr-primary);
-  }
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-  height: 30vh;
-`;
