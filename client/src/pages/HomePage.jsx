@@ -4,16 +4,16 @@ import { Header, Navbar, TopPicks, FeaturedCollections, BrandShowcase, NewArriva
 const HomePage = () => {
   return (
     <>
-      <PopupBanner />
+      {/* <PopupBanner /> */}
       <main className='section-center'>
         <Navbar />
         <Header />
         <FadeInSection>
           <TopPicks />
         </FadeInSection>
-        <FadeInSection delay={0.1}>
+        {/* <FadeInSection delay={0.1}>
           <FeaturedCollections />
-        </FadeInSection>
+        </FadeInSection> */}
         <FadeInSection delay={0.15}>
           <BrandShowcase />
         </FadeInSection>

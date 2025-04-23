@@ -37,6 +37,7 @@
     "react-redux": "^8.0.2",
     "react-scripts": "^3.0.1",
     "react-stripe-checkout": "^2.6.3",
-    "stripe": "^12.18.0"
+    "stripe": "^12.18.0",
+    "lucide-react": "^0.399.0"
   }
 }

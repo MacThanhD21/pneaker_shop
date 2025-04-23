@@ -234,7 +234,7 @@ const EditProductPag = () => {
     <Dialog open={isEditItemOpen} onClose={() => setIsEditItemOpen(false)}>
         <DialogTitle>Edit Product</DialogTitle>
         <DialogContent>
-            <EditItem onCancel={() => setIsEditItemOpen(false)} />
+            {/* <EditItem onCancel={() => setIsEditItemOpen(false)} /> */}
         </DialogContent>
         </Dialog>
     </DialogOverlay>

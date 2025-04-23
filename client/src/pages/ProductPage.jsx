@@ -15,6 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const ProductPage = () => {
   const [product, setProduct] = useState('');
   const [shoeSize, setShoeSize] = useState([]);
+  const [quantity, setQuantity] = useState(1);
   const [success, setSuccess] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState('description');
@@ -39,12 +40,14 @@ const ProductPage = () => {
     {
       onCompleted() {
         setShoeSize([]);
+        setQuantity(1);
         setSuccess(true);
       },
       variables: {
         userId,
         productId: id,
         size: shoeSize,
+        quantity: quantity,
         productPrice: data?.getProductById.price,
       },
       refetchQueries: [
@@ -122,6 +125,12 @@ const ProductPage = () => {
         pauseOnHover: true,
         draggable: true,
       });
+    }
+  };
+
+  const handleQuantityChange = (newQuantity) => {
+    if (newQuantity >= 1 && newQuantity <= (inStock ? 10 : 0)) {
+      setQuantity(newQuantity);
     }
   };
 
@@ -285,6 +294,40 @@ const ProductPage = () => {
                             {size}
                           </button>
                         ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {inStock && (
+                    <div className="space-y-2">
+                      <span className="font-medium block">Số lượng:</span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleQuantityChange(quantity - 1)}
+                          disabled={quantity <= 1}
+                          className="w-10 h-10 flex items-center justify-center rounded-full bg-rose-100 text-rose-800 hover:bg-rose-200 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clipRule="evenodd" />
+                          </svg>
+                        </button>
+                        <input
+                          type="number"
+                          min="1"
+                          max={inStock ? 10 : 0}
+                          value={quantity}
+                          onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
+                          className="w-16 h-10 text-center border border-rose-200 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                        />
+                        <button
+                          onClick={() => handleQuantityChange(quantity + 1)}
+                          disabled={quantity >= (inStock ? 10 : 0)}
+                          className="w-10 h-10 flex items-center justify-center rounded-full bg-rose-100 text-rose-800 hover:bg-rose-200 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+                          </svg>
+                        </button>
                       </div>
                     </div>
                   )}
