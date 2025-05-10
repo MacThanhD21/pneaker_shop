@@ -1,5 +1,29 @@
 import mongoose from 'mongoose';
 import Cart from './Cart.js';
+
+const orderProductSchema = mongoose.Schema({
+  productId: {
+    type: String,
+    required: true,
+  },
+  size: {
+    type: Number,
+    required: true,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+  },
+  productPrice: {
+    type: Number,
+    required: true,
+  },
+  _id: {
+    type: mongoose.Schema.Types.ObjectId,
+    auto: true
+  }
+});
+
 const orderSchema = mongoose.Schema({
   purchasedBy: {
     type: mongoose.Schema.Types.ObjectId,
@@ -7,7 +31,7 @@ const orderSchema = mongoose.Schema({
     required: true,
   },
   orderProducts: {
-    type: Array,
+    type: [orderProductSchema],
     required: true,
   },
   datePurchased: {

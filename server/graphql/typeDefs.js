@@ -36,6 +36,17 @@ export const typeDefs = gql`
     getAllBanners: [Banner]!
     getActiveBanners: [Banner]!
   }
+  type OrderFix {
+    id: ID!
+    purchasedBy: ID!
+    datePurchased: Date!
+    orderProducts: [CartProductsFix!]!
+  }
+  type CartProductsFix {
+    productId: String!
+    productPrice: Int!
+    size: [Float!]!
+  }
   type Banner {
     id: ID!
     image: String!

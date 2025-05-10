@@ -10,43 +10,45 @@ import moment from 'moment';
 
 const PurchaseHistory = () => {
   const { loading, error, data } = useQuery(GET_USER_ORDER);
-
-  console.log(data)
-  
   const navigate = useNavigate();
 
-  const ordersLength = data?.getUserOrders.length;
-  console.log(ordersLength);
+  const orders = data?.getUserOrders || [];
   
   useEffect(() => {
-    if (ordersLength < 1 && !loading) {
+    if (!loading && orders.length === 0) {
       navigate('/shop');
     }
-  }, [ordersLength, navigate, loading]);
+  }, [orders, navigate, loading]);
 
-  // Sắp xếp các đơn hàng theo thời gian mua gần nhất
-  const sortedOrders = data?.getUserOrders ? [...data.getUserOrders].sort((a, b) => {
+  // Sort orders by purchase date (newest first)
+  const sortedOrders = orders.sort((a, b) => {
     const dateA = moment(a.datePurchased);
     const dateB = moment(b.datePurchased);
     return dateB.diff(dateA);
-  }) : [];
+  });
+
+  if (loading) {
+    return (
+      <Wrapper>
+        <Loading />
+      </Wrapper>
+    );
+  }
+
+  if (error) {
+    return (
+      <Wrapper>
+        <MuiError type='error' value={'Please try again later..'} />
+      </Wrapper>
+    );
+  }
 
   return (
-    <>
-      <Wrapper>
-        {loading ? (
-          <Loading />
-        ) : error ? (
-          <MuiError type='error' value={'Please try again later..'} />
-        ) : (
-          <div>
-            {sortedOrders.map((c, index) => {
-              return <OrderComponent key={index} {...c} />;
-            })}
-          </div>
-        )}
-      </Wrapper>
-    </>
+    <Wrapper>
+      {sortedOrders.map((order, index) => (
+        <OrderComponent key={index} {...order} />
+      ))}
+    </Wrapper>
   );
 };
 

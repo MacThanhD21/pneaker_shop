@@ -9,7 +9,7 @@ export const order = {
     getUserOrders: async (_, {}, context) => {
       const userAuth = await auth(context);
       const order = await Order.find({ purchasedBy: userAuth._id });
-
+      console.log(order);
       if (!order) {
         throw new UserInputError('No order available');
       }
@@ -53,14 +53,15 @@ export const order = {
     
       
       const orderMake = cart.cartProducts.filter((e) => e.selected === true);
-      
+      console.log(orderMake);
       const newOrder = new Order({
         orderProducts:
           orderMake.map((item) => ({
             productId: item.productId,
             size: item.size,
             productPrice: item.productPrice,
-            _id: item._id
+            _id: item._id,
+            quantity: item.quantity
           })),
         purchasedBy: userAuth._id,
         datePurchased: new Date(),
