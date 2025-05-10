@@ -13,7 +13,17 @@ const GET_PRODUCTS = gql`
       rates
       title
       color
-      size
+      size {
+        size
+        quantity
+      }
+      reviews {
+        userId
+        rating
+        comment
+        createdAt
+        imageList
+      }
     }
   }
 `;
@@ -39,7 +49,10 @@ const GET_PRODUCTS_PAGINATION = gql`
         reviews {
           rating
         }
-        size
+        size {
+          size
+          quantity
+        }
       }
     }
   }
@@ -52,12 +65,25 @@ const GET_SINGLE_PRODUCT = gql`
       title
       image
       brand
-      inStock
       model
       price
+      inStock
       rates
-      size
+      title
       color
+      description
+      additionalInfo
+      size {
+        size
+        quantity
+      }
+      reviews {
+        userId
+        rating
+        comment
+        createdAt
+        imageList
+      }
     }
   }
 `;
@@ -85,7 +111,10 @@ const GET_PRODUCT_BY_ID = gql`
       model
       price
       rates
-      size
+      size {
+        size
+        quantity
+      }
       color
     }
   }

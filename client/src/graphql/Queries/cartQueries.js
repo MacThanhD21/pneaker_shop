@@ -10,6 +10,7 @@ const GET_USER_CART = gql`
         productPrice
         id
         selected
+        quantity
       }
     }
   }

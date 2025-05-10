@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import jwtDecode from 'jwt-decode';
 import { useQuery } from '@apollo/client';
+import { HelmetProvider } from 'react-helmet-async';
 import {
   CartPage,
   ErrorPage,
@@ -68,7 +69,7 @@ const App = () => {
   }, [dispatch, data, loading, userInfo?.id]);
 
   return (
-    <>
+    <HelmetProvider>
       <MobileMenu />
       <Routes>
         <Route path='/admin' element={<AdminDashboard />} />
@@ -137,7 +138,7 @@ const App = () => {
         <Route path="/shoe-care/:id" element={<ShoeCareDetail />} />
       </Routes>
       <SocialIcons />
-    </>
+    </HelmetProvider>
   );
 };
 

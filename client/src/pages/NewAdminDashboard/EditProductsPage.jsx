@@ -21,6 +21,7 @@ const EditProductPag = () => {
     const [page, setPage] = useState(1);
     const [numberPage, setNumberPage] = useState(0);
     const [deleteProduct, setDeleteProduct] = useState(null);
+    const [listSize, setListSize] = useState([]);
     const { data, loading, error , refetch} = useQuery(GET_PRODUCTS_PAGINATION, {
         onCompleted: ({ getProductsPagination }) => {
             setNumberPage(getProductsPagination.numOfPages);
@@ -46,7 +47,7 @@ const EditProductPag = () => {
         price: '',
         image: '',
         color: '',
-        size: ''
+        size: []
     });
 
     const [isEditItemOpen, setIsEditItemOpen] = useState(false);
@@ -56,14 +57,20 @@ const EditProductPag = () => {
     });
 
     const handleAddProduct = async (e) => {
-        e.preventDefault();
         try {
+            console.log('Product data received:', e);
             await addProduct({
                 variables: {
-                    addProductInput: {
-                        ...newProduct,
-                        price: parseFloat(newProduct.price)
-                    }
+                    title: e.title,
+                    brand: e.brand,
+                    model: e.model,
+                    price: e.price,
+                    image: e.image,
+                    color: e.color,
+                    size: e.size.map(sizeItem => ({
+                        size: parseFloat(sizeItem.size),
+                        quantity: parseInt(sizeItem.quantity)
+                    }))
                 }
             });
             setIsAddModalOpen(false);
@@ -74,8 +81,9 @@ const EditProductPag = () => {
                 price: '',
                 image: '',
                 color: '',
-                size: ''
+                size: []
             });
+            setListSize([]);
         } catch (err) {
             console.error('Error adding product:', err);
         }
@@ -223,7 +231,7 @@ const EditProductPag = () => {
     <Dialog open={isAddModalOpen} onClose={() => setIsAddModalOpen(false)}>
         <DialogTitle>Add New Product</DialogTitle>
         <DialogContent>
-            <NewItem onCancel={() => setIsAddModalOpen(false)} />
+            <NewItem onCancel={() => setIsAddModalOpen(false) } onSubmit={handleAddProduct} />
         </DialogContent>
     </Dialog>
 </DialogOverlay>
@@ -234,7 +242,7 @@ const EditProductPag = () => {
     <Dialog open={isEditItemOpen} onClose={() => setIsEditItemOpen(false)}>
         <DialogTitle>Edit Product</DialogTitle>
         <DialogContent>
-            {/* <EditItem onCancel={() => setIsEditItemOpen(false)} /> */}
+        <NewItem onCancel={() => setIsEditItemOpen(false) } onSubmit={handleAddProduct} />
         </DialogContent>
         </Dialog>
     </DialogOverlay>

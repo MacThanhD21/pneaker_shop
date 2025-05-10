@@ -13,6 +13,7 @@ const HistoryItems = ({ productId, datePurchased, size }) => {
   const [historyItems, setHistoryItems] = useState([]);
   const [userRates, setUserRates] = useState(0);
   const [success, setSuccess] = useState(false);
+  const [comment, setComment] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,11 +23,12 @@ const HistoryItems = ({ productId, datePurchased, size }) => {
   }, [success]);
 
   const getUserRates = (value) => {
+    console.log(value);
     setUserRates(value + 1);
   };
 
   const [createReview, { error }] = useMutation(CREATE_REVIEW, {
-    variables: { productId: productId, userRate: +userRates },
+    variables: { productId: productId, userRate: +userRates, comment: comment },
     onCompleted() {
       setSuccess(true);
       setUserRates(0);
@@ -69,7 +71,14 @@ const HistoryItems = ({ productId, datePurchased, size }) => {
             <h4 className="text-xl font-bold text-gray-900">{title}</h4>
             <p className="text-sm text-gray-500 mt-1">{brand}</p>
             <div className="flex items-center mt-3 space-x-4">
-              <p className="text-sm font-medium bg-gray-100 px-3 py-1 rounded-full">Size: {size}</p>
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium bg-gray-100 px-3 py-1 rounded-full">
+                  Size: {size.size}
+                </p>
+                <p className="text-sm font-medium bg-gray-100 px-3 py-1 rounded-full">
+                  Quantity: {size.quantity}
+                </p>
+              </div>
               <h4 className="text-lg font-bold text-red-500">
                 {formatVNDPrice(price)}
               </h4>
@@ -109,15 +118,36 @@ const HistoryItems = ({ productId, datePurchased, size }) => {
                 value={'Thank you for your review!'}
               />
             ) : (
-              <div className="flex items-center">
-                <h3 className="text-base font-semibold text-gray-900 mr-4">Rate this product:</h3>
-                <Stars
-                  stars={rates}
-                  condition
-                  getUserRates={getUserRates}
-                  createReview={createReview}
-                  userRates={userRates}
-                />
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <h3 className="text-base font-semibold text-gray-900 mr-4">Rate this product:</h3>
+                  <Stars
+                    stars={rates}
+                    condition
+                    getUserRates={getUserRates}
+                    userRates={userRates}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <textarea
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Write your review here..."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    rows="3"
+                  />
+                  <button
+                    onClick={() => createReview()}
+                    disabled={!userRates || !comment.trim()}
+                    className={`w-full py-2 px-4 rounded-lg font-medium text-white transition-colors duration-200
+                      ${!userRates || !comment.trim() 
+                        ? 'bg-gray-400 cursor-not-allowed' 
+                        : 'bg-blue-600 hover:bg-blue-700'}`}
+                  >
+                    Submit Review
+                  </button>
+                </div>
               </div>
             )}
           </div>

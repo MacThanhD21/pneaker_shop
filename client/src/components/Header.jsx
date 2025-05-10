@@ -16,9 +16,11 @@ const Header = () => {
 
   return (
     <>
-      <div
+      <header
         className="relative min-h-[60vh] bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url(${backgroundImage})` }}
+        role="banner"
+        aria-label="Main header with featured product"
       >
         {/* Content */}
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -40,21 +42,22 @@ const Header = () => {
               <Link
                 to="/shop"
                 className="inline-flex items-center space-x-2 bg-gradient-to-r from-rose-600 to-rose-800 text-white px-6 py-3 rounded-full font-semibold text-base shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 group"
+                aria-label="Explore our collection of premium sneakers"
               >
                 <span>Explore Collection</span>
-                <FaArrowRight className="transform group-hover:translate-x-1 transition-transform" />
+                <FaArrowRight className="transform group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </Link>
 
               {/* Features */}
-              <div className="grid grid-cols-2 gap-3 pt-6">
-                <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center">
+              <div className="grid grid-cols-2 gap-3 pt-6" role="list" aria-label="Key features">
+                <div className="flex items-center space-x-2" role="listitem">
+                  <div className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center" aria-hidden="true">
                     <span className="text-rose-600 font-bold">✓</span>
                   </div>
                   <span className="text-gray-700 text-sm">Free Shipping</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center">
+                <div className="flex items-center space-x-2" role="listitem">
+                  <div className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center" aria-hidden="true">
                     <span className="text-rose-600 font-bold">✓</span>
                   </div>
                   <span className="text-gray-700 text-sm">Authentic Products</span>
@@ -66,23 +69,27 @@ const Header = () => {
             <div className="relative">
               <div className="relative">
                 {/* Background Blur Effect */}
-                <div className="absolute inset-0 bg-cover bg-center bg-no-repeat blur-sm opacity-50"
-                  style={{ backgroundImage: `url(${image})` }}>
+                <div 
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat blur-sm opacity-50"
+                  style={{ backgroundImage: `url(${image})` }}
+                  role="presentation"
+                  aria-hidden="true"
+                >
                 </div>
 
                 {/* Decorative Circles */}
-                <div className="absolute -top-4 -right-4 w-16 h-16 bg-rose-500 rounded-full opacity-20 animate-pulse"></div>
-                <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-rose-500 rounded-full opacity-20 animate-pulse delay-300"></div>
+                <div className="absolute -top-4 -right-4 w-16 h-16 bg-rose-500 rounded-full opacity-20 animate-pulse" aria-hidden="true"></div>
+                <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-rose-500 rounded-full opacity-20 animate-pulse delay-300" aria-hidden="true"></div>
 
                 {/* Main Image Container */}
                 <div className="relative backdrop-blur-sm rounded-2xl overflow-hidden transform hover:scale-105 transition-all duration-500 border border-rose-100/40 shadow-[0_10px_35px_rgba(230,150,230,0.25)]">
                   <img
                     src={image}
-                    alt="Yeezy Boost 700"
+                    alt="Yeezy Boost 700 Mauve - Premium sneaker with innovative design and superior comfort"
                     className="w-full h-auto object-cover brightness-110 saturate-110"
                   />
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-pink-200/20 via-transparent to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-pink-200/20 via-transparent to-transparent" aria-hidden="true"></div>
 
                   <div className="absolute top-1/2 -right-20 transform -translate-y-1/2 rotate-90">
                     <h2 className="text-3xl font-semibold text-rose-400 drop-shadow-[1px_1px_3px_rgba(230,150,230,0.5)] tracking-wide">
@@ -95,7 +102,7 @@ const Header = () => {
             </div>
           </div>
         </div>
-      </div>
+      </header>
       <Chatbox />
       <ScrollToTop />
     </>

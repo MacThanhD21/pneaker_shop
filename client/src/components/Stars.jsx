@@ -1,34 +1,38 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import StarIcon from '@mui/icons-material/Star';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
 import StarOutlineIcon from '@mui/icons-material/StarOutline';
 
-const Stars = ({ stars, condition, getUserRates, createReview, userRates }) => {
-  const onClick = (index) => {
-    getUserRates(index);
-  };
+const Stars = ({ stars: initialStars, condition, getUserRates, userRates }) => {
+  const [currentStars, setCurrentStars] = useState(initialStars || 0);
 
   useEffect(() => {
-    if (userRates > 0) {
-      createReview();
-    }
-  }, [createReview, userRates]);
+    setCurrentStars(initialStars || 0);
+  }, [initialStars]);
 
-  const tempStars = Array.from({ length: 5 }, (_, index) => {
+  const handleStarClick = (index) => {
+    if (condition && getUserRates) {
+      const newRating = index + 1;
+      setCurrentStars(newRating);
+      getUserRates(newRating);
+    }
+  };
+
+  const renderStars = Array.from({ length: 5 }, (_, index) => {
     const number = index + 0.5;
     return (
       <span
         key={index}
-        onClick={() => condition && onClick(index)}
+        onClick={() => handleStarClick(index)}
         className={`cursor-pointer transition-colors duration-200 ${
           condition 
             ? 'hover:text-yellow-600' 
             : 'hover:text-yellow-500'
         }`}
       >
-        {stars > number ? (
+        {currentStars > number ? (
           <StarIcon className="text-yellow-500" />
-        ) : stars > index ? (
+        ) : currentStars > index ? (
           <StarHalfIcon className="text-yellow-500" />
         ) : (
           <StarOutlineIcon className="text-yellow-500" />
@@ -39,9 +43,9 @@ const Stars = ({ stars, condition, getUserRates, createReview, userRates }) => {
 
   return (
     <div className="flex items-center font-medium text-yellow-500">
-      {tempStars}
+      {renderStars}
       <span className="text-gray-400 ml-2.5">
-        {stars?.toFixed(1)}
+        {currentStars?.toFixed(1)}
       </span>
     </div>
   );

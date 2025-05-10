@@ -12,7 +12,23 @@ const GET_USER_ORDER = gql`
         size
       }
     }
+    
   }
 `;
 
-export { GET_USER_ORDER };
+const GET_ALL_ORDERS = gql`
+  query {
+    getAllOrders {
+      datePurchased
+      id
+      orderProducts {
+        id
+        productId
+        productPrice
+      }
+      purchasedBy
+    }
+  }
+`
+
+export { GET_USER_ORDER, GET_ALL_ORDERS };

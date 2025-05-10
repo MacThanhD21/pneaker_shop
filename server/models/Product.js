@@ -9,6 +9,29 @@ const reviewSchema = mongoose.Schema({
     required: true,
     ref: 'User',
   },
+  comment: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  imageList: {
+    type: [String],
+    required: true,
+  }
+});
+const productSizeSchema = mongoose.Schema({
+  size: {
+    type: Number,
+    enum: sizeEnum,
+    required: true,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+  },
 });
 const productSchema = mongoose.Schema({
   title: {
@@ -20,8 +43,7 @@ const productSchema = mongoose.Schema({
     required: true,
   },
   size: {
-    type: [Number],
-    enum: sizeEnum,
+    type: [productSizeSchema],
     required: true,
   },
   brand: {
@@ -30,7 +52,7 @@ const productSchema = mongoose.Schema({
   },
   model: {
     type: String,
-    required: true,
+    required: true, 
   },
   color: {
     type: Array,
@@ -53,6 +75,19 @@ const productSchema = mongoose.Schema({
     type: Boolean,
     required: true,
     default: true,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+    default: 100
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  additionalInfo: {
+    type: String,
+    required: true,
   },
 });
 productSchema.pre('save', async function () {

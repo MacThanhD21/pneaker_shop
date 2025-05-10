@@ -6,7 +6,6 @@ export const products = {
   Query: {
     getProducts: async () => {
       const products = await Product.find({});
-
       return products;
     },
     getProductsPagination: async (
@@ -15,7 +14,7 @@ export const products = {
     ) => {
       const query = {};
       if (size) {
-        query.size = size;
+        query.size = { $elemMatch: { size: size } };
       }
       if (brand) {
         query.brand = brand;
@@ -112,11 +111,16 @@ export const products = {
       if (!title || !model || !brand || !color || !price || !size || !image) {
         throw new UserInputError('One or more fields are missing');
       } else {
-        size = size.split(',').map((str) => Number(str));
+        size = size.map(item => ({
+          size: Number(item.size),
+          quantity: Number(item.quantity)
+        }));
         color = color.split(',');
         price = Number(price);
       }
-
+      const description = 'Experience unparalleled comfort and style with these premium sneakers. Crafted with high-quality materials and innovative design, these shoes offer exceptional durability and support for everyday wear. The breathable mesh upper ensures optimal airflow, while the cushioned insole provides all-day comfort. Perfect for both casual outings and athletic activities, these sneakers combine fashion with functionality.';
+      const additionalInfo = 'Product Details:\n• Material: Premium synthetic mesh and leather\n• Sole: Durable rubber outsole with enhanced traction\n• Closure: Lace-up design for secure fit\n• Care Instructions: Wipe with damp cloth, air dry\n• Country of Origin: Vietnam\n• Warranty: 6 months manufacturing defects\n• Style Code: SNK-2024\n• Weight: 320g per pair\n• Available in multiple colorways\n• Suitable for all seasons';
+      const imageList = [];
       const newProduct = await Product.create({
         title,
         model,
@@ -125,6 +129,9 @@ export const products = {
         color,
         price,
         size,
+        description,
+        additionalInfo,
+        imageList,
       });
 
       return newProduct;
@@ -174,7 +181,7 @@ export const products = {
 
       return product;
     },
-    createProductReview: async (_, { productId, userRate }, context) => {
+    createProductReview: async (_, { productId, userRate, comment }, context) => {
       const userAuth = await auth(context);
       const product = await Product.findById(productId);
       const alreadyReviewd = product.reviews.find(
@@ -192,6 +199,8 @@ export const products = {
       const review = {
         userId: userAuth._id,
         rating: userRate,
+        comment: comment,
+        createdAt: new Date(),
       };
 
       product.reviews.push(review);

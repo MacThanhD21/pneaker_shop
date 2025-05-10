@@ -32,8 +32,21 @@ export const typeDefs = gql`
     getUserCart: Cart!
     getUserOrders: [Order]!
     getAllUsers: [User!]!
+    getAllOrders: [Order]!
+    getAllBanners: [Banner]!
+    getActiveBanners: [Banner]!
   }
-
+  type Banner {
+    id: ID!
+    image: String!
+    title: String!
+    description: String
+    link: String
+    isActive: Boolean!
+    order: Int!
+    createdAt: String!
+    updatedAt: String!
+  }
   input ProductsFiltersInput {
     brand: String
     size: Float
@@ -69,10 +82,17 @@ export const typeDefs = gql`
     reviews: [Reviews]
     color: [String]!
     inStock: Boolean!
-    size: [Float!]!
+    size: [ProductSize]!
     totalPages: Int
+    quantity: Int!
+    description: String!
+    additionalInfo: String!
+    imageList: [String]!
   }
-
+  type ProductSize {
+    size: Float!
+    quantity: Int!
+  }
   type TopPicksProducts {
     id: ID!
     title: String!
@@ -84,12 +104,12 @@ export const typeDefs = gql`
   type Reviews {
     userId: ID!
     rating: Float!
+    comment: String!
+    createdAt: String!
+    imageList: [String]!
   }
 
-  type Cart {
-    userId: ID!
-    cartProducts: [CartProducts]!
-  }
+  
 
   type Order {
     purchasedBy: ID!
@@ -97,13 +117,17 @@ export const typeDefs = gql`
     datePurchased: Date
     id: ID
   }
-
+  type Cart {
+    userId: ID!
+    cartProducts: [CartProducts]!
+  }
   type CartProducts {
     productId: String!
-    size: [Float!]!
+    size: Float!
     productPrice: Int!
     id: ID
     selected: Boolean!
+    quantity: Int!
   }
 
   input RegisterInput {
@@ -138,7 +162,11 @@ export const typeDefs = gql`
     image: String!
     price: String
     color: String
-    size: String
+    size: [ProductSizeInput!]!
+  }
+  input ProductSizeInput {
+    size: Float!
+    quantity: Int!
   }
   input UpdateProductInput {
     productId: ID
@@ -157,6 +185,21 @@ export const typeDefs = gql`
     lastName: String
     password: String
   }
+  input BannerInput {
+    image: String!
+    title: String!
+    description: String
+    link: String
+    order: Int
+  }
+  input UpdateBannerInput {
+    image: String
+    title: String
+    description: String
+    link: String
+    isActive: Boolean
+    order: Int
+  }
   type Mutation {
     login(username: String!, password: String!): User!
     register(registerInput: RegisterInput): User!
@@ -167,17 +210,22 @@ export const typeDefs = gql`
     addToCart(
       userId: ID!
       productId: ID!
-      size: [Float]!
+      size: Float!
       productPrice: Int!
+      quantity: Int!
     ): Cart!
     deleteProductFromCart(id: ID!): Cart!
-    createProductReview(productId: ID!, userRate: Int!): Product!
+    createProductReview(productId: ID!, userRate: Int!, comment: String!): Product!
     createOrder: Order!
     updateCartItemsSelection(cartProductIds: [ID!]!, selected: Boolean!): Cart!
     updateRoleUser(userId: ID!, isAdmin: Boolean!): User!
     deleteUser(userId: ID!): User!
     deleteProduct(productId: ID!): Product!
+    updateCartItemQuantity(productId: ID!, size: Float!, quantity: Int!): Cart!
+    createBanner(input: BannerInput!): Banner!
+    updateBanner(id: ID!, input: UpdateBannerInput!): Banner!
+    deleteBanner(id: ID!): Banner!
   }
 
-
+    
 `;

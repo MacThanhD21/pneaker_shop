@@ -15,8 +15,11 @@ export const order = {
       }
       return order;
     },
+    getAllOrders: async (_, {}, context) => {
+      const orders = await Order.find({});
+      return orders;
+    },
   },
-
   Mutation: {
     createOrder: async (_, {}, context) => {
       const userAuth = await auth(context);
@@ -32,8 +35,12 @@ export const order = {
         
         const product = products.find(p => p._id.toString() === cartItem.productId.toString());
         if (product) {
-          product.size = product.size.filter((size) => size !== +cartItem.size);
-          await product.save();
+          // Find the size object and update its quantity
+          const sizeObj = product.size.find(s => s.size === +cartItem.size);
+          if (sizeObj) {
+            sizeObj.quantity -= 1;
+            await product.save();
+          }
         }
       }
     
@@ -58,6 +65,8 @@ export const order = {
         purchasedBy: userAuth._id,
         datePurchased: new Date(),
       });
+
+      
       await newOrder.save();
       return newOrder ;
     },

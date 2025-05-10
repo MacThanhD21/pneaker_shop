@@ -6,10 +6,10 @@ import { formatVNDPrice } from '../utils/formatPrice';
 const OrderSum = ({ cartProducts, loading, link, onClick, orderPage }) => {
   const deliveryTax = cartProducts?.length > 0 ? 10000 : 0;
   const salesTax = cartProducts?.length > 0 ? 20000 : 0;
-
+  console.log(cartProducts);
   const originalPriceCalculated = cartProducts?.reduce(
-    (acc, val) => Number(acc) + Number(val.productPrice),
-    [0]
+    (acc, val) => Number(acc) + (Number(val.productPrice) * Number(val.quantity)),
+    0
   );
 
   // Kiểm tra điều kiện miễn phí vận chuyển

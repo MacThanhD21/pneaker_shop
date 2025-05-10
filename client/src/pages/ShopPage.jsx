@@ -25,16 +25,22 @@ const FilterSection = ({ title, children }) => {
 
   return (
     <div className="mb-6 pb-6 border-b border-gray-200 last:border-0 last:mb-0 last:pb-0">
-      <div 
-        className="flex justify-between items-center mb-4 p-2 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors"
+      <button 
+        className="w-full flex justify-between items-center mb-4 p-2 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors"
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+        aria-controls={`filter-${title.toLowerCase().replace(/\s+/g, '-')}`}
       >
         <h5 className="text-base font-medium text-gray-900">{title}</h5>
         <KeyboardArrowDownIcon 
           className={`text-gray-500 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
+          aria-hidden="true"
         />
-      </div>
-      <div className={`overflow-hidden transition-all duration-300 px-2 ${isOpen ? 'max-h-[500px]' : 'max-h-0'}`}>
+      </button>
+      <div 
+        id={`filter-${title.toLowerCase().replace(/\s+/g, '-')}`}
+        className={`overflow-hidden transition-all duration-300 px-2 ${isOpen ? 'max-h-[500px]' : 'max-h-0'}`}
+      >
         {children}
       </div>
     </div>
@@ -87,15 +93,15 @@ const ShopPage = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-t-2 border-red-500"></div>
+      <div className="flex min-h-screen items-center justify-center" role="status" aria-label="Loading products">
+        <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-t-2 border-red-500" aria-hidden="true"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center" role="alert">
         <div className="text-center text-red-500">
           <h2 className="text-2xl font-bold">Đã xảy ra lỗi</h2>
           <p className="mt-2">{error.message}</p>
@@ -104,19 +110,54 @@ const ShopPage = () => {
     );
   }
 
+  // Generate schema markup for the product list
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "itemListElement": products?.map((product, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "item": {
+        "@type": "Product",
+        "name": product.title,
+        "image": product.image,
+        "description": product.description,
+        "brand": {
+          "@type": "Brand",
+          "name": product.brand
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": product.price,
+          "priceCurrency": "VND",
+          "availability": product.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+        }
+      }
+    }))
+  };
+
   return (
     <>
       <Helmet>
-        <title>Shop - Sneaker Shop</title>
+        <title>Shop Premium Sneakers & Athletic Shoes | Browse Our Collection</title>
+        <meta name="description" content="Explore our extensive collection of premium sneakers and athletic shoes. Filter by size, brand, color, and price to find your perfect pair. Free shipping on all orders." />
+        <meta name="keywords" content="sneakers, athletic shoes, premium footwear, sports shoes, running shoes, basketball shoes, lifestyle sneakers" />
+        <link rel="canonical" href="https://yourdomain.com/shop" />
+        
+        {/* Schema.org markup for Product List */}
+        <script type="application/ld+json">
+          {JSON.stringify(productSchema)}
+        </script>
       </Helmet>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Navbar />
         <div className="flex flex-col md:flex-row gap-8 mt-8">
-          <div className="bg-white p-6 rounded-xl shadow-sm sticky top-8 h-fit w-full md:w-[30%] md:min-w-[300px]">
-            <h4 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
-              <span className="w-1 h-5 bg-red-500 rounded"></span>
+          <aside className="bg-white p-6 rounded-xl shadow-sm sticky top-8 h-fit w-full md:w-[30%] md:min-w-[300px]" aria-label="Product filters">
+            <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
+              <span className="w-1 h-5 bg-red-500 rounded" aria-hidden="true"></span>
               Bộ lọc
-            </h4>
+            </h2>
             
             <FilterSection title="Kích cỡ">
               <SizeChart />
@@ -135,16 +176,22 @@ const ShopPage = () => {
             </FilterSection>
 
             <div className="flex gap-4 mt-6 px-2">
-              <button className="flex-1 py-3 px-4 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-colors">
+              <button 
+                className="flex-1 py-3 px-4 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-colors"
+                aria-label="Apply filters"
+              >
                 Áp dụng
               </button>
-              <button className="flex-1 py-3 px-4 bg-white text-gray-900 border border-gray-200 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+              <button 
+                className="flex-1 py-3 px-4 bg-white text-gray-900 border border-gray-200 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                aria-label="Reset filters"
+              >
                 Đặt lại
               </button>
             </div>
-          </div>
+          </aside>
 
-          <div className="w-full md:w-[70%]">
+          <section className="w-full md:w-[70%]" aria-label="Product listing">
             <ShopHeader filteredProducts={filteredProducts} />
             {products?.length < 1 ? (
               <MuiError
@@ -162,13 +209,13 @@ const ShopPage = () => {
                 />
               </div>
             )}
-          </div>
+          </section>
         </div>
 
-        <div className="flex justify-center mt-4 md:ml-40">
+        <nav className="flex justify-center mt-4 md:ml-40" aria-label="Product pagination">
           <PaginationMUI page={page} getPage={getPage} numOfPages={numOfPages} />
-        </div>
-      </div>
+        </nav>
+      </main>
     </>
   );
 };

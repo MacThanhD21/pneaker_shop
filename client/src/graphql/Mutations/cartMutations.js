@@ -4,14 +4,16 @@ const ADD_TO_CART = gql`
   mutation (
     $userId: ID!
     $productId: ID!
-    $size: [Float]!
+    $size: Float!
     $productPrice: Int!
+    $quantity: Int!
   ) {
     addToCart(
       userId: $userId
       productId: $productId
       size: $size
       productPrice: $productPrice
+      quantity: $quantity
     ) {
       userId
       cartProducts {
@@ -20,6 +22,7 @@ const ADD_TO_CART = gql`
         size
         id
         selected
+        quantity
       }
     }
   }
@@ -55,4 +58,20 @@ const UPDATE_CART_ITEMS_SELECTION = gql`
   }
 `;
 
-export { ADD_TO_CART, DELETE_FROM_CART, UPDATE_CART_ITEMS_SELECTION };
+const UPDATE_CART_ITEM_QUANTITY = gql`
+  mutation ($productId: ID!, $size: Float!, $quantity: Int!) {
+    updateCartItemQuantity(productId: $productId, size: $size, quantity: $quantity) {
+      userId
+      cartProducts {
+        id
+        productId
+        productPrice
+        size
+        selected
+        quantity
+      }
+    }
+  }
+`;
+
+export { ADD_TO_CART, DELETE_FROM_CART, UPDATE_CART_ITEMS_SELECTION, UPDATE_CART_ITEM_QUANTITY };

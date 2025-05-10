@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ClearIcon from '@mui/icons-material/Clear';
 import Stars from './Stars';
 import { useMutation, useQuery } from '@apollo/client';
@@ -10,10 +10,16 @@ import { GET_USER_CART } from '../graphql/Queries/cartQueries';
 import MuiError from '../assets/mui/Alert';
 import { formatVNDPrice } from '../utils/formatPrice';
 
-const CartItems = ({ productId, size, id, orderPage, historyPage, isSelected, onSelect, onDisableCheckbox }) => {
+const CartItems = ({ productId, size, id, orderPage, historyPage, isSelected, onSelect, onDisableCheckbox, quantity, onQuantityChange, 
+  isShowEditQuantity = true
+ }) => {
   const [cartItems, setCartItems] = useState([]);
-  const [quantity, setQuantity] = useState(1);
+  const [currentQuantity, setCurrentQuantity] = useState(quantity);
   const { userInfo } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    setCurrentQuantity(quantity);
+  }, [quantity]);
 
   const { loading } = useQuery(GET_SINGLE_PRODUCT, {
     variables: { productId },
@@ -37,13 +43,20 @@ const CartItems = ({ productId, size, id, orderPage, historyPage, isSelected, on
   const { image, title, model, price } = cartItems;
 
   const handleQuantityChange = (newQuantity) => {
-    if (newQuantity >= 1 && newQuantity <= 10) {
-      setQuantity(newQuantity);
+    const validQuantity = Math.max(1, Math.min(10, Number(newQuantity)));
+    
+    if (validQuantity !== currentQuantity) {
+      setCurrentQuantity(validQuantity);
+      if (onQuantityChange) {
+        onQuantityChange(validQuantity);
+      }
     }
   };
 
-  if (loading || deleteLoading) return <Loading />;
+  if (loading) return <Loading />;
+  if (deleteLoading) return <Loading />;
   if (deleteError) return <MuiError type='error' value={'Something went wrong.. Please try again later'} />;
+  if (!cartItems || Object.keys(cartItems).length === 0) return <Loading />;
 
   return (
     <div className="mb-4">
@@ -79,32 +92,35 @@ const CartItems = ({ productId, size, id, orderPage, historyPage, isSelected, on
 
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
+              {isShowEditQuantity && (
               <button
-                onClick={() => handleQuantityChange(quantity - 1)}
-                disabled={quantity <= 1}
+                onClick={() => handleQuantityChange(currentQuantity - 1)}
+                disabled={currentQuantity <= 1}
                 className="w-8 h-8 flex items-center justify-center rounded-full bg-rose-100 text-rose-800 hover:bg-rose-200 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clipRule="evenodd" />
                 </svg>
-              </button>
+                </button>
+              )}
               <input
                 type="number"
                 min="1"
                 max="10"
-                value={quantity}
-                onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
+                value={currentQuantity}
+                onChange={(e) => handleQuantityChange(e.target.value)}
                 className="w-12 h-8 text-center border border-rose-200 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
               />
-              <button
-                onClick={() => handleQuantityChange(quantity + 1)}
-                disabled={quantity >= 10}
+             { isShowEditQuantity && <button
+                onClick={() => handleQuantityChange(currentQuantity + 1)}
+                disabled={currentQuantity >= cartItems.size.find(item => item.size === Number(size)).quantity}
                 className="w-8 h-8 flex items-center justify-center rounded-full bg-rose-100 text-rose-800 hover:bg-rose-200 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <svg x mlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
                 </svg>
               </button>
+             }
             </div>
 
             <div className="flex flex-col items-end gap-2">
@@ -115,7 +131,7 @@ const CartItems = ({ productId, size, id, orderPage, historyPage, isSelected, on
                 />
               )}
               <h2 className="text-lg text-primary-500 font-semibold">
-                {formatVNDPrice(price * quantity)}
+                {formatVNDPrice(price * currentQuantity)}
               </h2>
             </div>
           </div>

@@ -7,30 +7,35 @@ import { GET_USER_CART } from '../graphql/Queries/cartQueries';
 import { Navbar, OrderSum, TopPicks } from '../components';
 import CartItems from '../components/CartItems';
 import MuiError from '../assets/mui/Alert';
-import { UPDATE_CART_ITEMS_SELECTION } from '../graphql/Mutations/cartMutations';
+import { UPDATE_CART_ITEMS_SELECTION, UPDATE_CART_ITEM_QUANTITY } from '../graphql/Mutations/cartMutations';
 
 const CartPage = () => {
   const { userInfo } = useSelector((state) => state.user);
   const { loading, data, error } = useQuery(GET_USER_CART, {
     variables: { userId: userInfo?.id },
   });
-  const cartProducts = data?.getUserCart.cartProducts;
+  const [cartProducts, setCartProducts] = useState([]);
   const cartLength = cartProducts?.length;
 
   const [updateCartItemsSelection] = useMutation(UPDATE_CART_ITEMS_SELECTION, {
     refetchQueries: [{ query: GET_USER_CART }],
   });
 
+  const [updateCartItemQuantity] = useMutation(UPDATE_CART_ITEM_QUANTITY, {
+    refetchQueries: [{ query: GET_USER_CART }],
+  });
+
   const [selectedItems, setSelectedItems] = useState([]);
 
   useEffect(() => {
-    if(cartProducts){
-      const initialSelected = cartProducts
+    if(data?.getUserCart.cartProducts) {
+      setCartProducts(data.getUserCart.cartProducts);
+      const initialSelected = data.getUserCart.cartProducts
         .filter(item => item.selected)
         .map(item => item.id);
       setSelectedItems(initialSelected);
     }
-  }, [cartProducts]);
+  }, [data]);
 
   const handleSelectAll = async(e) => {
     if (e.target.checked) {
@@ -79,6 +84,31 @@ const CartPage = () => {
       });
     } catch (error) {
       console.error('Error updating cart items selection:', error);
+    }
+  };
+
+  const handleQuantityChange = async (itemId, newQuantity) => {
+    try {
+      const item = cartProducts.find(item => item.id === itemId);
+      if (!item) return;
+
+      await updateCartItemQuantity({
+        variables: {
+          productId: item.productId,
+          size: item.size,
+          quantity: newQuantity
+        }
+      });
+
+      setCartProducts(prev => 
+        prev.map(item => 
+          item.id === itemId 
+            ? { ...item, quantity: newQuantity }
+            : item
+        )
+      );
+    } catch (error) {
+      console.error('Error updating quantity:', error);
     }
   };
 
@@ -136,6 +166,7 @@ const CartPage = () => {
                       isSelected={selectedItems.includes(cartItem.id)}
                       onSelect={() => handleSelectItem(cartItem.id)}
                       onDisableCheckbox={false}
+                      onQuantityChange={(newQuantity) => handleQuantityChange(cartItem.id, newQuantity)}
                     />
                   ))}
                 </div>

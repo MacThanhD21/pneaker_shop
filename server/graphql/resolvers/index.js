@@ -2,6 +2,7 @@ import { cart } from './cartResolvers.js';
 import { order } from './orderResolvers.js';
 import { products } from './productResolvers.js';
 import { users } from './userResolvers.js';
+import { banners } from './bannerResolvers.js';
 import { DateTimeResolver } from 'graphql-scalars';
 
 export default {
@@ -11,11 +12,13 @@ export default {
     ...products.Query,
     ...cart.Query,
     ...order.Query,
+    ...banners.Query,
   },
   Mutation: {
     ...users.Mutation,
     ...products.Mutation,
     ...cart.Mutation,
     ...order.Mutation,
+    ...banners.Mutation,
   },
 };

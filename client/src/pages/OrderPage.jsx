@@ -137,7 +137,7 @@ const OrderPage = () => {
                   </h2>
                   <div className="flex flex-col pr-2 overflow-y-auto overflow-x-hidden h-[30vh] gap-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                     {selectedProducts.map((cartItem, index) => (
-                      <CartItems key={index} orderPage {...cartItem} onDisableCheckbox />
+                      <CartItems key={index} orderPage {...cartItem} onDisableCheckbox isShowEditQuantity={false} />
                     ))}
                   </div>
                 </div>

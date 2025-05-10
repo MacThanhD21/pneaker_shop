@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 const CREATE_REVIEW = gql`
-  mutation ($productId: ID!, $userRate: Int!) {
-    createProductReview(productId: $productId, userRate: $userRate) {
+  mutation ($productId: ID!, $userRate: Int!, $comment: String!) {
+    createProductReview(productId: $productId, userRate: $userRate, comment: $comment) {
       id
       rates
     }
@@ -22,7 +22,7 @@ const CREATE_PRODUCT = gql`
     $image: String!
     $price: String
     $color: String
-    $size: String
+    $size: [ProductSizeInput!]!
   ) {
     addProduct(
       addProductInput: {
@@ -49,7 +49,10 @@ const CREATE_PRODUCT = gql`
         rating
         userId
       }
-      size
+      size {
+        size
+        quantity
+      }
     }
   }
 `;

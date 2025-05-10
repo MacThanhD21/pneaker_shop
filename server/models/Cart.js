@@ -14,16 +14,20 @@ const cartSchema = mongoose.Schema({
         required: true,
       },
       size: {
-        type: [Number],
+        type: Number,
         required: true,
       },
       productPrice: {
-        type: Number,
+        type: Number, 
         required: true,
       },
       selected: {
         type: Boolean,
         default: false,
+      },
+      quantity: {
+        type: Number,
+        required: true,
       },
     },
   ],

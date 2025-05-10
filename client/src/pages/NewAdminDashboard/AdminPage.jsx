@@ -4,9 +4,28 @@ import {
   Home, Tag, FileText, Image, BarChart2, Settings, LogOut, ArrowLeft
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from '@apollo/client';
+import { GET_ALL_USERS } from '../../graphql/Queries/userQueries';
+import { GET_ALL_ORDERS } from '../../graphql/Queries/orderQueries';
 import EditUserPage from "./EditUsersPage";
 import EditProductPage from "./EditProductsPage";
 import OrderDetailPage from "./EditOrderPage";
+import Loading from '../../assets/mui/Loading';
+import MuiError from '../../assets/mui/Alert';
+import { formatVNDPrice } from '../../utils/formatPrice';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Line, Bar, Pie } from 'react-chartjs-2';
 import { 
   AppContainer, Sidebar, SidebarHeader, SidebarNav, NavButton, 
   Header, HeaderContainer, MenuButton, MobileTitle, HeaderActions, 
@@ -19,6 +38,20 @@ import {
   StatsContainer, StatCard, StatIcon, StatValue, StatLabel,
   ChartContainer, RecentActivity, ActivityItem
 } from "./Components";
+import EditBannerPage from "./EditBannerPage";
+
+// Register ChartJS components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -26,30 +59,38 @@ export default function AdminDashboard() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
+  const { loading: usersLoading, error: usersError, data: usersData } = useQuery(GET_ALL_USERS);
+  const { loading: ordersLoading, error: ordersError, data: ordersData } = useQuery(GET_ALL_ORDERS);
+
   const navItems = [
     { id: "dashboard", icon: <Home size={20} />, label: "Dashboard" },
     { id: "products", icon: <Package size={20} />, label: "Sản phẩm" },
     { id: "orders", icon: <ShoppingCart size={20} />, label: "Đơn hàng" },
     { id: "users", icon: <User size={20} />, label: "Người dùng" },
-    { id: "promotions", icon: <Tag size={20} />, label: "Khuyến mãi" },
-    { id: "blog", icon: <FileText size={20} />, label: "Bài viết" },
-    { id: "theme", icon: <Image size={20} />, label: "Giao diện" },
-    { id: "reports", icon: <BarChart2 size={20} />, label: "Báo cáo" },
-    { id: "settings", icon: <Settings size={20} />, label: "Cài đặt" }
+    { id: "promotions", icon: <Tag size={20} />, label: "Banner quảng cáo" },
   ];
   
+  // Calculate total revenue from orders
+  const totalRevenue = ordersData?.getAllOrders?.reduce((total, order) => {
+    const orderTotal = order.orderProducts.reduce((sum, product) => sum + product.productPrice, 0);
+    return total + orderTotal;
+  }, 0) || 0;
+
   const stats = [
-    { value: "25.000.000đ", label: "Doanh thu", icon: <Home size={24} />, color: "bg-green-100 text-green-600" },
-    { value: "156", label: "Đơn hàng", icon: <ShoppingCart size={24} />, color: "bg-blue-100 text-blue-600" },
-    { value: "1.234", label: "Người dùng", icon: <User size={24} />, color: "bg-purple-100 text-purple-600" },
-    { value: "3.2%", label: "Tỷ lệ chuyển đổi", icon: <BarChart2 size={24} />, color: "bg-orange-100 text-orange-600" }
+    { value: formatVNDPrice(totalRevenue), label: "Doanh thu", icon: <Home size={24} />, color: "bg-green-100 text-green-600" },
+    { value: ordersData?.getAllOrders?.length || 0, label: "Đơn hàng", icon: <ShoppingCart size={24} />, color: "bg-blue-100 text-blue-600" },
+    { value: usersData?.getAllUsers?.length || 0, label: "Người dùng", icon: <User size={24} />, color: "bg-purple-100 text-purple-600" },
+    { value: "87%", label: "Tỷ lệ chuyển đổi", icon: <BarChart2 size={24} />, color: "bg-orange-100 text-orange-600" }
   ];
 
-  const recentActivities = [
-    { id: 1, type: "order", title: "Đơn hàng mới #1234", user: "Nguyễn Văn A", amount: "2.500.000đ", time: "2 giờ trước" },
-    { id: 2, type: "user", title: "Người dùng mới", user: "Trần Thị B", time: "3 giờ trước" },
-    { id: 3, type: "product", title: "Sản phẩm mới", name: "Nike Air Max 270", time: "5 giờ trước" }
-  ];
+  const recentActivities = ordersData?.getAllOrders?.slice(0, 3).map(order => ({
+    id: order.id,
+    type: "order",
+    title: `Đơn hàng mới #${order.id}`,
+    user: order.purchasedBy,
+    amount: formatVNDPrice(order.orderProducts.reduce((sum, product) => sum + product.productPrice, 0)),
+    time: new Date(order.datePurchased).toLocaleDateString()
+  })) || [];
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -58,6 +99,103 @@ export default function AdminDashboard() {
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
   };
+
+  // Process data for charts
+  const processRevenueData = () => {
+    if (!ordersData?.getAllOrders) return null;
+
+    const ordersByDate = ordersData.getAllOrders.reduce((acc, order) => {
+      const date = new Date(order.datePurchased).toLocaleDateString();
+      const total = order.orderProducts.reduce((sum, product) => sum + product.productPrice, 0);
+      
+      if (!acc[date]) {
+        acc[date] = 0;
+      }
+      acc[date] += total;
+      return acc;
+    }, {});
+
+    const dates = Object.keys(ordersByDate).sort();
+    const revenues = dates.map(date => ordersByDate[date]);
+
+    return {
+      labels: dates,
+      datasets: [
+        {
+          label: 'Doanh thu',
+          data: revenues,
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1,
+          fill: true,
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        },
+      ],
+    };
+  };
+
+  const processOrderStatusData = () => {
+    if (!ordersData?.getAllOrders) return null;
+
+    const statusCount = ordersData.getAllOrders.reduce((acc, order) => {
+      const status = order.status || 'pending';
+      acc[status] = (acc[status] || 0) + 1;
+      return acc;
+    }, {});
+
+    return {
+      labels: Object.keys(statusCount),
+      datasets: [
+        {
+          data: Object.values(statusCount),
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.8)',
+            'rgba(54, 162, 235, 0.8)',
+            'rgba(255, 206, 86, 0.8)',
+            'rgba(75, 192, 192, 0.8)',
+          ],
+        },
+      ],
+    };
+  };
+
+  const processUserGrowthData = () => {
+    if (!usersData?.getAllUsers) return null;
+
+    const usersByDate = usersData.getAllUsers.reduce((acc, user) => {
+      const date = new Date(user.createdAt).toLocaleDateString();
+      if (!acc[date]) {
+        acc[date] = 0;
+      }
+      acc[date]++;
+      return acc;
+    }, {});
+
+    const dates = Object.keys(usersByDate).sort();
+    const userCounts = dates.map(date => usersByDate[date]);
+
+    return {
+      labels: dates,
+      datasets: [
+        {
+          label: 'Người dùng mới',
+          data: userCounts,
+          backgroundColor: 'rgba(153, 102, 255, 0.8)',
+        },
+      ],
+    };
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+    },
+  };
+
+  if (usersLoading || ordersLoading) return <Loading />;
+  if (usersError || ordersError) return <MuiError type='error' value={'Please try again later..'} />;
 
   return (
     <AppContainer>
@@ -120,17 +258,9 @@ export default function AdminDashboard() {
             </div>
             
             <HeaderActions>
-              <NotificationButton>
-                <Bell size={20} />
-                <NotificationBadge>3</NotificationBadge>
-              </NotificationButton>
-              
               <UserProfileContainer>
                 <UserAvatar>A</UserAvatar>
                 <UserName>Admin</UserName>
-                <ChevronIcon>
-                  <ChevronDown size={16} />
-                </ChevronIcon>
               </UserProfileContainer>
             </HeaderActions>
           </HeaderContainer>
@@ -176,9 +306,28 @@ export default function AdminDashboard() {
                 ))}
               </StatsContainer>
 
-              <ChartContainer>
-                {/* Add your chart component here */}
-              </ChartContainer>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-white p-6 rounded-lg shadow">
+                  <h3 className="text-lg font-semibold mb-4">Doanh thu theo thời gian</h3>
+                  {processRevenueData() && (
+                    <Line data={processRevenueData()} options={chartOptions} />
+                  )}
+                </div>
+                
+                <div className="bg-white p-6 rounded-lg shadow">
+                  <h3 className="text-lg font-semibold mb-4">Phân bố đơn hàng</h3>
+                  {processOrderStatusData() && (
+                    <Pie data={processOrderStatusData()} options={chartOptions} />
+                  )}
+                </div>
+                
+                <div className="bg-white p-6 rounded-lg shadow md:col-span-2">
+                  <h3 className="text-lg font-semibold mb-4">Tăng trưởng người dùng</h3>
+                  {processUserGrowthData() && (
+                    <Bar data={processUserGrowthData()} options={chartOptions} />
+                  )}
+                </div>
+              </div>
 
               <RecentActivity>
                 <SectionHeader>
@@ -206,7 +355,7 @@ export default function AdminDashboard() {
           {activeSection === "users" && <EditUserPage />}
           {activeSection === "products" && <EditProductPage />}
           {activeSection === "orders" && <OrderDetailPage />}
-          {/* Add other sections here */}
+          {activeSection === "promotions" && <EditBannerPage />}
         </MainContentArea>
       </MainContent>
     </AppContainer>

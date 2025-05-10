@@ -1,5 +1,3 @@
-
-
 import {
   AppContainer, Sidebar, SidebarHeader, SidebarNav, NavButton, NavIconWrapperl,
   Header, HeaderContainer, MenuButton, MobileTitle, HeaderActions, NotificationButton,
@@ -8,12 +6,52 @@ import {
   SectionTitle, ActionButton, TableContainer, Table, TableHead, TableBody, TableRow,
   TableCell, TableHeaderCell, StatusBadge, ActionLink, NavIconWrapper
 } from "./Components";
+import { useQuery, useMutation } from '@apollo/client';
+import { GET_ALL_ORDERS } from '../../graphql/Queries/orderQueries';
+import Loading from '../../assets/mui/Loading';
+import MuiError from '../../assets/mui/Alert';
+import { useState } from 'react';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, MenuItem } from '@mui/material';
+import { formatVNDPrice } from '../../utils/formatPrice';
+export default function EditOrderPage() {
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editedStatus, setEditedStatus] = useState('');
 
-export default function OrderDetailPage() {
+  const { loading, error, data, refetch } = useQuery(GET_ALL_ORDERS);
+
+  const handleEditClick = (order) => {
+    setSelectedOrder(order);
+    setEditedStatus(order.status);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsEditDialogOpen(false);
+    setSelectedOrder(null);
+    setEditedStatus('');
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      // Here you would implement the mutation to update the order status
+      // await updateOrderStatus({ variables: { orderId: selectedOrder.id, status: editedStatus } });
+      await refetch(); // Refresh the orders list
+      handleCloseDialog();
+    } catch (error) {
+      console.error('Error updating order:', error);
+    }
+  };
+
+  if (loading) return <Loading />;
+  if (error) return <MuiError type='error' value={'Please try again later..'} />;
+
+  const orders = data?.getAllOrders || [];
+
   return (
     <div>
       <SectionHeader>
-        <SectionTitle>Order History</SectionTitle>
+        <SectionTitle>Order Management</SectionTitle>
         <ActionButton>Export Data</ActionButton>
       </SectionHeader>
       <TableContainer>
@@ -25,34 +63,54 @@ export default function OrderDetailPage() {
               <TableHeaderCell>Date</TableHeaderCell>
               <TableHeaderCell>Status</TableHeaderCell>
               <TableHeaderCell>Total</TableHeaderCell>
-              <TableHeaderCell>Actions</TableHeaderCell>
             </tr>
           </TableHead>
           <TableBody>
-            {[1, 2, 3].map((item) => (
-              <tr key={item}>
-                <TableCell>#ORD-{item}0{item}5</TableCell>
-                <TableCell highlight>Customer {item}</TableCell>
-                <TableCell>2025-04-{item < 10 ? '0' + item : item}</TableCell>
+            {orders.map((order) => (
+              <tr key={order.id}>
+                <TableCell>#{order.id}</TableCell>
+                <TableCell highlight>{order.purchasedBy}</TableCell>
+                <TableCell>{new Date(order.datePurchased).toLocaleDateString()}</TableCell>
                 <TableCell>
-                  <StatusBadge status={
-                    item === 1 ? 'Completed' :
-                      item === 2 ? 'Pending' :
-                        'Processing'
-                  }>
-                    {item === 1 ? 'Completed' : item === 2 ? 'Pending' : 'Processing'}
+                  <StatusBadge status={order.status}>
+                    Completed
                   </StatusBadge>
                 </TableCell>
-                <TableCell>${item * 49}.99</TableCell>
                 <TableCell>
-                  <ActionLink>View</ActionLink>
-                  <ActionLink color="#4b5563" hoverColor="#111827">Print</ActionLink>
+                  {formatVNDPrice(order.orderProducts.reduce((total, product) => total + product.productPrice, 0))}
                 </TableCell>
               </tr>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Edit Order Dialog */}
+      <Dialog open={isEditDialogOpen} onClose={handleCloseDialog}>
+        <DialogTitle>Edit Order Status</DialogTitle>
+        <DialogContent>
+          <TextField
+            select
+            fullWidth
+            label="Order Status"
+            value={editedStatus}
+            onChange={(e) => setEditedStatus(e.target.value)}
+            margin="normal"
+          >
+            <MenuItem value="Pending">Pending</MenuItem>
+            <MenuItem value="Processing">Processing</MenuItem>
+            <MenuItem value="Shipped">Shipped</MenuItem>
+            <MenuItem value="Delivered">Delivered</MenuItem>
+            <MenuItem value="Cancelled">Cancelled</MenuItem>
+          </TextField>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={handleSaveChanges} variant="contained" color="primary">
+            Save Changes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
-  )
+  );
 }
