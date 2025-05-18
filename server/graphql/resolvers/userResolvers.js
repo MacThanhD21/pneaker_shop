@@ -8,7 +8,7 @@ import {
   registerInputValidator,
 } from '../../utils/vaildators.js';
 
-const RECAPTCHA_SECRET_KEY = '6LdS6QQrAAAAACgNQ61zRWkGRbfcRoSCFbKhkgd9';
+const RECAPTCHA_SECRET_KEY = '6Lfflj4rAAAAAGBRKGVOa-GtPSLhsYBM0Uj6qU4E';
 // Hàm xác thực reCAPTCHA
 const verifyRecaptcha = async (token) => {
   try {
@@ -27,6 +27,16 @@ const verifyRecaptcha = async (token) => {
     return false;
   }
 };
+
+const isPotentiallyMalicious = (value) => {
+  if (typeof value !== 'string' || !value.trim()) return false;
+
+  const val = value.toLowerCase().trim();
+  const pattern = /\b(select|update|delete|insert|drop|exec|union|alter|create|truncate)\b|('|--|#|;|\/\*|\*\/|%27|%23|=)/i;
+  const logic = /('|")\s*(or|and)\s*[\w\d]+\s*=\s*[\w\d]+/i;
+  return pattern.test(val) || logic.test(val);
+};
+
 
 export const users = {
   Query: {
@@ -56,8 +66,31 @@ export const users = {
   Mutation: {
     register: async (
       _,
-      { registerInput: { username, email, password, confirmedPassword } }
+      { registerInput: { username, email, password, confirmedPassword }, recaptchaToken }
     ) => {
+      // First verify the captcha token
+      const isCaptchaValid = await verifyRecaptcha(recaptchaToken);
+      if (!isCaptchaValid) {
+        throw new UserInputError('CAPTCHA verification failed', {
+          errors: {
+            captcha: 'CAPTCHA verification failed. Please try again.',
+          },
+        });
+      }
+      
+      // Kiểm tra đầu vào có dấu hiệu tấn công
+      if (
+        [username, email, password, confirmedPassword].some(isPotentiallyMalicious)
+      ) {
+        throw new UserInputError('Malicious input detected', {
+          errors: {
+            general:
+              'Your input contains potentially dangerous characters or SQL keywords.',
+          },
+        });
+      }
+    
+      // Validate chuẩn (định dạng, logic, độ dài,...)
       const { valid, errors } = registerInputValidator(
         username,
         email,
@@ -67,6 +100,8 @@ export const users = {
       if (!valid) {
         throw new UserInputError('Errors', { errors });
       }
+    
+      // Kiểm tra tồn tại
       const existUser = await User.findOne({ username });
       const existEmail = await User.findOne({ email });
       if (existUser) {
@@ -82,44 +117,68 @@ export const users = {
           },
         });
       }
+    
+      // Tạo mới
       const newUser = new User({
         username,
         email,
         password,
       });
       const res = await newUser.save();
-
+    
       return {
         ...res._doc,
         id: res._id,
         token: res.createJWT(),
       };
     },
-    login: async (_, { username, password }) => {
+    
+    login: async (_, { username, password, recaptchaToken }) => {
+      // First verify the captcha token
+      const isCaptchaValid = await verifyRecaptcha(recaptchaToken);
+      if (!isCaptchaValid) {
+        throw new UserInputError('CAPTCHA verification failed', {
+          errors: {
+            captcha: 'CAPTCHA verification failed. Please try again.',
+          },
+        });
+      }
+    
+      // Kiểm tra dấu hiệu tấn công
+      if ([username, password].some(isPotentiallyMalicious)) {
+        throw new UserInputError('Malicious input detected', {
+          errors: {
+            general: 'Invalid login credentials.',
+          },
+        });
+      }
+    
+      // Validate logic nhập liệu
       const { valid, errors } = loginInputValidator(username, password);
-
       if (!valid) {
         throw new UserInputError('Errors', { errors });
       }
-
+    
+      // Kiểm tra người dùng
       const user = await User.findOne({ username }).select('+password');
-
       if (!user) {
         errors.general = 'User not found';
         throw new UserInputError('No user ', { errors });
       }
-
+    
+      // So sánh mật khẩu
       if (!(await user.comparePasswords(password))) {
         errors.general = 'Wrong credentials';
         throw new UserInputError('Wrong credentials', { errors });
       }
-
+    
       return {
         ...user._doc,
         id: user._id,
         token: user.createJWT(),
       };
     },
+    
     updateUser: async (
       _,
       {

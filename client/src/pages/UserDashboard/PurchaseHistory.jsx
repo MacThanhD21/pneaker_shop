@@ -21,7 +21,7 @@ const PurchaseHistory = () => {
   }, [orders, navigate, loading]);
 
   // Sort orders by purchase date (newest first)
-  const sortedOrders = orders.sort((a, b) => {
+  const sortedOrders = [...orders].sort((a, b) => {
     const dateA = moment(a.datePurchased);
     const dateB = moment(b.datePurchased);
     return dateB.diff(dateA);

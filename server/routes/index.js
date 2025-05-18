@@ -1,10 +1,10 @@
-import {Router} from 'express'
+import { Router } from 'express'
 import { asyncHandler } from '../utils/async.helper.js'
 import { doPaypalPayment, doStripePayment } from '../app/controller/payment.controller.js'
 
 
 
-function  route(app){
+function route(app) {
     app.use('/', mainRoute)
 }
 
@@ -17,12 +17,12 @@ const mainRoute = Router()
 
 mainRoute.post(
     '/payment-check',
-     asyncHandler(doStripePayment)
+    asyncHandler(doStripePayment)
 )
 
 mainRoute.post(
     '/verify-payment',
-     asyncHandler(doPaypalPayment)
+    asyncHandler(doPaypalPayment)
 )
 
 export default route

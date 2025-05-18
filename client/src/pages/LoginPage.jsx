@@ -9,9 +9,10 @@ import { useDispatch } from 'react-redux';
 import { loginUser } from '../features/userSlice';
 import Loading from '../assets/mui/Loading';
 import MuiError from '../assets/mui/Alert';
-
+import Captcha from '../components/ReCAPTCHA'; // Import the captcha component
 const LoginPage = () => {
   const [errors, setErrors] = useState({});
+  const [recaptchaToken, setRecaptchaToken] = useState('');
 
   const dispatch = useDispatch();
 
@@ -28,12 +29,25 @@ const LoginPage = () => {
     onError(err) {
       setErrors(err.graphQLErrors[0]?.extensions.errors);
     },
-    variables: values,
+    variables: { ...values, recaptchaToken }, // Include recaptchaToken in variables
   });
 
   function loginUserCallback() {
+    if (!recaptchaToken) {
+      setErrors({ captcha: 'Please complete the CAPTCHA verification' });
+      return;
+    }
     login();
   }
+
+  const handleCaptchaChange = (token) => {
+    setRecaptchaToken(token);
+    // Clear captcha error if it exists
+    if (errors?.captcha) {
+      const { captcha, ...rest } = errors;
+      setErrors(rest);
+    }
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-50">
@@ -84,6 +98,13 @@ const LoginPage = () => {
                 placeholder="Enter your password"
               />
             </div>
+            
+            {/* Add CAPTCHA component */}
+            <Captcha onChange={handleCaptchaChange} />
+            {errors?.captcha && (
+              <div className="text-red-500 text-sm">{errors.captcha}</div>
+            )}
+            
             <button 
               disabled={loading}
               type='submit'
@@ -104,7 +125,7 @@ const LoginPage = () => {
             </span>
           </Link>
           {errors &&
-            Object.values(errors)?.map((err, index) => (
+            Object.values(errors)?.filter(err => err !== errors.captcha)?.map((err, index) => (
               <MuiError value={err} key={index} type='error' />
             ))}
         </div>

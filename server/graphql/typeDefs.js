@@ -212,8 +212,8 @@ export const typeDefs = gql`
     order: Int
   }
   type Mutation {
-    login(username: String!, password: String!): User!
-    register(registerInput: RegisterInput): User!
+    login(username: String!, password: String!, recaptchaToken: String!): User!
+    register(registerInput: RegisterInput, recaptchaToken: String!): User!
     addProduct(addProductInput: AddProductInput): Product!
     updateProduct(updateProductInput: UpdateProductInput): Product!
     updateUser(updateUserInput: UpdateUserInput): User!

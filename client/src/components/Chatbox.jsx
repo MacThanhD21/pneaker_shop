@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FiSend, FiX, FiMessageSquare } from 'react-icons/fi';
 import { RiRobot2Line, RiUserSmileLine } from 'react-icons/ri';
 
-const chatDomain = 'https://b470-34-34-59-139.ngrok-free.app/chatbot/query';
+const chatDomain = 'https://0ada-34-145-136-64.ngrok-free.app/chat';
 
 const preprocessAnswer = (answer) => {
   return answer.replace("<|im_end|>", "");
@@ -88,7 +88,7 @@ const Chatbox = () => {
     
     const newBotMessage = {
       id: messages.length + 2,
-      text: preprocessAnswer(botResponse.answer),
+      text: preprocessAnswer(botResponse.response),
       sender: "bot",
       timestamp: new Date().toISOString(),
       type: "text"

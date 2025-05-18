@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 const LOGIN_USER = gql`
-  mutation ($username: String!, $password: String!) {
-    login(username: $username, password: $password) {
+  mutation ($username: String!, $password: String!, $recaptchaToken: String!) {
+    login(username: $username, password: $password, recaptchaToken: $recaptchaToken) {
       id
       email
       username
@@ -30,6 +30,7 @@ const REGISTER_USER = gql`
     $password: String!
     $email: String!
     $confirmedPassword: String!
+    $recaptchaToken: String!
   ) {
     register(
       registerInput: {
@@ -38,6 +39,7 @@ const REGISTER_USER = gql`
         email: $email
         confirmedPassword: $confirmedPassword
       }
+      recaptchaToken: $recaptchaToken
     ) {
       id
       email
