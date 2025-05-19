@@ -12,6 +12,7 @@ import { formatVNDPrice } from '../utils/formatPrice';
 import { ToastContainer, toast } from 'react-toastify';
 import { Helmet } from 'react-helmet-async';
 import 'react-toastify/dist/ReactToastify.css';
+import RecommendedProducts from '../components/RecommendedProducts';
 
 const ProductPage = () => {
   const [product, setProduct] = useState(null);
@@ -63,6 +64,7 @@ const ProductPage = () => {
 
   useEffect(() => {
     if (data) {
+      console.log('Product data received:', data);
       setProduct(data?.getProductById);
       const availableSize = data?.getProductById.size.find(size => size.quantity > 0);
       setSelectedSize(availableSize ? availableSize.size : null);
@@ -473,7 +475,7 @@ const ProductPage = () => {
                 </div>
               </section>
 
-              <section aria-label="Sản phẩm tương tự" className="mb-12">
+              {/* <section aria-label="Sản phẩm tương tự" className="mb-12">
                 <h2 className="text-2xl font-bold mb-6">Sản Phẩm Tương Tự</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {similarProducts.map((product) => (
@@ -497,8 +499,16 @@ const ProductPage = () => {
                     </Link>
                   ))}
                 </div>
-              </section>
+              </section> */}
             </>
+          )}
+
+          {/* Add RecommendedProducts component before Footer */}
+          {id && (
+            <div className="mt-12">
+              {console.log('Rendering RecommendedProducts with id:', id)}
+              <RecommendedProducts itemId={id} />
+            </div>
           )}
         </main>
       </div>

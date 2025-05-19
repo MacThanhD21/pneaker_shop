@@ -84,6 +84,7 @@ const GET_SINGLE_PRODUCT = gql`
         createdAt
         imageList
       }
+      quantity
     }
   }
 `;
