@@ -10,6 +10,132 @@ import { GET_ALL_BANNERS } from '../../graphql/Queries/bannerQueries';
 import { CREATE_BANNER, UPDATE_BANNER, DELETE_BANNER } from '../../graphql/Mutations/bannerMutations';
 import Loading from '../../assets/mui/Loading';
 import MuiError from '../../assets/mui/Alert';
+import styled from 'styled-components';
+import { IconButton, Tooltip, Button } from '@mui/material';
+
+const StyledTableContainer = styled(TableContainer)`
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 24px;
+  overflow: hidden;
+  max-width: 100%;
+`;
+
+const StyledTable = styled(Table)`
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  table-layout: fixed;
+`;
+
+const StyledTableRow = styled.tr`
+  transition: all 0.2s ease;
+  &:hover {
+    background-color: #f8f9fa;
+  }
+`;
+
+const StyledTableCell = styled(TableCell)`
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 0;
+`;
+
+const StyledTableHeaderCell = styled(TableHeaderCell)`
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  padding: 12px;
+  border-bottom: 2px solid #dee2e6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 0;
+`;
+
+const StatusBadge = styled.span`
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background-color: ${props => props.isActive ? '#d1e7dd' : '#f8d7da'};
+  color: ${props => props.isActive ? '#0f5132' : '#842029'};
+`;
+
+const ActionButtons = styled.div`
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+`;
+
+const StyledSectionHeader = styled(SectionHeader)`
+  margin-bottom: 24px;
+`;
+
+const StyledFormInput = styled.input`
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  &:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
+`;
+
+const StyledSelect = styled.select`
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  &:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
+`;
+
+const BannerImageContainer = styled.div`
+  width: 100px;
+  height: 50px;
+  position: relative;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
+
+const NewBannerForm = styled.div`
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 16px;
+  }
+`;
 
 const EditBannerPage = () => {
   const [banners, setBanners] = useState([]);
@@ -99,7 +225,7 @@ const EditBannerPage = () => {
 
   return (
     <div className="space-y-6">
-      <SectionHeader>
+      <StyledSectionHeader>
         <SectionTitle>Quản lý Banner</SectionTitle>
         <div className="flex gap-4">
           <ActionButton onClick={handleCreateBanner}>
@@ -107,195 +233,189 @@ const EditBannerPage = () => {
             Thêm Banner
           </ActionButton>
         </div>
-      </SectionHeader>
+      </StyledSectionHeader>
 
-      {/* New Banner Form */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h3 className="text-lg font-semibold mb-4">Thêm Banner Mới</h3>
+      <NewBannerForm>
+        <h3>Thêm Banner Mới</h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Hình ảnh</label>
-            <input
+            <StyledFormInput
               type="text"
               value={newBanner.image}
               onChange={(e) => handleInputChange('image', e.target.value)}
               placeholder="URL hình ảnh"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Tiêu đề</label>
-            <input
+            <StyledFormInput
               type="text"
               value={newBanner.title}
               onChange={(e) => handleInputChange('title', e.target.value)}
               placeholder="Tiêu đề banner"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
-            <input
+            <StyledFormInput
               type="text"
               value={newBanner.description}
               onChange={(e) => handleInputChange('description', e.target.value)}
               placeholder="Mô tả banner"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Link</label>
-            <input
+            <StyledFormInput
               type="text"
               value={newBanner.link}
               onChange={(e) => handleInputChange('link', e.target.value)}
               placeholder="Link banner"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Thứ tự</label>
-            <input
+            <StyledFormInput
               type="number"
               value={newBanner.order}
               onChange={(e) => handleInputChange('order', parseInt(e.target.value))}
               placeholder="Thứ tự hiển thị"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
-      </div>
+      </NewBannerForm>
 
-      <TableContainer>
-        <Table>
+      <StyledTableContainer>
+        <StyledTable>
           <TableHead>
-            <TableRow>
-              <TableHeaderCell>Hình ảnh</TableHeaderCell>
-              <TableHeaderCell>Tiêu đề</TableHeaderCell>
-              <TableHeaderCell>Mô tả</TableHeaderCell>
-              <TableHeaderCell>Link</TableHeaderCell>
-              <TableHeaderCell>Thứ tự</TableHeaderCell>
-              <TableHeaderCell>Trạng thái</TableHeaderCell>
-              <TableHeaderCell>Thao tác</TableHeaderCell>
-            </TableRow>
+            <tr>
+              <StyledTableHeaderCell style={{ width: '12%' }}>Hình ảnh</StyledTableHeaderCell>
+              <StyledTableHeaderCell style={{ width: '18%' }}>Tiêu đề</StyledTableHeaderCell>
+              <StyledTableHeaderCell style={{ width: '20%' }}>Mô tả</StyledTableHeaderCell>
+              <StyledTableHeaderCell style={{ width: '20%' }}>Link</StyledTableHeaderCell>
+              <StyledTableHeaderCell style={{ width: '8%' }}>Thứ tự</StyledTableHeaderCell>
+              <StyledTableHeaderCell style={{ width: '10%' }}>Trạng thái</StyledTableHeaderCell>
+              <StyledTableHeaderCell style={{ width: '12%' }}>Thao tác</StyledTableHeaderCell>
+            </tr>
           </TableHead>
           <TableBody>
             {banners.map((banner) => (
-              <TableRow key={banner.id}>
-                <TableCell>
-                  <div className="w-32 h-20 relative bg-gray-100 rounded-lg overflow-hidden">
+              <StyledTableRow key={banner.id}>
+                <StyledTableCell>
+                  <BannerImageContainer>
                     {banner.image ? (
                       <img
                         src={banner.image}
                         alt={banner.title}
-                        className="w-full h-full object-cover"
                         onError={(e) => {
                           e.target.src = '';
-                          e.target.parentElement.classList.add('flex', 'items-center', 'justify-center');
-                          e.target.parentElement.innerHTML = '<ImageIcon size={24} className="text-gray-400" />';
+                          e.target.parentElement.innerHTML = '<ImageIcon size={20} className="text-gray-400" />';
                         }}
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <ImageIcon size={24} className="text-gray-400" />
-                      </div>
+                      <ImageIcon size={20} className="text-gray-400" />
                     )}
-                  </div>
-                </TableCell>
-                <TableCell>
+                  </BannerImageContainer>
+                </StyledTableCell>
+                <StyledTableCell title={banner.title}>
                   {editingBanner?.id === banner.id ? (
-                    <input
+                    <StyledFormInput
                       type="text"
                       value={editingBanner.title}
                       onChange={(e) => handleInputChange('title', e.target.value)}
-                      className="w-full px-2 py-1 border border-gray-300 rounded"
                     />
                   ) : (
                     banner.title
                   )}
-                </TableCell>
-                <TableCell>
+                </StyledTableCell>
+                <StyledTableCell title={banner.description}>
                   {editingBanner?.id === banner.id ? (
-                    <input
+                    <StyledFormInput
                       type="text"
                       value={editingBanner.description}
                       onChange={(e) => handleInputChange('description', e.target.value)}
-                      className="w-full px-2 py-1 border border-gray-300 rounded"
                     />
                   ) : (
                     banner.description
                   )}
-                </TableCell>
-                <TableCell>
+                </StyledTableCell>
+                <StyledTableCell title={banner.link}>
                   {editingBanner?.id === banner.id ? (
-                    <input
+                    <StyledFormInput
                       type="text"
                       value={editingBanner.link}
                       onChange={(e) => handleInputChange('link', e.target.value)}
-                      className="w-full px-2 py-1 border border-gray-300 rounded"
                     />
                   ) : (
                     banner.link
                   )}
-                </TableCell>
-                <TableCell>
+                </StyledTableCell>
+                <StyledTableCell>
                   {editingBanner?.id === banner.id ? (
-                    <input
+                    <StyledFormInput
                       type="number"
                       value={editingBanner.order}
                       onChange={(e) => handleInputChange('order', parseInt(e.target.value))}
-                      className="w-full px-2 py-1 border border-gray-300 rounded"
                     />
                   ) : (
                     banner.order
                   )}
-                </TableCell>
-                <TableCell>
+                </StyledTableCell>
+                <StyledTableCell>
                   {editingBanner?.id === banner.id ? (
-                    <select
+                    <StyledSelect
                       value={editingBanner.isActive}
                       onChange={(e) => handleInputChange('isActive', e.target.value === 'true')}
-                      className="w-full px-2 py-1 border border-gray-300 rounded"
                     >
                       <option value="true">Active</option>
                       <option value="false">Inactive</option>
-                    </select>
+                    </StyledSelect>
                   ) : (
-                    <span className={`px-2 py-1 rounded-full text-sm ${banner.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    <StatusBadge isActive={banner.isActive}>
                       {banner.isActive ? 'Active' : 'Inactive'}
-                    </span>
+                    </StatusBadge>
                   )}
-                </TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
+                </StyledTableCell>
+                <StyledTableCell>
+                  <ActionButtons>
                     {editingBanner?.id === banner.id ? (
-                      <button
-                        onClick={handleUpdateBanner}
-                        className="p-2 text-green-500 hover:bg-green-50 rounded-lg transition-colors"
-                      >
-                        <Save size={20} />
-                      </button>
+                      <Tooltip title="Lưu thay đổi">
+                        <IconButton 
+                          size="small"
+                          onClick={handleUpdateBanner}
+                          style={{ color: '#28a745' }}
+                        >
+                          <Save size={18} />
+                        </IconButton>
+                      </Tooltip>
                     ) : (
-                      <button
-                        onClick={() => setEditingBanner(banner)}
-                        className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
-                      >
-                        <Edit2 size={20} />
-                      </button>
+                      <Tooltip title="Chỉnh sửa">
+                        <IconButton 
+                          size="small"
+                          onClick={() => setEditingBanner(banner)}
+                          style={{ color: '#007bff' }}
+                        >
+                          <Edit2 size={18} />
+                        </IconButton>
+                      </Tooltip>
                     )}
-                    <button
-                      onClick={() => handleDeleteBanner(banner.id)}
-                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                    >
-                      <Trash2 size={20} />
-                    </button>
-                  </div>
-                </TableCell>
-              </TableRow>
+                    <Tooltip title="Xóa banner">
+                      <IconButton 
+                        size="small"
+                        onClick={() => handleDeleteBanner(banner.id)}
+                        style={{ color: '#dc3545' }}
+                      >
+                        <Trash2 size={18} />
+                      </IconButton>
+                    </Tooltip>
+                  </ActionButtons>
+                </StyledTableCell>
+              </StyledTableRow>
             ))}
           </TableBody>
-        </Table>
-      </TableContainer>
+        </StyledTable>
+      </StyledTableContainer>
     </div>
   );
 };

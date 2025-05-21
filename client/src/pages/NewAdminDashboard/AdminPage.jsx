@@ -185,6 +185,70 @@ export default function AdminDashboard() {
     };
   };
 
+  const processTopProductsData = () => {
+    if (!ordersData?.getAllOrders) return null;
+
+    const productSales = ordersData.getAllOrders.reduce((acc, order) => {
+      order.orderProducts.forEach(product => {
+        const productName = product?.product?.title || 'Sản phẩm không xác định';
+        if (!acc[productName]) {
+          acc[productName] = {
+            quantity: 0,
+            revenue: 0
+          };
+        }
+        acc[productName].quantity += product.quantity || 0;
+        acc[productName].revenue += product.productPrice || 0;
+      });
+      return acc;
+    }, {});
+
+    const sortedProducts = Object.entries(productSales)
+      .sort(([, a], [, b]) => b.quantity - a.quantity)
+      .slice(0, 5);
+
+    return {
+      labels: sortedProducts.map(([name]) => name),
+      datasets: [
+        {
+          label: 'Số lượng bán',
+          data: sortedProducts.map(([, data]) => data.quantity),
+          backgroundColor: 'rgba(255, 159, 64, 0.8)',
+        }
+      ],
+    };
+  };
+
+  const processHourlyOrderData = () => {
+    if (!ordersData?.getAllOrders) return null;
+
+    const hourlyOrders = ordersData.getAllOrders.reduce((acc, order) => {
+      const hour = new Date(parseInt(order.datePurchased)).getHours();
+      if (!acc[hour]) {
+        acc[hour] = 0;
+      }
+      acc[hour]++;
+      return acc;
+    }, {});
+
+    const hours = Array.from({ length: 24 }, (_, i) => i);
+    const orderCounts = hours.map(hour => hourlyOrders[hour] || 0);
+
+    return {
+      labels: hours.map(hour => `${hour}:00`),
+      datasets: [
+        {
+          label: 'Số đơn hàng',
+          data: orderCounts,
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1,
+          fill: true,
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        }
+      ],
+    };
+  };
+
   const chartOptions = {
     responsive: true,
     plugins: {
@@ -321,6 +385,20 @@ export default function AdminDashboard() {
                   )}
                 </div>
                 
+                <div className="bg-white p-6 rounded-lg shadow">
+                  <h3 className="text-lg font-semibold mb-4">Top sản phẩm bán chạy</h3>
+                  {processTopProductsData() && (
+                    <Bar data={processTopProductsData()} options={chartOptions} />
+                  )}
+                </div>
+                
+                <div className="bg-white p-6 rounded-lg shadow md:col-span-2">
+                  <h3 className="text-lg font-semibold mb-4">Phân tích đơn hàng theo giờ</h3>
+                  {processHourlyOrderData() && (
+                    <Line data={processHourlyOrderData()} options={chartOptions} />
+                  )}
+                </div>
+
                 <div className="bg-white p-6 rounded-lg shadow md:col-span-2">
                   <h3 className="text-lg font-semibold mb-4">Tăng trưởng người dùng</h3>
                   {processUserGrowthData() && (

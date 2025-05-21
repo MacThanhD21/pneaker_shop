@@ -12,9 +12,75 @@ import { GET_ALL_USERS } from '../../graphql/Queries/userQueries';
 import Loading from '../../assets/mui/Loading';
 import MuiError from '../../assets/mui/Alert';
 import { useState, useMemo } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, MenuItem } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, MenuItem, IconButton, Tooltip } from '@mui/material';
 import { formatVNDPrice } from '../../utils/formatPrice';
 import * as XLSX from 'xlsx';
+import { FiDownload, FiEdit2, FiEye } from 'react-icons/fi';
+import styled from 'styled-components';
+
+const StyledTableContainer = styled(TableContainer)`
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 24px;
+  overflow: hidden;
+`;
+
+const StyledTable = styled(Table)`
+  border-collapse: separate;
+  border-spacing: 0;
+`;
+
+const StyledTableRow = styled(TableRow)`
+  transition: all 0.2s ease;
+  &:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+  }
+`;
+
+const StyledTableCell = styled(TableCell)`
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+`;
+
+const StyledTableHeaderCell = styled(TableHeaderCell)`
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  padding: 16px;
+  border-bottom: 2px solid #dee2e6;
+`;
+
+const ActionButtons = styled.div`
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+`;
+
+const StyledStatusBadge = styled(StatusBadge)`
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background-color: #d1e7dd;
+  color: #0f5132;
+`;
+
+const StyledSectionHeader = styled(SectionHeader)`
+  margin-bottom: 24px;
+`;
+
+const StyledActionButton = styled(ActionButton)`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #28a745;
+  color: white;
+  &:hover {
+    background-color: #218838;
+  }
+`;
 
 export default function EditOrderPage() {
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -86,44 +152,73 @@ export default function EditOrderPage() {
 
   return (
     <div>
-      <SectionHeader>
+      <StyledSectionHeader>
         <SectionTitle>Order Management</SectionTitle>
-        <ActionButton onClick={handleExportData}>Export Data</ActionButton>
-      </SectionHeader>
-      <TableContainer>
-        <Table>
+        <StyledActionButton onClick={handleExportData}>
+          <FiDownload /> Export Data
+        </StyledActionButton>
+      </StyledSectionHeader>
+      
+      <StyledTableContainer>
+        <StyledTable>
           <TableHead>
             <tr>
-              <TableHeaderCell>Order ID</TableHeaderCell>
-              <TableHeaderCell>Customer</TableHeaderCell>
-              <TableHeaderCell>Date</TableHeaderCell>
-              <TableHeaderCell>Status</TableHeaderCell>
-              <TableHeaderCell>Total</TableHeaderCell>
+              <StyledTableHeaderCell>Order ID</StyledTableHeaderCell>
+              <StyledTableHeaderCell>Customer</StyledTableHeaderCell>
+              <StyledTableHeaderCell>Date</StyledTableHeaderCell>
+              <StyledTableHeaderCell>Status</StyledTableHeaderCell>
+              <StyledTableHeaderCell>Total</StyledTableHeaderCell>
+              <StyledTableHeaderCell>Actions</StyledTableHeaderCell>
             </tr>
           </TableHead>
           <TableBody>
             {sortedOrders.map((order) => (
-              <tr key={order.id}>
-                <TableCell>#{order.id.slice(0, 6)}</TableCell>
-                <TableCell highlight>{getUserName[order.purchasedBy] || order.purchasedBy}</TableCell>
-                <TableCell>{new Date(order.datePurchased).toLocaleDateString()}</TableCell>
-                <TableCell>
-                  <StatusBadge status={order.status}>
+              <StyledTableRow key={order.id} onClick={() => handleEditClick(order)}>
+                <StyledTableCell>#{order.id.slice(0, 6)}</StyledTableCell>
+                <StyledTableCell highlight>{getUserName[order.purchasedBy] || order.purchasedBy}</StyledTableCell>
+                <StyledTableCell>{new Date(order.datePurchased).toLocaleDateString()}</StyledTableCell>
+                <StyledTableCell>
+                  <StyledStatusBadge status={order.status}>
                     Completed
-                  </StatusBadge>
-                </TableCell>
-                <TableCell>
+                  </StyledStatusBadge>
+                </StyledTableCell>
+                <StyledTableCell>
                   {formatVNDPrice(order.orderProducts.reduce((total, product) => total + product.productPrice, 0))}
-                </TableCell>
-              </tr>
+                </StyledTableCell>
+                <StyledTableCell>
+                  <ActionButtons>
+                    <Tooltip title="View Details">
+                      <IconButton size="small">
+                        <FiEye />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Edit Order">
+                      <IconButton size="small">
+                        <FiEdit2 />
+                      </IconButton>
+                    </Tooltip>
+                  </ActionButtons>
+                </StyledTableCell>
+              </StyledTableRow>
             ))}
           </TableBody>
-        </Table>
-      </TableContainer>
+        </StyledTable>
+      </StyledTableContainer>
 
       {/* Edit Order Dialog */}
-      <Dialog open={isEditDialogOpen} onClose={handleCloseDialog}>
-        <DialogTitle>Edit Order Status</DialogTitle>
+      <Dialog 
+        open={isEditDialogOpen} 
+        onClose={handleCloseDialog}
+        PaperProps={{
+          style: {
+            borderRadius: '12px',
+            padding: '16px'
+          }
+        }}
+      >
+        <DialogTitle style={{ fontSize: '1.25rem', fontWeight: 600 }}>
+          Edit Order Status
+        </DialogTitle>
         <DialogContent>
           <TextField
             select
@@ -132,6 +227,7 @@ export default function EditOrderPage() {
             value={editedStatus}
             onChange={(e) => setEditedStatus(e.target.value)}
             margin="normal"
+            variant="outlined"
           >
             <MenuItem value="Pending">Pending</MenuItem>
             <MenuItem value="Processing">Processing</MenuItem>
@@ -141,8 +237,23 @@ export default function EditOrderPage() {
           </TextField>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
-          <Button onClick={handleSaveChanges} variant="contained" color="primary">
+          <Button 
+            onClick={handleCloseDialog}
+            style={{ color: '#6c757d' }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleSaveChanges} 
+            variant="contained" 
+            color="primary"
+            style={{ 
+              backgroundColor: '#007bff',
+              '&:hover': {
+                backgroundColor: '#0056b3'
+              }
+            }}
+          >
             Save Changes
           </Button>
         </DialogActions>
