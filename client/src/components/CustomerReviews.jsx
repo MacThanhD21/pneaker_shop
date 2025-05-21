@@ -1,90 +1,47 @@
 import React, { useState } from 'react';
 import { FaStar } from 'react-icons/fa';
+import { useQuery } from '@apollo/client';
 import FadeInSection from './FadeInSection';
+import { GET_PRODUCTS_REVIEWS } from '../graphql/Queries/productQueries';
+import Loading from '../assets/mui/Loading';
+import MuiError from '../assets/mui/Alert';
 
 const CustomerReviews = () => {
   const [showAll, setShowAll] = useState(false);
+  const { loading, error, data } = useQuery(GET_PRODUCTS_REVIEWS);
 
-  const initialReviews = [
-    {
-      id: 1,
-      name: "Ngô Tuấn Anh",
-      avatar: "https://i.pravatar.cc/150?img=1",
-      rating: 5,
-      comment: "Sản phẩm chất lượng, giao hàng nhanh!",
-      date: "15/06/2024"
-    },
-    {
-      id: 2,
-      name: "Mạc Văn Thành",
-      avatar: "https://i.pravatar.cc/150?img=2",
-      rating: 5,
-      comment: "Giày rất đẹp và thoải mái khi mang.",
-      date: "10/06/2024"
-    },
-    {
-      id: 3,
-      name: "Trần Minh Quang",
-      avatar: "https://i.pravatar.cc/150?img=3",
-      rating: 5,
-      comment: "Dịch vụ chăm sóc khách hàng rất tốt!",
-      date: "05/06/2024"
-    }
-  ];
+  if (loading) return <Loading />;
+  if (error) return <MuiError value={error.message} type="error" />;
 
-  const additionalReviews = [
-    {
-      id: 4,
-      name: "Lê Văn Hùng",
-      avatar: "https://i.pravatar.cc/150?img=4",
-      rating: 4,
-      comment: "Giày đẹp nhưng hơi chật một chút. Chất lượng tốt.",
-      date: "01/06/2024"
-    },
-    {
-      id: 5,
-      name: "Phạm Thị Mai",
-      avatar: "https://i.pravatar.cc/150?img=5",
-      rating: 5,
-      comment: "Rất hài lòng với dịch vụ và sản phẩm. Sẽ quay lại mua tiếp!",
-      date: "28/05/2024"
-    },
-    {
-      id: 6,
-      name: "Nguyễn Văn Tú",
-      avatar: "https://i.pravatar.cc/150?img=6",
-      rating: 5,
-      comment: "Đóng gói cẩn thận, giao hàng đúng hẹn. Cảm ơn shop!",
-      date: "25/05/2024"
-    },
-    {
-      id: 7,
-      name: "Trần Thị Hoa",
-      avatar: "https://i.pravatar.cc/150?img=7",
-      rating: 4,
-      comment: "Giày đẹp, giá cả hợp lý. Nhân viên tư vấn nhiệt tình.",
-      date: "20/05/2024"
-    },
-    {
-      id: 8,
-      name: "Đỗ Văn Minh",
-      avatar: "https://i.pravatar.cc/150?img=8",
-      rating: 5,
-      comment: "Chất lượng vượt mong đợi. Đã giới thiệu cho bạn bè!",
-      date: "15/05/2024"
-    },
-    {
-      id: 9,
-      name: "Hoàng Thị Lan",
-      avatar: "https://i.pravatar.cc/150?img=9",
-      rating: 5,
-      comment: "Mẫu mã đa dạng, nhiều lựa chọn. Rất thích shopping ở đây!",
-      date: "10/05/2024"
-    }
-  ];
+  // Lấy tất cả reviews từ tất cả sản phẩm
+  const allReviews = data?.getProducts?.reduce((acc, product) => {
+    const productReviews = product.reviews?.map(review => ({
+      id: `${product.id}-${review.userId}`,
+      productName: product.title,
+      rating: review.rating,
+      comment: review.comment,
+      date: new Date(review.createdAt).toLocaleDateString('vi-VN'),
+      imageList: review.imageList || []
+    })) || [];
+    return [...acc, ...productReviews];
+  }, []) || [];
 
-  const allReviews = [...initialReviews, ...additionalReviews];
-  const displayedReviews = showAll ? allReviews : initialReviews;
+  // Sắp xếp reviews theo số sao (cao nhất) và ngày mới nhất
+  const sortedReviews = allReviews
+    .sort((a, b) => {
+      // Ưu tiên sắp xếp theo số sao
+      if (b.rating !== a.rating) {
+        return b.rating - a.rating;
+      }
+      // Nếu số sao bằng nhau thì sắp xếp theo ngày mới nhất
+      return new Date(b.date) - new Date(a.date);
+    })
+    .slice(0, 9); // Giới hạn 10 reviews
+
+  // Chia reviews thành 2 nhóm: hiển thị ban đầu và thêm
+  const initialReviews = sortedReviews.slice(0, 3);
+  const additionalReviews = sortedReviews.slice(3);
+  const displayedReviews = showAll ? sortedReviews : initialReviews;
 
   return (
     <section className="py-16 px-4 bg-gradient-to-b from-pink-50 to-rose-50">
@@ -102,44 +59,62 @@ const CustomerReviews = () => {
                 className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
               >
                 <div className="flex items-center mb-4">
-                  <img 
-                    src={review.avatar} 
-                    alt={review.name}
-                    className="w-16 h-16 rounded-full border-4 border-rose-200 object-cover"
-                  />
+                  <div className="w-16 h-16 rounded-full border-4 border-rose-200 bg-rose-100 flex items-center justify-center">
+                    <span className="text-2xl">👤</span>
+                  </div>
                   <div className="ml-4">
-                    <h3 className="text-lg font-semibold text-gray-800">{review.name}</h3>
+                    <h3 className="text-lg font-semibold text-gray-800">{review.productName}</h3>
                     <p className="text-sm text-gray-500">{review.date}</p>
                   </div>
                 </div>
 
-                <div className="flex mb-4">
-                  {[...Array(review.rating)].map((_, index) => (
-                    <FaStar 
-                      key={index} 
-                      className="text-yellow-400 w-5 h-5"
-                    />
-                  ))}
+                <div className="flex items-center mb-4">
+                  <div className="flex">
+                    {[...Array(review.rating)].map((_, index) => (
+                      <FaStar 
+                        key={index} 
+                        className="text-yellow-400 w-5 h-5"
+                      />
+                    ))}
+                  </div>
+                  <span className="ml-2 text-sm text-gray-600">
+                    ({review.rating} sao)
+                  </span>
                 </div>
 
                 <p className="text-gray-600 italic leading-relaxed">
                   "{review.comment}"
                 </p>
+
+                {review.imageList?.length > 0 && (
+                  <div className="mt-4 flex gap-2 overflow-x-auto pb-2">
+                    {review.imageList.map((image, imgIndex) => (
+                      <img
+                        key={imgIndex}
+                        src={image}
+                        alt={`Review image ${imgIndex + 1}`}
+                        className="w-20 h-20 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             </FadeInSection>
           ))}
         </div>
 
-        <FadeInSection delay={0.3}>
-          <div className="mt-12 text-center">
-            <button 
-              onClick={() => setShowAll(!showAll)}
-              className="px-6 py-3 bg-rose-600 text-white rounded-full hover:bg-rose-700 transition-colors duration-300 shadow-lg hover:shadow-xl"
-            >
-              {showAll ? "Ẩn Bớt Đánh Giá" : "Xem Thêm Đánh Giá"}
-            </button>
-          </div>
-        </FadeInSection>
+        {additionalReviews.length > 0 && (
+          <FadeInSection delay={0.3}>
+            <div className="mt-12 text-center">
+              <button 
+                onClick={() => setShowAll(!showAll)}
+                className="px-6 py-3 bg-rose-600 text-white rounded-full hover:bg-rose-700 transition-colors duration-300 shadow-lg hover:shadow-xl"
+              >
+                {showAll ? "Ẩn Bớt Đánh Giá" : "Xem Thêm Đánh Giá"}
+              </button>
+            </div>
+          </FadeInSection>
+        )}
       </div>
     </section>
   );

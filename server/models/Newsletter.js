@@ -8,35 +8,21 @@ const newsletterSchema = new mongoose.Schema({
     trim: true,
     lowercase: true
   },
-  status: {
-    type: String,
-    enum: ['active', 'unsubscribed'],
-    default: 'active'
+  isActive: {
+    type: Boolean,
+    default: true
   },
-  subscribedAt: {
+  createdAt: {
     type: Date,
     default: Date.now
   },
-  lastEmailSent: {
-    type: Date
-  },
-  preferences: {
-    newProducts: {
-      type: Boolean,
-      default: true
-    },
-    promotions: {
-      type: Boolean,
-      default: true
-    },
-    events: {
-      type: Boolean,
-      default: true
-    }
+  lastNotified: {
+    type: Date,
+    default: null
   }
 });
 
-// Middleware để kiểm tra email trước khi lưu
+// Middleware để validate email trước khi lưu
 newsletterSchema.pre('save', function(next) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(this.email)) {
@@ -47,4 +33,4 @@ newsletterSchema.pre('save', function(next) {
 
 const Newsletter = mongoose.model('Newsletter', newsletterSchema);
 
-module.exports = Newsletter; 
+module.exports = { Newsletter }; 

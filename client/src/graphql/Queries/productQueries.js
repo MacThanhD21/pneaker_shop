@@ -121,10 +121,28 @@ const GET_PRODUCT_BY_ID = gql`
   }
 `;
 
+const GET_PRODUCTS_REVIEWS = gql`
+  query {
+    getProducts {
+      id
+      title
+      rates
+      reviews {
+        userId
+        rating
+        comment
+        createdAt
+        imageList
+      }
+    }
+  }
+`;
+
 export {
   GET_SINGLE_PRODUCT,
   GET_PRODUCTS,
   GET_PRODUCTS_PAGINATION,
   GET_PRODUCTS_BY_TITLE,
   GET_PRODUCT_BY_ID,
+  GET_PRODUCTS_REVIEWS,
 };

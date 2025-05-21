@@ -1,26 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useMutation } from '@apollo/client';
+import { SUBSCRIBE_NEWSLETTER } from '../graphql/Mutations/newsletterMutations';
 
 const Newsletter = () => {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState(''); // 'success', 'error', 'loading'
   const [message, setMessage] = useState('');
-  const [subscribedEmails, setSubscribedEmails] = useState([]);
 
-  // Load subscribed emails from localStorage on component mount
-  useEffect(() => {
-    const savedEmails = localStorage.getItem('newsletterSubscribers');
-    if (savedEmails) {
-      setSubscribedEmails(JSON.parse(savedEmails));
+  const [subscribeNewsletter] = useMutation(SUBSCRIBE_NEWSLETTER, {
+    onCompleted: (data) => {
+      setStatus('success');
+      setMessage('Đăng ký thành công! Cảm ơn bạn đã quan tâm.');
+      setEmail('');
+    },
+    onError: (error) => {
+      setStatus('error');
+      setMessage(error.message || 'Có lỗi xảy ra, vui lòng thử lại sau.');
     }
-  }, []);
+  });
 
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Validate email
@@ -30,35 +35,18 @@ const Newsletter = () => {
       return;
     }
 
-    // Check if email is already subscribed
-    if (subscribedEmails.includes(email)) {
-      setStatus('error');
-      setMessage('Email này đã được đăng ký trước đó');
-      return;
-    }
-
     // Set loading state
     setStatus('loading');
     setMessage('Đang xử lý...');
 
-    // Simulate API call delay
-    setTimeout(() => {
-      try {
-        // Add new email to the list
-        const updatedEmails = [...subscribedEmails, email];
-        setSubscribedEmails(updatedEmails);
-        
-        // Save to localStorage
-        localStorage.setItem('newsletterSubscribers', JSON.stringify(updatedEmails));
-        
-        setStatus('success');
-        setMessage('Đăng ký thành công! Cảm ơn bạn đã quan tâm.');
-        setEmail(''); // Reset form
-      } catch (error) {
-        setStatus('error');
-        setMessage('Có lỗi xảy ra, vui lòng thử lại sau.');
-      }
-    }, 1000);
+    try {
+      await subscribeNewsletter({
+        variables: { email }
+      });
+    } catch (error) {
+      setStatus('error');
+      setMessage('Có lỗi xảy ra, vui lòng thử lại sau.');
+    }
   };
 
   return (
@@ -66,6 +54,9 @@ const Newsletter = () => {
       <NewsletterContainer>
         <NewsletterContent>
           <NewsletterTitle>Đăng Ký Nhận Thông Báo Mới Nhất</NewsletterTitle>
+          <NewsletterDescription>
+            Nhận thông báo ngay khi có sản phẩm mới và các chương trình khuyến mãi hấp dẫn
+          </NewsletterDescription>
           <NewsletterForm onSubmit={handleSubmit}>
             <Input
               type="email"
@@ -263,4 +254,11 @@ const Message = styled.div`
       transform: translateY(0);
     }
   }
+`;
+
+const NewsletterDescription = styled.p`
+  color: #db7093;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.8;
 `;
