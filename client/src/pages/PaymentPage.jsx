@@ -28,12 +28,12 @@ const PaymentTypeSelector = ({ cartProducts }) => {
   const [amount, setAmount] = useState(0);
   const deliveryTax = 10000;
   const salesTax = 20000;
-
+  console.log("cartProducts", cartProducts);
   const { userInfo, isLoading } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [paymentStatus, setPaymentStatus] = useState("");
   const originalPriceCalculated = cartProducts?.reduce(
-    (acc, val) => Number(acc) + Number(val.productPrice),
+    (acc, val) => Number(acc) + Number(val.productPrice) * Number(val.quantity),
     [0]
   );
   const totalPriceCalculated =

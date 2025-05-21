@@ -9,7 +9,7 @@ export const order = {
     getUserOrders: async (_, {}, context) => {
       const userAuth = await auth(context);
       const order = await Order.find({ purchasedBy: userAuth._id });
-      console.log(order);
+      console.log(order[0].orderProducts[0]);
       if (!order) {
         throw new UserInputError('No order available');
       }

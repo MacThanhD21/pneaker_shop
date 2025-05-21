@@ -13,7 +13,7 @@ const PurchaseHistory = () => {
   const navigate = useNavigate();
 
   const orders = data?.getUserOrders || [];
-  
+  // console.log("orders");
   useEffect(() => {
     if (!loading && orders.length === 0) {
       navigate('/shop');

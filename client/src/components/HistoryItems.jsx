@@ -73,10 +73,10 @@ const HistoryItems = ({ productId, datePurchased, size }) => {
             <div className="flex items-center mt-3 space-x-4">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium bg-gray-100 px-3 py-1 rounded-full">
-                  Size: {size.size}
+                  Size: {size && typeof size.size === 'number' ? size.size : '37'}
                 </p>
                 <p className="text-sm font-medium bg-gray-100 px-3 py-1 rounded-full">
-                  Quantity: {size.quantity}
+                  Quantity: {size?.quantity || '1'}
                 </p>
               </div>
               <h4 className="text-lg font-bold text-red-500">

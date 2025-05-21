@@ -399,11 +399,15 @@ const ProductPage = () => {
 
                     <button
                       onClick={handleAddToCart}
-                      className="w-full bg-rose-600 text-white py-3 rounded-md hover:bg-rose-700 transition-colors duration-300"
+                      className={`w-full py-3 rounded-md transition-colors duration-300 ${
+                        !selectedSize || !size.find(s => s.size === selectedSize)?.quantity > 0
+                          ? 'bg-gray-400 cursor-not-allowed'
+                          : 'bg-rose-600 text-white hover:bg-rose-700'
+                      }`}
                       disabled={!selectedSize || !size.find(s => s.size === selectedSize)?.quantity > 0}
                       aria-label="Thêm vào giỏ hàng"
                     >
-                      {size.find(s => s.size === selectedSize)?.quantity > 0 ? 'Thêm Vào Giỏ Hàng' : 'Hết Hàng'}
+                      Thêm Vào Giỏ Hàng
                     </button>
                   </div>
                 </section>

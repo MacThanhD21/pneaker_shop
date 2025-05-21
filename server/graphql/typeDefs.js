@@ -134,7 +134,7 @@ export const typeDefs = gql`
   }
   type CartProducts {
     productId: String!
-    size: Float!
+    size: Float
     productPrice: Int!
     id: ID
     selected: Boolean!

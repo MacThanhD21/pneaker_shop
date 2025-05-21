@@ -162,7 +162,7 @@ const EditProductPag = () => {
                             <TableHeaderCell>Product</TableHeaderCell>
                             <TableHeaderCell>Image</TableHeaderCell>
                             <TableHeaderCell>Price</TableHeaderCell>
-                            <TableHeaderCell>Stock</TableHeaderCell>
+                            <TableHeaderCell>Size & Quantity</TableHeaderCell>
                             <TableHeaderCell>Rates</TableHeaderCell>
                             
                             <TableHeaderCell>Actions</TableHeaderCell>
@@ -177,7 +177,13 @@ const EditProductPag = () => {
                                     <img src={item.image} alt={item.title} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
                                 </TableCell>
                                 <TableCell> {(item.price)}₫</TableCell>
-                                <TableCell>42</TableCell>
+                                <TableCell>{item.size.map(size => {
+                                    return (
+                                        <div key={size.id}>
+                                            Size: {size.size} - Quantity: {size.quantity} left
+                                        </div>
+                                    )
+                                })}</TableCell>
                                 <TableCell>{item.rates}</TableCell>
                                 <TableCell>
                                     <ActionLink onClick={() => {setIsEditItemOpen(true)}}>Edit</ActionLink>
