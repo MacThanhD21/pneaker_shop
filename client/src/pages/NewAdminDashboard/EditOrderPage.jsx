@@ -8,17 +8,32 @@ import {
 } from "./Components";
 import { useQuery, useMutation } from '@apollo/client';
 import { GET_ALL_ORDERS } from '../../graphql/Queries/orderQueries';
+import { GET_ALL_USERS } from '../../graphql/Queries/userQueries';
 import Loading from '../../assets/mui/Loading';
 import MuiError from '../../assets/mui/Alert';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, MenuItem } from '@mui/material';
 import { formatVNDPrice } from '../../utils/formatPrice';
+import * as XLSX from 'xlsx';
+
 export default function EditOrderPage() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editedStatus, setEditedStatus] = useState('');
 
-  const { loading, error, data, refetch } = useQuery(GET_ALL_ORDERS);
+  const { loading: ordersLoading, error: ordersError, data: ordersData, refetch } = useQuery(GET_ALL_ORDERS);
+  const { loading: usersLoading, error: usersError, data: usersData } = useQuery(GET_ALL_USERS);
+
+  const getUserName = useMemo(() => {
+    if (!usersData?.getAllUsers || !ordersData?.getAllOrders) return {};
+    
+    const userMap = {};
+    usersData.getAllUsers.forEach(user => {
+      userMap[user.id] = `${user.firstName} ${user.lastName}`;
+    });
+    
+    return userMap;
+  }, [usersData, ordersData]);
 
   const handleEditClick = (order) => {
     setSelectedOrder(order);
@@ -43,16 +58,37 @@ export default function EditOrderPage() {
     }
   };
 
-  if (loading) return <Loading />;
-  if (error) return <MuiError type='error' value={'Please try again later..'} />;
+  const handleExportData = () => {
+    const exportData = sortedOrders.map(order => ({
+      'Order ID': `#${order.id.slice(0, 6)}`,
+      'Customer': getUserName[order.purchasedBy] || order.purchasedBy,
+      'Date': new Date(order.datePurchased).toLocaleDateString(),
+      'Status': order.status,
+      'Total': formatVNDPrice(order.orderProducts.reduce((total, product) => total + product.productPrice, 0))
+    }));
 
-  const orders = data?.getAllOrders || [];
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Orders");
+    
+    // Generate Excel file
+    const fileName = `orders_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+  };
+
+  if (ordersLoading) return <Loading />;
+  if (ordersError) return <MuiError type='error' value={'Please try again later..'} />;
+
+  const orders = ordersData?.getAllOrders || [];
+  const sortedOrders = [...orders].sort((a, b) => 
+    new Date(b.datePurchased) - new Date(a.datePurchased)
+  );
 
   return (
     <div>
       <SectionHeader>
         <SectionTitle>Order Management</SectionTitle>
-        <ActionButton>Export Data</ActionButton>
+        <ActionButton onClick={handleExportData}>Export Data</ActionButton>
       </SectionHeader>
       <TableContainer>
         <Table>
@@ -66,10 +102,10 @@ export default function EditOrderPage() {
             </tr>
           </TableHead>
           <TableBody>
-            {orders.map((order) => (
+            {sortedOrders.map((order) => (
               <tr key={order.id}>
-                <TableCell>#{order.id}</TableCell>
-                <TableCell highlight>{order.purchasedBy}</TableCell>
+                <TableCell>#{order.id.slice(0, 6)}</TableCell>
+                <TableCell highlight>{getUserName[order.purchasedBy] || order.purchasedBy}</TableCell>
                 <TableCell>{new Date(order.datePurchased).toLocaleDateString()}</TableCell>
                 <TableCell>
                   <StatusBadge status={order.status}>
