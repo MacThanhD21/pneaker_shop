@@ -116,21 +116,25 @@ const PaymentTypeSelector = ({ cartProducts }) => {
             {selectedPayment === payment.id && payment.id === 'paypal' && (
               <div className="p-3 bg-gray-50 border-t border-gray-200">
                 <PayPalScriptProvider options={{ "client-id": "Af5oZoPUQ1tTUv7sdLzxs3PGfa09k6ynefB4gqLwQtyBqNRTQ9HoJ2YEx1wvJk0JsMnWpYnBVxT4nsKD" }}>
-                  <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-                    <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-                      <h2 className="text-xl font-semibold mb-4">Pay {formatVNDPrice(totalPriceCalculated)} with Paypal</h2>
-                      <PayPalButton
-                        amount={totalPriceCalculated}
-                        onSuccess={(details) => {
-                          setPaymentStatus(`Transaction completed by ${details.payer.name.given_name}`);
-                          completeOrder({});
-                        }}
-                        onError={(err) => {
-                          setPaymentStatus("Payment failed. Please try again.");
-                          console.error(err);
-                        }}
-                      />
-                      {paymentStatus && <p className="mt-4 text-gray-600">{paymentStatus}</p>}
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="bg-white p-4 rounded-lg w-full">
+                      <h2 className="text-lg font-semibold mb-3">Thanh toán {formatVNDPrice(totalPriceCalculated)} qua PayPal</h2>
+                      <div className="w-full max-w-[300px] mx-auto">
+                        <PayPalButton
+                          amount={totalPriceCalculated}
+                          onSuccess={(details) => {
+                            setPaymentStatus(`Giao dịch hoàn tất bởi ${details.payer.name.given_name}`);
+                            completeOrder({});
+                          }}
+                          onError={(err) => {
+                            setPaymentStatus("Thanh toán thất bại. Vui lòng thử lại.");
+                            console.error(err);
+                          }}
+                        />
+                      </div>
+                      {paymentStatus && (
+                        <p className="mt-3 text-sm text-gray-600 text-center">{paymentStatus}</p>
+                      )}
                     </div>
                   </div>
                 </PayPalScriptProvider>
