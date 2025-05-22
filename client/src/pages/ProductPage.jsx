@@ -21,6 +21,9 @@ const ProductPage = () => {
   const [success, setSuccess] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState('description');
+  const [showZoom, setShowZoom] = useState(false);
+  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
+  const [zoomDialogPosition, setZoomDialogPosition] = useState({ x: 0, y: 0 });
 
   const userInfo = useSelector((state) => state.user.userInfo);
   const { id } = useParams();
@@ -151,6 +154,21 @@ const ProductPage = () => {
     if (newQuantity >= 1 && newQuantity <= (size.find(size => size.size === selectedSize)?.quantity || 1)) {
       setQuantity(newQuantity);
     }
+  };
+
+  const handleMouseMove = (e) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    
+    // Tính toán vị trí zoom để hiển thị đúng vùng tương ứng với con trỏ
+    setZoomPosition({ x: x, y: y });
+    
+    // Điều chỉnh vị trí dialog để không che khuất con trỏ
+    setZoomDialogPosition({ 
+      x: e.clientX + 20, 
+      y: e.clientY + 20 
+    });
   };
 
   // Fake data for similar products
@@ -304,11 +322,32 @@ const ProductPage = () => {
             <>
               <article className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
                 <section aria-label="Hình ảnh sản phẩm" className="relative group">
-                  <img 
-                    src={images[currentImageIndex]} 
-                    alt={`${title} - ${brand} ${model} in ${color}`}
-                    className="w-full h-[450px] object-cover rounded-lg shadow-lg transition-all duration-300 group-hover:shadow-xl ring-2 ring-rose-100/50"
-                  />
+                  <div 
+                    className="relative overflow-hidden rounded-lg"
+                    onMouseEnter={() => setShowZoom(true)}
+                    onMouseLeave={() => setShowZoom(false)}
+                    onMouseMove={handleMouseMove}
+                  >
+                    <img 
+                      src={images[currentImageIndex]} 
+                      alt={`${title} - ${brand} ${model} in ${color}`}
+                      className="w-full h-[450px] object-cover transition-all duration-300 cursor-zoom-in"
+                    />
+                  </div>
+                  {showZoom && (
+                    <div 
+                      className="fixed w-[300px] h-[300px] rounded-lg shadow-2xl border-2 border-white overflow-hidden pointer-events-none z-50"
+                      style={{
+                        left: `${zoomDialogPosition.x}px`,
+                        top: `${zoomDialogPosition.y}px`,
+                        transform: 'translate(-50%, -50%)',
+                        backgroundImage: `url(${images[currentImageIndex]})`,
+                        backgroundSize: '300%',
+                        backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                        backgroundRepeat: 'no-repeat',
+                      }}
+                    />
+                  )}
                   <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
                     {images.map((_, index) => (
                       <button

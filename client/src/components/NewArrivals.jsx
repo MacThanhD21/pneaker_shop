@@ -190,7 +190,7 @@ const ProductCard = styled.div`
 
 const ProductImage = styled.img`
   width: 100%;
-  height: 200px;
+  height: 180px;
   object-fit: cover;
   transition: transform 0.4s ease;
   background: #f8f9fa;
@@ -201,13 +201,13 @@ const ProductImage = styled.img`
 `;
 
 const ProductInfo = styled.div`
-  padding: 1rem;
+  padding: 0.8rem;
   background: white;
   position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
 `;
 
 const ProductCategory = styled.span`
@@ -224,7 +224,7 @@ const ProductCategory = styled.span`
 `;
 
 const ProductName = styled.h3`
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #2d3436;
   font-weight: 600;
   line-height: 1.3;
@@ -236,7 +236,7 @@ const ProductName = styled.h3`
 `;
 
 const ProductPrice = styled.p`
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #ff6b6b;
   font-weight: 700;
   margin: 0;
@@ -246,7 +246,7 @@ const ProductPrice = styled.p`
   
   &:before {
     content: '₫';
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: #ff8e8e;
   }
 `;
@@ -255,22 +255,25 @@ const ProductDetails = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: #666;
   margin-top: auto;
-  padding-top: 0.5rem;
+  padding-top: 0.4rem;
   border-top: 1px solid #eee;
 `;
 
 const ProductMeta = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   
   span {
     display: flex;
     align-items: center;
     gap: 0.2rem;
+    background: #f8f9fa;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
   }
 `;
 
@@ -279,7 +282,7 @@ const Button = styled.button`
   color: white;
   border: none;
   padding: 0.6rem 1rem;
-  border-radius: 20px;
+  border-radius: 8px;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -290,6 +293,10 @@ const Button = styled.button`
   position: relative;
   overflow: hidden;
   margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   
   &:before {
     content: '';
@@ -308,12 +315,18 @@ const Button = styled.button`
   }
   
   &:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+    background: linear-gradient(135deg, #ff8e8e, #ff6b6b);
     
     &:before {
       left: 100%;
     }
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.2);
   }
 `;
 
@@ -325,9 +338,9 @@ const StyledLink = styled(Link)`
 const NoProducts = styled.div`
   grid-column: 1 / -1;
   text-align: center;
-  padding: 2rem;
+  padding: 1.5rem;
   color: #666;
-  font-size: 1rem;
+  font-size: 0.9rem;
   background: white;
   border-radius: 12px;
   margin: 1rem 0;
@@ -336,9 +349,9 @@ const NoProducts = styled.div`
   
   &:before {
     content: '👟';
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
   }
 `;
 
@@ -347,9 +360,9 @@ const ShowMoreButton = styled.button`
   background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
   color: white;
   border: none;
-  padding: 1rem;
-  border-radius: 12px;
-  font-size: 1rem;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -359,6 +372,10 @@ const ShowMoreButton = styled.button`
   letter-spacing: 0.5px;
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   
   &:before {
     content: '';
@@ -377,12 +394,18 @@ const ShowMoreButton = styled.button`
   }
   
   &:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+    background: linear-gradient(135deg, #ff8e8e, #ff6b6b);
     
     &:before {
       left: 100%;
     }
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.2);
   }
 `; 
 

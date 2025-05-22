@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'https://e156-34-141-233-16.ngrok-free.app';
+const API_URL = 'https://dc3c-34-148-89-69.ngrok-free.app';
+// https://dc3c-34-148-89-69.ngrok-free.app/recommend
 // Tạo instance axios với config mặc định
 const axiosInstance = axios.create({
   headers: {
